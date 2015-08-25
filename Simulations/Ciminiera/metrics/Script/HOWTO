@@ -1,0 +1,24 @@
+Copia tutti i file che trovi in questa cartella nella directory della Simulazione ( es. Ciminiere ).
+
+Avvia la simulazione.
+
+Una volta terminata la simulazione usa lo script bash compute.sh per generare i file _avg. 
+
+	./compute.sh
+
+I file generati contengono i dati pronti all'uso per fare i grafici. 
+Crea una cartella e copia al suo interno i file clusterX_avg ed i file stacks.plt t Threshold.
+Dal terminale entra nella cartella creata ed esegui :
+
+	gnuplot stacks.plt
+
+otterrai così il grafico.
+
+Se vuoi cambiare il nome del file o gli assi ecc devi modificare il file stacks.plt.
+
+- Nota -
+1 - Dopo che hai copiato i file e ti sei divertito a disegnare i grafici ricordati di dare un bel rm *.txt nella cartella della simulazione
+in modo da fare un po di pulizia.
+
+2 - il file Scenario.txt ed il relativo file Scenario_avg non servono a niente, li ho messi nel caso in cui ci fosse venuto in mente qualcosa
+che riguardasse il sink. 

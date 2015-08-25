@@ -1,0 +1,43 @@
+Castalia| what:General (1)
+Castalia| when:2015-01-04 16:47
+Castalia| label:General
+Castalia|	module:SN.node[0].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			6.79841 
+Castalia|	module:SN.node[0].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			100 Duty cycle
+Castalia|			100.004 RX Time
+Castalia|			0 SLEEP Time
+Castalia|			0 TX Time
+Castalia|	module:SN.node[0].Communication.LocalFilter
+Castalia|		simple output name:Real Energy Consumed
+Castalia|			6.79841 Energy (mJ)
+Castalia|	module:SN.node[1].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			6.28814 
+Castalia|	module:SN.node[1].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			100 Duty cycle
+Castalia|			32.5391 RX Time
+Castalia|			0 SLEEP Time
+Castalia|			67.4651 TX Time
+Castalia|		simple output name:TXed pkts
+Castalia|			499 TX pkts
+Castalia|	module:SN.node[1].Communication.LocalFilter
+Castalia|		simple output name:Real Energy Consumed
+Castalia|			6.28814 Energy (mJ)
+Castalia|	module:SN.node[2].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			6.28597 
+Castalia|	module:SN.node[2].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			100 Duty cycle
+Castalia|			32.5028 RX Time
+Castalia|			0 SLEEP Time
+Castalia|			67.5014 TX Time
+Castalia|		simple output name:TXed pkts
+Castalia|			499 TX pkts
+Castalia|	module:SN.node[2].Communication.LocalFilter
+Castalia|		simple output name:Real Energy Consumed
+Castalia|			6.28597 Energy (mJ)

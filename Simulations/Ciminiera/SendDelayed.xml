@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<configuration>
+
+	<Conditional>
+		<Attack>
+			<node>4</node>
+			<start_time>205</start_time>
+			<var><name>11</name><value>11</value><type>NUMBER</type></var>
+			<filter>APP.sourceNodeID:==:4:AND</filter>
+		
+			<action>
+				<name>Send</name>
+				<parameters>packetName:original:delay:10</parameters>
+			</action>
+			
+		</Attack>
+
+	</Conditional>
+</configuration>

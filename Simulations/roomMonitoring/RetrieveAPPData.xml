@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<configuration>
+	<Logical>
+		<Attack>
+			<node>9</node>
+			<start_time>200</start_time>
+			<filter>MAC.srcID:>:9:MAC.Mac802154PacketType:==:1003:AND</filter>
+			<action>
+				<name>Retrieve</name>
+				<parameters>field_name:MAC.srcID:packetName:original</parameters>
+			</action>
+		</Attack>
+	</Logical>
+</configuration>

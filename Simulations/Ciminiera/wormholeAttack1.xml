@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<configuration>
+
+	<Conditional>
+		<Attack>
+			<node>9</node>
+			<start_time>200</start_time>
+			<filter>NET.source:==:9:NET.multipathRingsRoutingPacketKind:==:1:AND</filter>
+
+		
+			<action>
+				<name>Put</name>
+				<parameters>direction:RX:nodes:1:delay:0.01:throughWC:false:packetName:original</parameters>
+			</action>
+		
+
+		</Attack>
+
+	</Conditional>
+</configuration>

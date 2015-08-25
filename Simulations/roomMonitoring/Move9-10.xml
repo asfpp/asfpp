@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<configuration>
+	<Physical>
+		<Attack>
+			<node>9:10</node>
+			<start_time>200</start_time>
+			<action>
+				<name>Move</name>
+				<parameters>100:10:0</parameters>
+			</action>
+		</Attack>
+	</Physical>
+</configuration>

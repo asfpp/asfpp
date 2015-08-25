@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<configuration>
+	<Logical>
+		<Attack>
+			<node>2:3</node>
+			<start_time>200</start_time>
+			<filter>APP.sourceNodeID:==:2|3</filter>
+			<var><name>MAX</name><value>1000</value><type>NUMBER</type></var>
+			<var><name>MIN</name><value>0</value><type>NUMBER</type></var>
+			<action>
+				<name>Change</name>
+				<parameters>value:MAX:field_name:APP.data:packetName:original</parameters>
+			</action>
+		</Attack>
+	</Logical>
+</configuration>

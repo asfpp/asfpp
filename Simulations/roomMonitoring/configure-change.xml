@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<configuration>
+	<Physical>
+		<Attack>
+			<node>12:18</node>
+			<start_time>200</start_time>
+			<filter></filter>
+			<action>
+				<name>Change</name>
+				<parameters>50:10:0</parameters>
+			</action>
+		</Attack>
+	</Physical>
+</configuration>

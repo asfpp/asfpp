@@ -1,0 +1,7 @@
+
+0               SN.node[0].Communication.LocalFilter     LocalFilter::initialize() started
+0               SN.node[0].Communication.LocalFilter     -> XML : none
+0               SN.node[0].Application                   -> setTimerDrift(1.00006)
+0               SN.node[0].Application                   -> STARTUP at 0.0275399
+0               SN.adversary                             Adversary::initialize() attacks 1
+0.027539895218  SN.node[0].Application                   Not sending packets

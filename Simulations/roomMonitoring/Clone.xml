@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<configuration>
+	<Logical>
+		<Attack>
+			<node>10</node>
+			<start_time>200</start_time>
+			<filter>APP.sourceNodeID:==:10:AND</filter>
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:packet2</parameters>
+			</action>
+			<action>
+				<name>Send</name>
+				<parameters>packetName:packet2</parameters>
+			</action>
+		</Attack>
+	</Logical>
+</configuration>

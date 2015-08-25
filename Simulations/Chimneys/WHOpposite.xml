@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<configuration>
+
+	<Conditional>
+		
+		<Attack>
+			<node>4</node>
+			<start_time>185</start_time>
+			<filter>MAC.source:==:6:NET.id:==:6:AND</filter>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>3</name><value>3</value><type>NUMBER</type></var>
+			<var><name>5</name><value>5</value><type>NUMBER</type></var>
+			<var><name>appseqno</name><value>100</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:wormPacket</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>field_name:NET.destination:value:3:packetName:wormPacket</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>field_name:APP.sourceNodeID:value:5:packetName:wormPacket</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>field_name:APP.sequenceNumber:value:appseqno:packetName:wormPacket</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>direction:RX:nodes:3:delay:1:throughWC:false:packetName:wormPacket</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appseqno</item>
+			</action>
+
+
+		    <action>
+				<name>Drop</name>
+				<parameters>packetName:original</parameters>
+			</action>
+
+
+		</Attack>
+
+
+		
+
+	</Conditional>
+</configuration>

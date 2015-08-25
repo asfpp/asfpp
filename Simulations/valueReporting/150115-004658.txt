@@ -1,0 +1,87 @@
+Castalia| what:fakeread (1)
+Castalia| when:2015-01-15 00:46
+Castalia| label:fakeread
+Castalia|	module:SN.node[0].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			5.58566 
+Castalia|	module:SN.node[0].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			97.1947 Duty cycle
+Castalia|			581.055 RX Time
+Castalia|			16.8415 SLEEP Time
+Castalia|			2.44021 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			2 Failed with interference
+Castalia|			331 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			111 TX pkts
+Castalia|	module:SN.node[0].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			11 DATA
+Castalia|			100 SYNC
+Castalia|	module:SN.node[0].Communication.LocalFilter
+Castalia|		simple output name:Real Energy Consumed
+Castalia|			inf Energy (mJ)
+Castalia|	module:SN.node[1].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			5.67285 
+Castalia|	module:SN.node[1].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			96.9859 Duty cycle
+Castalia|			579.643 RX Time
+Castalia|			18.0949 SLEEP Time
+Castalia|			2.59876 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			3 Failed, non RX state
+Castalia|			330 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			111 TX pkts
+Castalia|	module:SN.node[1].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			11 DATA
+Castalia|			100 SYNC
+Castalia|	module:SN.node[1].Communication.LocalFilter
+Castalia|		simple output name:Real Energy Consumed
+Castalia|			inf Energy (mJ)
+Castalia|	module:SN.node[2].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			5.67257 
+Castalia|	module:SN.node[2].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			96.9762 Duty cycle
+Castalia|			579.612 RX Time
+Castalia|			18.1532 SLEEP Time
+Castalia|			2.57152 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			2 Failed with interference
+Castalia|			331 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			111 TX pkts
+Castalia|	module:SN.node[2].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			11 DATA
+Castalia|			100 SYNC
+Castalia|	module:SN.node[2].Communication.LocalFilter
+Castalia|		simple output name:Real Energy Consumed
+Castalia|			inf Energy (mJ)
+Castalia|	module:SN.node[3].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			5.67025 
+Castalia|	module:SN.node[3].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			96.9896 Duty cycle
+Castalia|			579.643 RX Time
+Castalia|			18.0725 SLEEP Time
+Castalia|			2.62156 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			1 Failed, non RX state
+Castalia|			332 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			111 TX pkts
+Castalia|	module:SN.node[3].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			11 DATA
+Castalia|			100 SYNC
+Castalia|	module:SN.node[3].Communication.LocalFilter
+Castalia|		simple output name:Real Energy Consumed
+Castalia|			inf Energy (mJ)

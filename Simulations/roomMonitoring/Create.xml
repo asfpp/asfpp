@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<configuration>
+	<Logical>
+		<Attack>
+			<node>10</node>
+			<start_time>200</start_time>
+			<filter>APP.sourceNodeID:==:10:AND</filter>
+			<action>
+				<name>Create</name>
+				<parameters>packetName:packet3:APP.type:0:NET.type:1</parameters>
+			</action>
+			<action>
+				<name>Retrieve</name>
+				<parameters>field_name:APP.data:packetName:packet3</parameters>
+			</action>
+			<action>
+				<name>Change</name>
+				<parameters>field_name:APP.data:value:3:packetName:packet3</parameters>
+			</action>
+			<action>
+				<name>Retrieve</name>
+				<parameters>field_name:APP.data:packetName:packet3</parameters>
+			</action>
+			<action>
+				<name>Send</name>
+				<parameters>packetName:packet3</parameters>
+			</action>
+		</Attack>
+	</Logical>
+</configuration>

@@ -1,0 +1,47 @@
+[ MAC ]
+
+A comune tra tutti i protocolli MAC
+
+InfoExchange ->		"macRadioInfoExchange",
+source ->		"source",
+destination ->		"destination",
+sequenceNumber ->	"sequenceNumber",
+
+
+MAC802154
+
+type -> 		"Mac802154PacketType", indica il tipo di pacchetto
+PAN  -> 		"PANid",
+source ->		"srcID",
+destination ->		"dstID",
+        "beaconOrder",
+        "frameOrder",
+        "BSN",
+        "CAPlength",
+        "GTSlength",
+        "GTSlist",
+
+Tunable
+
+type ->			"frameType", indica il tipo di pacchetto
+
+
+[ ROUTING ]
+
+
+A comune tra tutti i protocolli di Routing
+
+InfoExchange ->		"netMacInfoExchange",
+source ->		"source",
+destination ->		"destination",
+sequenceNumber ->	"sequenceNumber",
+
+
+RoutingMultiPathRings
+
+
+type ->			"multipathRingsRoutingPacketKind", indica il tipo di pacchetto
+Sink ->			"sinkID",
+senderLevel ->		"senderLevel",
+
+

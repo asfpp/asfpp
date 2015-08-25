@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<configuration>
+	<Logical>
+		<Attack>
+			<node>10</node>
+			<start_time>200</start_time>
+			<filter>APP.sourceNodeID:==:10:NET.source:==:10:AND</filter>
+			<action>
+				<name>Retrieve</name>
+				<parameters>field_name:APP.data:packetName:original</parameters>
+			</action>
+			<action>
+				<name>Change</name>
+				<parameters>sensorIndex:0:value:666:field_name:APP.data:packetName:original</parameters>
+			</action>
+			<action>
+				<name>Retrieve</name>
+				<parameters>field_name:APP.data:packetName:original</parameters>
+			</action>
+		</Attack>
+	</Logical>
+</configuration>

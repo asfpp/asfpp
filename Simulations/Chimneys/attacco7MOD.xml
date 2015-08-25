@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<configuration>
+<Conditional>
+
+<Attack>
+	<start_time>180</start_time>
+	<node>15</node>
+	<var><name>1</name><value>1</value><type>NUMBER</type></var>
+	<var><name>data</name><value>0</value><type>NUMBER</type></var>
+	<var><name>17</name><value>17</value><type>NUMBER</type></var>
+	<var><name>appSeqNum</name><value>20000</value><type>NUMBER</type></var>
+	<filter>NET.source:==:15:NET.id:==:6:AND</filter>
+
+	<action>
+		<name>Retrieve</name>
+		<parameters>packetName:original:field_name:APP.data:varName:data</parameters>
+	</action>
+	<action>
+		<name>Expression</name>
+		<item>17</item>
+		<item>-=</item>
+		<item>data</item>
+	</action>
+	<action>
+		<name>Change</name>
+		<parameters>packetName:original:field_name:APP.data:value:data</parameters>
+	</action>
+	<action>
+		<name>Change</name>
+		<parameters>packetName:original:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+	</action>
+	<action>
+		<name>Expression</name>
+		<item>1</item>
+		<item>+=</item>
+		<item>appSeqNum</item>
+	</action>
+	<action>
+		<name>Clone</name>          
+		<parameters>packetName:original:newPacketName:copy</parameters>                        
+	</action>
+	<action>
+		<name>Change</name>
+		<parameters>packetName:copy:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+	</action>
+	<action>
+		<name>Send</name>
+		<parameters>packetName:copy:delay:0</parameters>
+	</action>
+	<action>
+		<name>Expression</name>
+		<item>1</item>
+		<item>+=</item>
+		<item>appSeqNum</item>
+	</action>
+	<action>
+		<name>Clone</name>          
+		<parameters>packetName:original:newPacketName:copy2</parameters>                        
+	</action>
+	<action>
+		<name>Change</name>
+		<parameters>packetName:copy2:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+	</action>
+	<action>
+		<name>Send</name>
+		<parameters>packetName:copy2:delay:0</parameters>
+	</action>
+	<action>
+		<name>Expression</name>
+		<item>1</item>
+		<item>+=</item>
+		<item>appSeqNum</item>
+	</action>
+</Attack>
+
+<Attack>
+	<start_time>180</start_time>
+	<node>8</node>
+	<var><name>1</name><value>1</value><type>NUMBER</type></var>
+	<var><name>data</name><value>0</value><type>NUMBER</type></var>
+	<var><name>17</name><value>17</value><type>NUMBER</type></var>
+	<var><name>appSeqNum</name><value>20000</value><type>NUMBER</type></var>
+	<filter>NET.source:==:8:NET.id:==:6:AND</filter>
+
+	<action>
+		<name>Retrieve</name>
+		<parameters>packetName:original:field_name:APP.data:varName:data</parameters>
+	</action>
+	<action>
+		<name>Expression</name>
+		<item>17</item>
+		<item>+=</item>
+		<item>data</item>
+	</action>
+	<action>
+		<name>Change</name>
+		<parameters>packetName:original:field_name:APP.data:value:data</parameters>
+	</action>
+	<action>
+		<name>Change</name>
+		<parameters>packetName:original:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+	</action>
+	<action>
+		<name>Expression</name>
+		<item>1</item>
+		<item>+=</item>
+		<item>appSeqNum</item>
+	</action>
+	<action>
+		<name>Clone</name>          
+		<parameters>packetName:original:newPacketName:copy</parameters>                        
+	</action>
+	<action>
+		<name>Change</name>
+		<parameters>packetName:copy:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+	</action>
+	<action>
+		<name>Send</name>
+		<parameters>packetName:copy:delay:0</parameters>
+	</action>
+	<action>
+		<name>Expression</name>
+		<item>1</item>
+		<item>+=</item>
+		<item>appSeqNum</item>
+	</action>
+</Attack>
+
+</Conditional>
+
+</configuration>
