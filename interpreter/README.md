@@ -9,6 +9,7 @@ Usage
 $ python path/interpreter.py -i inputfile -o outputfile
 ```
 -i inputfile is mandatory
+
 -o outputfile is optional
 
 The command above produces the XML Attack Configuration File (aka ACF) for ASF++, according to the ASL description in the input file.

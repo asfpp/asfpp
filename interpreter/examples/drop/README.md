@@ -18,26 +18,33 @@ args:
 
 Usage of the interpreter
 ========================
-$ python <relative_path/interpreter.py> -i <file_input> -o <file_output>
+``` sh
+$ python path/interpreter.py -i inputfile -o outputfile
+```
 
 or you can use the bash script for conveniente (if present, else you can build it):
 
+``` sh
 $ ./bash_script.sh
-
-The command above produces the XML Attack Configuration File (aka ACF) for ASF++, according to the ASL description in the input file.
-
+```
 
 Example
 =======
+``` sh
 $ python ../../interpreter.py -i drop-original.asl -o drop-original.xml
+```
 
 or
 
+``` sh
 $ python ../../interpreter.py -i drop-original.asl
+```
 
 or you can use the pre-built bash script
 
+``` sh
 $ ./drop-one.sh
+```
 
 
 Authors

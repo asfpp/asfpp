@@ -7,14 +7,18 @@ Usage
 =====
 To interpret all '.asl' files contained in the dir 'example' use:
 
+``` sh
 $ python interpret-all-files.py
-
+```
 
 To interpret one single '.asl' file use:
 
-$ python <path_to/interpreter.py> -i <path_to/file_input.asl> -o <path_to/file_output.xml>
+``` sh
+$ python path/interpreter.py -i inputfile -o outputfile
+```
+-i inputfile is mandatory
 
-The command above produces the XML Attack Configuration File (aka ACF) for ASF++, according to the ASL description in the input file.
+-o outputfile is optional
 
 
 Authors
