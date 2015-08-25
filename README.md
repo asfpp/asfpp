@@ -1,12 +1,12 @@
 Description
 ============
 This is the Attack Simulation Framework ++ (aka ASF++ or asfpp).
-It is composed by three elmeents:
+It is composed by three elments:
  + an Attack Specification Language (ASL);
  + an interpreter;
  + an Attack Simulator.
 
-It allows the user to simulate the effects of cyber-physical attacks against WSNs, collect data and, at the end, rank attacks.
+ASF++ allows the user to simulate the effects of cyber-physical attacks against WSNs, collect data and, at the end, rank attacks.
 
 
 Attack Specification Language
@@ -14,26 +14,40 @@ Attack Specification Language
 The ASL is a real high-level specification language that is independent from the underlying simulator.
 By using the ASL, the user can describe cyber-physical attacks against WSNs.
 
-Note: the user only describes attacks, he does not implement them!
+The ASL allows the user to describe cyber-physical attacks in a very rapid and simple manner, avoiding him to actually implement the attacks.
 
-In other words, the user does not need to know how attack are actualy implemented and, of course, 
-the user does not need to write a lot of code to implement attacks!
+In other words, the user must only describe attacks by editing a simple text file, he does not need neither to know how attacks are actually performed nor to implement them (by writing a lot of code).
+
+The text file contains the description of the attacks, according to the ASL. Its format is '.asl'.
 
 
 Interpreter
 ===========
-The interpreter is the glue between the ASL (the high-level Attack Specification Language) and the underlying simulator (ASF++).
-The interpreter interprets an input file that contains the description of the cyber-physical attacks (aka '.asl' files).
-Its output is a well-structured '.xml' file (aka Attack Configuration File), which will be parsed by the real attack simulator. 
+The interpreter is the 'glue' between the ASL (the high-level Attack Specification Language) and the underlying simulator (ASF++).
+
+The interpreter interprets the '.asl' file (which contains the description of the attacks) and produces as output a  well-structured '.xml' file.
 
 
 Attack Simulator
 ================
-The attack simulator is the core of the ASF++. It simulates the effects of the attacks that are described in the xml file.
+The attack simulator is the core of the ASF++. It parses the '.xml' file produced by the interpreter and simulates the effects of the attacks.
 
 Note: the simulator does not performs attacks, it only simulates the final effects of them.
 
-By running the simulations, the user can collect data and, by using them, rank attacks.
+
+Workflow
+========
+Step 0
+The user has to build a simulation scenario (based on Castalia) by using the NED language.
+
+Step 1
+The user has to produce an ASL file by using a simple text editor (and the ASL, of course). The ASL file, e.g. 'attacks.asl', contains the description of the attacks.
+
+Step 2
+The user has to invoke the interpreter. The interpreter take the ASL file 'attacks.asl' as input and produces the xml file 'attacks.xml'.
+
+Step 3
+The user has to launch the simulation.
 
 
 User manual
