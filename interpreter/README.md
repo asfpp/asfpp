@@ -5,7 +5,11 @@ This is the interpreter of the Attack Specification Language (ASL) for ASF++.
 
 Usage
 =====
-$ python path_to/interpreter.py -i path_to/file_input -o path_to/file_output
+``` sh
+$ python path/interpreter.py -i inputfile -o outputfile
+```
+-i inputfile is mandatory
+-o outputfile is optional
 
 The command above produces the XML Attack Configuration File (aka ACF) for ASF++, according to the ASL description in the input file.
 
