@@ -37,7 +37,7 @@ def p_filter_content_mono(p):
     "filter_content : filter_elem"
     
     # in case of a single condition, the AND operator is appended by default
-    p[0] = p[1]
+    p[0] = p[1].replace("\"","")
 
 
 def p_filter_content_generic(p):

@@ -8,7 +8,7 @@
 			<start_time>100</start_time>
 			<node>1</node>
 			<var><name>value</name><value></value><type>NONE</type></var>
-			<filter>"NET.sourcePort":==:"1000"</filter>
+			<filter>NET.sourcePort:==:1000</filter>
 
 			<action>
 				<name>Retrieve</name>

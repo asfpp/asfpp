@@ -27,14 +27,6 @@ if __name__ == "__main__":
     dir_name = os.path.dirname(sys.argv[0])
     abspath = os.path.abspath(dir_name)
     
-    # Remove ~ files from sub-dirs
-    for path, subdirs, files in os.walk(abspath):
-        for file_name in files:
-            if file_name.find("~"):
-                file_abspath = os.path.join(path, file_name)
-                shell_cmd = "rm " + file_abspath
-                call(shell_cmd, shell=True)
-    
     # Remove .xml files from sub-dirs
     for path, subdirs, files in os.walk(abspath):
         for file_name in files:

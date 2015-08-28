@@ -8,7 +8,7 @@ Usage
 To interpret all '.asl' files contained in the dir 'example' use:
 
 ``` sh
-$ python interpret-all-files.py
+$ python interpret-all-examples.py
 ```
 
 To interpret one single '.asl' file use:

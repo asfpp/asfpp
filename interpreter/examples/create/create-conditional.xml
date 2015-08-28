@@ -9,7 +9,7 @@
 			<node>1</node>
 			<var><name>1234</name><value>1234</value><type>NUMBER</type></var>
 			<var><name>1000</name><value>1000</value><type>NUMBER</type></var>
-			<filter>"APP.source":==:"1000"</filter>
+			<filter>APP.source:==:1000</filter>
 
 			<action>
 				<name>Drop</name>
