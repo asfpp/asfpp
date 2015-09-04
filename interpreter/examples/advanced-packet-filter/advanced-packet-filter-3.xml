@@ -7,11 +7,11 @@
 		<Attack>
 			<start_time>100</start_time>
 			<node>1</node>
-			<filter>[:NET.sourcePort:==:1000:]</filter>
+			<filter>[:(:APP.sequenceNumber:%:3:):==:0:]</filter>
 
 			<action>
-				<name>Put</name>
-				<parameters>packetName:original:nodes:2|3|4|5:direction:RX:throughWC:false:delay:0.5</parameters>
+				<name>Drop</name>
+				<parameters>packetName:original:likelyhood:1</parameters>
 			</action>
 		</Attack>
 

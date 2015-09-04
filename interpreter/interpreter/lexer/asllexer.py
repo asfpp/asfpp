@@ -79,7 +79,9 @@ tokens = (
     #'ELSE',
     # Primitive keywords
     'DESTROY',
+    'DISABLE',
     'MOVE',
+    'FAKEREAD',
     'DROP',
     'CHANGE',
     'RETRIEVE',
@@ -87,7 +89,6 @@ tokens = (
     'CREATE',
     'SEND',
     'PUT',
-    'FAKEREAD',
     # Well-known values
     'TX',
     'RX',
@@ -148,8 +149,11 @@ reserved = {
     'FALSE' : 'FALSE',
     'original' : 'ORIGINAL',
     'SELF' : 'SELF',
+    # Primitive reserved keywords
     'destroy' : 'DESTROY',
+    'disable' : 'DISABLE',
     'move' : 'MOVE',
+    'fakeread': 'FAKEREAD',
     'drop' : 'DROP',
     'change' : 'CHANGE',
     'retrieve' : 'RETRIEVE',
@@ -157,7 +161,6 @@ reserved = {
     'create' : 'CREATE',
     'send' : 'SEND',
     'put' : 'PUT',
-    'fakeread': 'FAKEREAD',
     # User defined constant noises
     'con':'CON',
     # Sensor dependent constant noises

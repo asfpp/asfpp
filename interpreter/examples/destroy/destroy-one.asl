@@ -6,4 +6,4 @@
 # author: Francesco Racciatti <racciatti.francesco@gmail.com>
 
 # destroy the node 1 at time 100
-destroy (1, 100)
+destroy(1, 100)

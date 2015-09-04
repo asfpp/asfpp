@@ -50,6 +50,9 @@ unconditional_attacks = []
 # Dictionary of 'destroy' actions. Entry format is <time, list_of_nodes>
 destroy_actions = {}
 
+# Dictionary of 'disable' actions. Entry format is <time, list_of_nodes>
+disable_actions = {}
+
 # Dictionary of 'move' actions; entry format is <time, <position, list_nodes> >
 move_actions = {} 
 

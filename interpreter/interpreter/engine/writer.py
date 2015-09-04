@@ -15,6 +15,7 @@ Maintainer:
 
 # Import classes to model (physical) primitives
 from primitives.destroy import Destroy
+from primitives.disable import Disable
 from primitives.move import Move
 from primitives.fakeread import Fakeread
 
@@ -40,7 +41,7 @@ def write_output_file(out_name):
     out_file.write("\n<configuration>\n")
     
     # Write physical attacks
-    if (len(destroy_actions) or len(move_actions) or len(fakeread_argc4_actions) or len(fakeread_argc5_actions) or len(fakeread_argc6_actions) or len(fakeread_argc7_actions)):
+    if (len(destroy_actions) or len(disable_actions) or len(move_actions) or len(fakeread_argc4_actions) or len(fakeread_argc5_actions) or len(fakeread_argc6_actions) or len(fakeread_argc7_actions)):
         
         # Begin physical attack section
         out_file.write("\n\t<Physical>\n")
@@ -55,6 +56,18 @@ def write_output_file(out_name):
             physical_attacks.append(attack)
             
         destroy_actions.clear()
+        del actions[:]
+        
+        # Build compact 'disable' blocks
+        if len(disable_actions):
+            action = Disable()
+            actions.append(action) # Actually it is only one action, with no parameters
+        
+        for key in disable_actions:
+            attack = PhysicalAttack(key, disable_actions[key], actions)
+            physical_attacks.append(attack)
+            
+        disable_actions.clear()
         del actions[:]
         
         # Build compact 'move' blocks

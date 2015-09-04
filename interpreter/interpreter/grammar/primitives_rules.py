@@ -22,6 +22,7 @@ from engine.utilities import check_layer_name
 
 # Import classes to model primitives
 from primitives.destroy import Destroy
+from primitives.disable import Disable
 from primitives.move import Move
 from primitives.fakeread import Fakeread
 from primitives.drop import Drop
@@ -46,6 +47,18 @@ def p_statement_destroy(p):
     
     else:
         destroy_actions[p[5]] = destroy_actions[p[5]] + ":" + str(p[3])
+
+
+# disable(int nodeID, double occurrence_time)
+def p_statement_disable(p):
+    "physical_statement : DISABLE LPAREN INTEGER COMMA arg_number RPAREN"
+    
+    # 'disable' invocations are grouped according to their occurrence time
+    if not p[5] in disable_actions.keys():
+        disable_actions[p[5]] = "" + str(p[3])
+    
+    else:
+        disable_actions[p[5]] = disable_actions[p[5]] + ":" + str(p[3])
 
 
 # move(int nodeID, double occurrence_time, double coord_x, double coord_y, double coord_z)

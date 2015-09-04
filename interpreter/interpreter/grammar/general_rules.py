@@ -34,6 +34,7 @@ precedence = (
 # Program
 def p_program(p):
     "program : global_entries"
+    #print "program: " + str(p[1])
 
 
 # Global entries
@@ -43,6 +44,7 @@ def p_global_entries(p):
                     | list_statement
                     | global_entries global_entries
     """
+    #print "global_entries: " + str(p[1])
 
 
 # List definition
@@ -74,10 +76,14 @@ def p_filter_codeblock(p):
     "filter_codeblock : filter_code codeblock"
 
     p[0] = p[1]
+    #print "filter_codeblock: " + str(p[0])
+    #print "filter_code: " + str(p[1])
+    #print "codeblock: " + str(p[2])
     
 # Codeblock
 def p_codeblock(p):
     "codeblock : statements"
+    #print "codeblock " + str(p[1])
     
 
 # Statements (logical primitives; variable declaration-initialization; packet declaration)
@@ -86,6 +92,7 @@ def p_statements(p):
                   | logical_statement
                   | statements statements
     """
+    #print "statements: " + str(p[1])
     
 
 # Variable initialization

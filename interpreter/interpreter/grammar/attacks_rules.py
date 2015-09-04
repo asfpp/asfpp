@@ -40,6 +40,7 @@ def p_attack(p):
            | conditional_attack
            | unconditional_attack
     """
+    #print "[p_attack] attack: " + str(p[1])
 
 
 # Conditional attack
