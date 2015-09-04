@@ -9,6 +9,23 @@ void tokenize(vector<string>& tokens, const string str, const char delim) {
 
 }
 
+vector<string> tokenize (const string stringToTokenize, const char delimiter) {
+	
+	// vector of tokenized strings
+	vector<string> tokens;
+	
+	string word;
+	stringstream stream(stringToTokenize);
+	
+	while (getline(stream, word, delimiter)) {
+		tokens.push_back(word);
+	}
+	
+	return tokens;
+}
+
+
+
 string itos(const int i) { 
   
  	stringstream s; 
@@ -36,8 +53,29 @@ int layertoi(const string layer) {
 
 	string message = "ERROR : in the XML file -> the layer "+layer+" doesn't exist\n";
 	opp_error(message.c_str());
+}
 
 
+int getPacketLayer(cPacket* packet) {
+    
+    int kind = (int)(packet->getKind());
+    
+    switch (kind) {
+        
+        case APPLICATION_PACKET: {
+            return 5;
+        }
+        
+        case NETWORK_LAYER_PACKET: {
+            return 3;
+        }
+        
+        case MAC_LAYER_PACKET : {
+            return 2;
+        }
+        
+    }    
+    
 }
 
 void setFilteredRecursively(cMessage* packet, const int value) {

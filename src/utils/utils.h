@@ -1,7 +1,8 @@
-/*
- * This file provides utility functions used by Castalia modules related to attacks evaluation.
- *  Author : Marco Tiloca, Alessandro Pischedda 
- *  e-mail : alessandro.pischedda@gmail.com
+/**
+ * @brief   This file provides utility functions used by Castalia modules related to attacks evaluation.
+ * @authors Marco Tiloca <marco.tiloca84@gmail.com>
+ *          Alessandro Pischedda <alessandro.pischedda@gmail.com>
+ *          Francesco Racciatti <racciatti.francesco@gmail.com>
  */
 
 #ifndef _UTILS_H_
@@ -23,7 +24,7 @@ using namespace std;
  * M.T.
  */
 void tokenize(vector<string>& tokens, const string str, const char delim);
-
+vector<string> tokenize(const string stringToTokenize, const char delimiter);
 
 /* Convert an integer into a string
  * A.P.
@@ -44,6 +45,13 @@ string dtos( const double number);
  * @return		the associated integer value
  */
 int layertoi(const string layer);
+
+
+
+/**
+ * @brief	Returns the layer of a packet
+ */ 
+int getPacketLayer(cPacket* packet);
 
 
 /*
@@ -109,6 +117,42 @@ bool evaluate( T f1, T f2, const string comp_operator) {
 	if(comp_operator == "<=" || comp_operator == "=<")
 		return f1 <= f2;
 
+}
+
+
+/**
+ * @brief	Evaluate arithmetic expressions between two elements by means of a specified operator.
+ * 			The compared elements must support such operators.
+ *
+ *  @param	field1, it is the first parameter
+ *  @param	field2, it is the second parameter
+ *  @param 	oper, it is the comparison operator
+ */
+
+template<class T>
+float evaluateArithmetic(T f1, T f2, const string comp_operator) {
+
+	if (comp_operator.compare("+") && comp_operator.compare("-") && comp_operator.compare("*") && comp_operator.compare("/") && comp_operator.compare("%")) {
+		EV << "Operator not supported" <<endl;
+		return false;
+	}
+
+	if (comp_operator == "+") {
+		return (f1 + f2);
+	}
+
+	if (comp_operator == "-") {
+		return (f1 - f2);
+	}
+			
+	if (comp_operator == "*") {
+		return (f1 * f2);
+	}
+    
+    if (comp_operator == "%") {
+		return ((int)f1 % (int)f2);
+	}
+    
 }
 
 #endif

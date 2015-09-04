@@ -1,9 +1,0 @@
-after a simulation use 
-
-	./compute.sh 
-
-to generate the files _completed, .eps and .pdf.
-
-To clean use 
-	
-	./remove.sh

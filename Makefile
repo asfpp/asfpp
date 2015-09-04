@@ -27,8 +27,18 @@ INCLUDE_PATH = \
     -I. \
     -Iinterpreter \
     -Iinterpreter/examples \
+    -Iinterpreter/examples/advanced-packet-filter \
+    -Iinterpreter/examples/change \
+    -Iinterpreter/examples/clone \
+    -Iinterpreter/examples/create \
+    -Iinterpreter/examples/destroy \
+    -Iinterpreter/examples/disable \
     -Iinterpreter/examples/drop \
-    -Iinterpreter/examples/overallexample \
+    -Iinterpreter/examples/fakeread \
+    -Iinterpreter/examples/move \
+    -Iinterpreter/examples/put \
+    -Iinterpreter/examples/retrieve \
+    -Iinterpreter/examples/send \
     -Iinterpreter/interpreter \
     -Iinterpreter/interpreter/attacks \
     -Iinterpreter/interpreter/engine \
@@ -38,7 +48,14 @@ INCLUDE_PATH = \
     -Isrc \
     -Isrc/action \
     -Isrc/adversary \
-    -Isrc/attack \
+    -Isrc/attacks \
+    -Isrc/attacks/attackbase \
+    -Isrc/attacks/attackentry \
+    -Isrc/attacks/conditionalattack \
+    -Isrc/attacks/conditionalattack/conditionalattack \
+    -Isrc/attacks/conditionalattack/packetfilter \
+    -Isrc/attacks/physicalattack \
+    -Isrc/attacks/unconditionalattack \
     -Isrc/globalfilter \
     -Isrc/helpStructures \
     -Isrc/logger \
@@ -108,11 +125,15 @@ OBJS = \
     $O/src/action/Retrieve.o \
     $O/src/action/Send.o \
     $O/src/adversary/Adversary.o \
-    $O/src/attack/Attack.o \
-    $O/src/attack/ConditionalAttack.o \
-    $O/src/attack/Entry.o \
-    $O/src/attack/PhysicalAttack.o \
-    $O/src/attack/UnconditionalAttack.o \
+    $O/src/attacks/attackbase/Attack.o \
+    $O/src/attacks/attackentry/Entry.o \
+    $O/src/attacks/conditionalattack/conditionalattack/ConditionalAttack.o \
+    $O/src/attacks/conditionalattack/packetfilter/CompoundBlock.o \
+    $O/src/attacks/conditionalattack/packetfilter/ElementaryBlock.o \
+    $O/src/attacks/conditionalattack/packetfilter/FilterBlock.o \
+    $O/src/attacks/conditionalattack/packetfilter/PacketFilter.o \
+    $O/src/attacks/unconditionalattack/PhysicalAttack.o \
+    $O/src/attacks/unconditionalattack/UnconditionalAttack.o \
     $O/src/globalfilter/GlobalFilter.o \
     $O/src/helpStructures/CastaliaModule.o \
     $O/src/helpStructures/DebugInfoWriter.o \
@@ -292,8 +313,18 @@ clean:
 	$(Q)-rm -f ./*_m.cc ./*_m.h
 	$(Q)-rm -f interpreter/*_m.cc interpreter/*_m.h
 	$(Q)-rm -f interpreter/examples/*_m.cc interpreter/examples/*_m.h
+	$(Q)-rm -f interpreter/examples/advanced-packet-filter/*_m.cc interpreter/examples/advanced-packet-filter/*_m.h
+	$(Q)-rm -f interpreter/examples/change/*_m.cc interpreter/examples/change/*_m.h
+	$(Q)-rm -f interpreter/examples/clone/*_m.cc interpreter/examples/clone/*_m.h
+	$(Q)-rm -f interpreter/examples/create/*_m.cc interpreter/examples/create/*_m.h
+	$(Q)-rm -f interpreter/examples/destroy/*_m.cc interpreter/examples/destroy/*_m.h
+	$(Q)-rm -f interpreter/examples/disable/*_m.cc interpreter/examples/disable/*_m.h
 	$(Q)-rm -f interpreter/examples/drop/*_m.cc interpreter/examples/drop/*_m.h
-	$(Q)-rm -f interpreter/examples/overallexample/*_m.cc interpreter/examples/overallexample/*_m.h
+	$(Q)-rm -f interpreter/examples/fakeread/*_m.cc interpreter/examples/fakeread/*_m.h
+	$(Q)-rm -f interpreter/examples/move/*_m.cc interpreter/examples/move/*_m.h
+	$(Q)-rm -f interpreter/examples/put/*_m.cc interpreter/examples/put/*_m.h
+	$(Q)-rm -f interpreter/examples/retrieve/*_m.cc interpreter/examples/retrieve/*_m.h
+	$(Q)-rm -f interpreter/examples/send/*_m.cc interpreter/examples/send/*_m.h
 	$(Q)-rm -f interpreter/interpreter/*_m.cc interpreter/interpreter/*_m.h
 	$(Q)-rm -f interpreter/interpreter/attacks/*_m.cc interpreter/interpreter/attacks/*_m.h
 	$(Q)-rm -f interpreter/interpreter/engine/*_m.cc interpreter/interpreter/engine/*_m.h
@@ -303,7 +334,14 @@ clean:
 	$(Q)-rm -f src/*_m.cc src/*_m.h
 	$(Q)-rm -f src/action/*_m.cc src/action/*_m.h
 	$(Q)-rm -f src/adversary/*_m.cc src/adversary/*_m.h
-	$(Q)-rm -f src/attack/*_m.cc src/attack/*_m.h
+	$(Q)-rm -f src/attacks/*_m.cc src/attacks/*_m.h
+	$(Q)-rm -f src/attacks/attackbase/*_m.cc src/attacks/attackbase/*_m.h
+	$(Q)-rm -f src/attacks/attackentry/*_m.cc src/attacks/attackentry/*_m.h
+	$(Q)-rm -f src/attacks/conditionalattack/*_m.cc src/attacks/conditionalattack/*_m.h
+	$(Q)-rm -f src/attacks/conditionalattack/conditionalattack/*_m.cc src/attacks/conditionalattack/conditionalattack/*_m.h
+	$(Q)-rm -f src/attacks/conditionalattack/packetfilter/*_m.cc src/attacks/conditionalattack/packetfilter/*_m.h
+	$(Q)-rm -f src/attacks/physicalattack/*_m.cc src/attacks/physicalattack/*_m.h
+	$(Q)-rm -f src/attacks/unconditionalattack/*_m.cc src/attacks/unconditionalattack/*_m.h
 	$(Q)-rm -f src/globalfilter/*_m.cc src/globalfilter/*_m.h
 	$(Q)-rm -f src/helpStructures/*_m.cc src/helpStructures/*_m.h
 	$(Q)-rm -f src/logger/*_m.cc src/logger/*_m.h
@@ -350,503 +388,547 @@ cleanall: clean
 
 depend:
 	$(qecho) Creating dependencies...
-	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc interpreter/*.cc interpreter/examples/*.cc interpreter/examples/drop/*.cc interpreter/examples/overallexample/*.cc interpreter/interpreter/*.cc interpreter/interpreter/attacks/*.cc interpreter/interpreter/engine/*.cc interpreter/interpreter/grammar/*.cc interpreter/interpreter/lexer/*.cc interpreter/interpreter/primitives/*.cc src/*.cc src/action/*.cc src/adversary/*.cc src/attack/*.cc src/globalfilter/*.cc src/helpStructures/*.cc src/logger/*.cc src/node/*.cc src/node/application/*.cc src/node/application/bridgeTest/*.cc src/node/application/clusterAggregator/*.cc src/node/application/connectivityMap/*.cc src/node/application/distanceTest/*.cc src/node/application/dummyApplication/*.cc src/node/application/roomMonitoring/*.cc src/node/application/simpleAggregation/*.cc src/node/application/throughputTest/*.cc src/node/application/valuePropagation/*.cc src/node/application/valueReporting/*.cc src/node/communication/*.cc src/node/communication/localfilter/*.cc src/node/communication/mac/*.cc src/node/communication/mac/baselineBanMac/*.cc src/node/communication/mac/bypassMac/*.cc src/node/communication/mac/mac802154/*.cc src/node/communication/mac/tMac/*.cc src/node/communication/mac/tunableMac/*.cc src/node/communication/radio/*.cc src/node/communication/routing/*.cc src/node/communication/routing/aodvRouting/*.cc src/node/communication/routing/bypassRouting/*.cc src/node/communication/routing/multipathRingsRouting/*.cc src/node/mobilityManager/*.cc src/node/mobilityManager/lineMobilityManager/*.cc src/node/mobilityManager/noMobilityManager/*.cc src/node/resourceManager/*.cc src/node/sensorManager/*.cc src/parser/*.cc src/physicalProcess/*.cc src/physicalProcess/carsPhysicalProcess/*.cc src/physicalProcess/customizablePhysicalProcess/*.cc src/utils/*.cc src/variable/*.cc src/wirelessChannel/*.cc
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc interpreter/*.cc interpreter/examples/*.cc interpreter/examples/advanced-packet-filter/*.cc interpreter/examples/change/*.cc interpreter/examples/clone/*.cc interpreter/examples/create/*.cc interpreter/examples/destroy/*.cc interpreter/examples/disable/*.cc interpreter/examples/drop/*.cc interpreter/examples/fakeread/*.cc interpreter/examples/move/*.cc interpreter/examples/put/*.cc interpreter/examples/retrieve/*.cc interpreter/examples/send/*.cc interpreter/interpreter/*.cc interpreter/interpreter/attacks/*.cc interpreter/interpreter/engine/*.cc interpreter/interpreter/grammar/*.cc interpreter/interpreter/lexer/*.cc interpreter/interpreter/primitives/*.cc src/*.cc src/action/*.cc src/adversary/*.cc src/attacks/*.cc src/attacks/attackbase/*.cc src/attacks/attackentry/*.cc src/attacks/conditionalattack/*.cc src/attacks/conditionalattack/conditionalattack/*.cc src/attacks/conditionalattack/packetfilter/*.cc src/attacks/physicalattack/*.cc src/attacks/unconditionalattack/*.cc src/globalfilter/*.cc src/helpStructures/*.cc src/logger/*.cc src/node/*.cc src/node/application/*.cc src/node/application/bridgeTest/*.cc src/node/application/clusterAggregator/*.cc src/node/application/connectivityMap/*.cc src/node/application/distanceTest/*.cc src/node/application/dummyApplication/*.cc src/node/application/roomMonitoring/*.cc src/node/application/simpleAggregation/*.cc src/node/application/throughputTest/*.cc src/node/application/valuePropagation/*.cc src/node/application/valueReporting/*.cc src/node/communication/*.cc src/node/communication/localfilter/*.cc src/node/communication/mac/*.cc src/node/communication/mac/baselineBanMac/*.cc src/node/communication/mac/bypassMac/*.cc src/node/communication/mac/mac802154/*.cc src/node/communication/mac/tMac/*.cc src/node/communication/mac/tunableMac/*.cc src/node/communication/radio/*.cc src/node/communication/routing/*.cc src/node/communication/routing/aodvRouting/*.cc src/node/communication/routing/bypassRouting/*.cc src/node/communication/routing/multipathRingsRouting/*.cc src/node/mobilityManager/*.cc src/node/mobilityManager/lineMobilityManager/*.cc src/node/mobilityManager/noMobilityManager/*.cc src/node/resourceManager/*.cc src/node/sensorManager/*.cc src/parser/*.cc src/physicalProcess/*.cc src/physicalProcess/carsPhysicalProcess/*.cc src/physicalProcess/customizablePhysicalProcess/*.cc src/utils/*.cc src/variable/*.cc src/wirelessChannel/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 $O/src/PacketTypes.o: src/PacketTypes.cc \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/application/distanceTest/DistanceTestPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
+  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
   src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
+  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
   src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
   src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
   src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
+  src/node/communication/mac/tMac/TMacPacket_m.h \
+  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/routing/aodvRouting/PacketId_m.h \
+  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  src/node/application/distanceTest/DistanceTestPacket_m.h \
   src/PacketTypes.h \
   src/node/application/ApplicationPacket_m.h \
-  src/node/communication/mac/tMac/TMacPacket_m.h \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
 $O/src/action/ASFExpression.o: src/action/ASFExpression.cc \
-  src/action/ASFExpression.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/variable/Variable.h \
-  src/utils/utils.h \
-  src/CastaliaMessages.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/utils/utils.h \
+  src/action/ASFExpression.h \
+  src/CastaliaMessages.h \
+  src/variable/Variable.h \
   src/node/communication/mac/MacPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
   src/node/communication/routing/RoutingPacket_m.h \
   src/action/Action.h \
   src/helpStructures/CastaliaModule.h
 $O/src/action/Action.o: src/action/Action.cc \
-  src/helpStructures/CastaliaModule.h \
   src/action/Action.h \
-  src/CastaliaMessages.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h
-$O/src/action/Change.o: src/action/Change.cc \
-  src/physicalProcess/PhysicalProcessMessage_m.h \
-  src/node/sensorManager/SensorManager.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
   src/helpStructures/CastaliaModule.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/action/Action.h \
-  src/utils/utils.h \
-  src/CastaliaMessages.h \
-  src/action/Change.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
   src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
-$O/src/action/Clone.o: src/action/Clone.cc \
-  src/utils/utils.h \
-  src/action/Clone.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/CastaliaMessages.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/action/Action.h
-$O/src/action/Create.o: src/action/Create.cc \
-  src/PacketTypes.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/communication/mac/tMac/TMacPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
-  src/action/Create.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/application/distanceTest/DistanceTestPacket_m.h \
-  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/action/Action.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
-  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
-  src/utils/utils.h \
-  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
-  src/CastaliaMessages.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h
-$O/src/action/Destroy.o: src/action/Destroy.cc \
-  src/action/Action.h \
-  src/helpStructures/CastaliaModule.h \
-  src/action/Destroy.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/CastaliaMessages.h
-$O/src/action/Drop.o: src/action/Drop.cc \
-  src/action/Drop.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/CastaliaMessages.h \
-  src/action/Action.h \
-  src/helpStructures/CastaliaModule.h
-$O/src/action/Fakeread.o: src/action/Fakeread.cc \
-  src/helpStructures/CastaliaModule.h \
-  src/action/Fakeread.h \
-  src/action/Action.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/CastaliaMessages.h \
-  src/helpStructures/DebugInfoWriter.h
-$O/src/action/Move.o: src/action/Move.cc \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/helpStructures/CastaliaModule.h \
-  src/action/Move.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/action/Action.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/CastaliaMessages.h \
-  src/helpStructures/DebugInfoWriter.h
-$O/src/action/Put.o: src/action/Put.cc \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/action/PutMessages.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/action/Action.h \
-  src/action/Put.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/utils/utils.h \
   src/CastaliaMessages.h \
   src/node/resourceManager/ResourceManagerMessage_m.h
-$O/src/action/PutMessages.o: src/action/PutMessages.cc \
-  src/action/PutMessages.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+$O/src/action/Change.o: src/action/Change.cc \
   src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/action/Action.h \
+  src/physicalProcess/PhysicalProcessMessage_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
   src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/CastaliaMessages.h \
+  src/node/sensorManager/SensorManager.h \
+  src/action/Change.h \
+  src/utils/utils.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
+$O/src/action/Clone.o: src/action/Clone.cc \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/helpStructures/CastaliaModule.h \
+  src/action/Clone.h \
+  src/action/Action.h \
+  src/utils/utils.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
   src/CastaliaMessages.h \
+  src/node/communication/mac/MacPacket_m.h
+$O/src/action/Create.o: src/action/Create.cc \
+  src/node/application/ApplicationPacket_m.h \
+  src/utils/utils.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
+  src/node/communication/routing/aodvRouting/PacketId_m.h \
+  src/CastaliaMessages.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/application/distanceTest/DistanceTestPacket_m.h \
+  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  src/PacketTypes.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
+  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
+  src/action/Create.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/tMac/TMacPacket_m.h \
+  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
+  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
+  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
+  src/helpStructures/CastaliaModule.h \
+  src/action/Action.h
+$O/src/action/Destroy.o: src/action/Destroy.cc \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/CastaliaMessages.h \
+  src/action/Destroy.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/helpStructures/CastaliaModule.h \
+  src/action/Action.h
+$O/src/action/Drop.o: src/action/Drop.cc \
+  src/helpStructures/DebugInfoWriter.h \
+  src/helpStructures/CastaliaModule.h \
+  src/action/Drop.h \
+  src/action/Action.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/CastaliaMessages.h
+$O/src/action/Fakeread.o: src/action/Fakeread.cc \
+  src/action/Fakeread.h \
+  src/CastaliaMessages.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/action/Action.h \
+  src/helpStructures/CastaliaModule.h \
+  src/helpStructures/DebugInfoWriter.h
+$O/src/action/Move.o: src/action/Move.cc \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/action/Action.h \
+  src/helpStructures/CastaliaModule.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/CastaliaMessages.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/action/Move.h
+$O/src/action/Put.o: src/action/Put.cc \
+  src/action/Action.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/helpStructures/CastaliaModule.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/action/Put.h \
+  src/action/PutMessages.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/utils/utils.h
+$O/src/action/PutMessages.o: src/action/PutMessages.cc \
+  src/helpStructures/CastaliaModule.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/action/PutMessages.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
   src/utils/utils.h
 $O/src/action/Retrieve.o: src/action/Retrieve.cc \
   src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/mac/MacPacket_m.h \
   src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/action/Action.h \
-  src/helpStructures/CastaliaModule.h \
-  src/action/Retrieve.h \
   src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/variable/Variable.h \
+  src/helpStructures/CastaliaModule.h \
+  src/action/Action.h \
   src/utils/utils.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/CastaliaMessages.h
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/variable/Variable.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/action/Retrieve.h
 $O/src/action/Send.o: src/action/Send.cc \
+  src/node/sensorManager/SensorManager.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/utils/utils.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/action/Action.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
   src/physicalProcess/PhysicalProcessMessage_m.h \
   src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManager.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
   src/node/communication/routing/RoutingPacket_m.h \
-  src/action/Action.h \
-  src/utils/utils.h \
-  src/CastaliaMessages.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/action/Send.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/helpStructures/DebugInfoWriter.h
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/action/Send.h
 $O/src/adversary/Adversary.o: src/adversary/Adversary.cc \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/action/Action.h \
+  src/helpStructures/CastaliaModule.h \
+  src/attacks/attackentry/Entry.h \
   src/helpStructures/DebugInfoWriter.h \
-  src/action/ASFExpression.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/CastaliaMessages.h \
-  src/attack/Attack.h \
-  src/variable/Variable.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
   src/adversary/Adversary.h \
-  src/utils/utils.h \
-  src/attack/Entry.h \
-  src/action/Action.h \
-  src/node/communication/routing/RoutingPacket_m.h \
+  src/action/ASFExpression.h \
   src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/helpStructures/CastaliaModule.h
-$O/src/attack/Attack.o: src/attack/Attack.cc \
-  src/helpStructures/CastaliaModule.h \
-  src/action/Action.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/attack/Attack.h \
-  src/CastaliaMessages.h \
+  src/attacks/attackbase/Attack.h \
   src/variable/Variable.h \
-  src/utils/utils.h \
+  src/CastaliaMessages.h \
   src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/action/ASFExpression.h
-$O/src/attack/ConditionalAttack.o: src/attack/ConditionalAttack.cc \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/utils/utils.h
+$O/src/attacks/attackbase/Attack.o: src/attacks/attackbase/Attack.cc \
+  src/utils/utils.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/communication/mac/MacPacket_m.h \
   src/CastaliaMessages.h \
   src/variable/Variable.h \
+  src/attacks/attackbase/Attack.h \
+  src/action/ASFExpression.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/helpStructures/CastaliaModule.h \
+  src/action/Action.h
+$O/src/attacks/attackentry/Entry.o: src/attacks/attackentry/Entry.cc \
+  src/helpStructures/DebugInfoWriter.h \
+  src/attacks/attackentry/Entry.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/action/Action.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/utils/utils.h \
+  src/action/ASFExpression.h \
+  src/CastaliaMessages.h \
+  src/variable/Variable.h \
+  src/attacks/attackbase/Attack.h \
+  src/node/communication/mac/MacPacket_m.h
+$O/src/attacks/conditionalattack/conditionalattack/ConditionalAttack.o: src/attacks/conditionalattack/conditionalattack/ConditionalAttack.cc \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/action/Action.h \
+  src/action/Clone.h \
+  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
+  src/action/Put.h \
+  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
+  src/action/Send.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/attacks/conditionalattack/packetfilter/PacketFilter.h \
+  src/action/ASFExpression.h \
+  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  src/node/communication/routing/aodvRouting/PacketId_m.h \
+  src/attacks/attackbase/Attack.h \
+  src/attacks/conditionalattack/conditionalattack/ConditionalAttack.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/action/Change.h \
+  src/utils/utils.h \
+  src/physicalProcess/PhysicalProcessMessage_m.h \
+  src/action/Drop.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
   src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
-  src/action/Retrieve.h \
-  src/action/Drop.h \
+  src/helpStructures/DebugInfoWriter.h \
   src/node/communication/mac/tMac/TMacPacket_m.h \
-  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
   src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
-  src/action/PutMessages.h \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
-  src/attack/Attack.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/action/Change.h \
-  src/action/Clone.h \
-  src/utils/utils.h \
-  src/attack/ConditionalAttack.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/action/ASFExpression.h \
-  src/action/Send.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/action/Create.h \
+  src/node/communication/routing/RoutingPacket_m.h \
   src/node/sensorManager/SensorManager.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/physicalProcess/PhysicalProcessMessage_m.h \
-  src/node/application/ApplicationPacket_m.h \
   src/PacketTypes.h \
-  src/action/Put.h \
-  src/action/Action.h \
-  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/action/Create.h \
-  src/node/application/distanceTest/DistanceTestPacket_m.h
-$O/src/attack/Entry.o: src/attack/Entry.cc \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/variable/Variable.h \
-  src/attack/Entry.h \
-  src/CastaliaMessages.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/action/ASFExpression.h \
-  src/utils/utils.h \
-  src/attack/Attack.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/action/Action.h \
-  src/helpStructures/CastaliaModule.h
-$O/src/attack/PhysicalAttack.o: src/attack/PhysicalAttack.cc \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/action/Move.h \
-  src/attack/PhysicalAttack.h \
-  src/action/Destroy.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/variable/Variable.h \
-  src/CastaliaMessages.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/action/Action.h \
-  src/action/Fakeread.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/action/ASFExpression.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/utils/utils.h \
-  src/attack/Attack.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h
-$O/src/attack/UnconditionalAttack.o: src/attack/UnconditionalAttack.cc \
-  src/action/Action.h \
-  src/action/Create.h \
   src/node/application/distanceTest/DistanceTestPacket_m.h \
-  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/physicalProcess/PhysicalProcessMessage_m.h \
-  src/node/sensorManager/SensorManager.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/action/Put.h \
-  src/PacketTypes.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/action/ASFExpression.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/action/Send.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/attack/UnconditionalAttack.h \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  src/attack/Attack.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/action/Change.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
-  src/action/Clone.h \
-  src/utils/utils.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
-  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/action/PutMessages.h \
-  src/node/communication/mac/tMac/TMacPacket_m.h \
-  src/action/Drop.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/action/Retrieve.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
   src/CastaliaMessages.h \
   src/variable/Variable.h \
-  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h
-$O/src/globalfilter/GlobalFilter.o: src/globalfilter/GlobalFilter.cc \
-  /usr/include/libxml++-2.6/libxml++/validators/schemavalidator.h \
-  /usr/include/glib-2.0/glib/ghostutils.h \
-  /usr/include/glib-2.0/glib/gkeyfile.h \
-  /usr/include/glib-2.0/glib/ghash.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/node.h \
-  /usr/include/libxml++-2.6/libxml++/validators/dtdvalidator.h \
-  /usr/include/libxml++-2.6/libxml++/validators/validator.h \
-  /usr/include/glib-2.0/glib/gbase64.h \
-  /usr/lib/libxml++-2.6/include/libxml++config.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/parser.h \
-  /usr/include/glib-2.0/glib/gfileutils.h \
-  /usr/include/glib-2.0/glib/deprecated/gmain.h \
-  /usr/include/glibmm-2.4/glibmm/ustring.h \
-  /usr/include/glib-2.0/glib/gvariant.h \
-  src/action/Move.h \
-  /usr/include/glib-2.0/glib/gdataset.h \
+  src/attacks/conditionalattack/packetfilter/FilterBlock.h \
+  src/action/PutMessages.h \
+  src/action/Retrieve.h \
+  src/node/application/ApplicationPacket_m.h
+$O/src/attacks/conditionalattack/packetfilter/CompoundBlock.o: src/attacks/conditionalattack/packetfilter/CompoundBlock.cc \
+  src/CastaliaMessages.h \
+  src/attacks/conditionalattack/packetfilter/FilterBlock.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/utils/utils.h \
+  src/attacks/conditionalattack/packetfilter/CompoundBlock.h \
   src/node/communication/mac/MacPacket_m.h \
   src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/CastaliaModule.h
+$O/src/attacks/conditionalattack/packetfilter/ElementaryBlock.o: src/attacks/conditionalattack/packetfilter/ElementaryBlock.cc \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/CastaliaMessages.h \
+  src/attacks/conditionalattack/packetfilter/FilterBlock.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/attacks/conditionalattack/packetfilter/ElementaryBlock.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/utils/utils.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
+$O/src/attacks/conditionalattack/packetfilter/FilterBlock.o: src/attacks/conditionalattack/packetfilter/FilterBlock.cc \
+  src/attacks/conditionalattack/packetfilter/FilterBlock.h
+$O/src/attacks/conditionalattack/packetfilter/PacketFilter.o: src/attacks/conditionalattack/packetfilter/PacketFilter.cc \
+  src/utils/utils.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/attacks/conditionalattack/packetfilter/CompoundBlock.h \
+  src/attacks/conditionalattack/packetfilter/PacketFilter.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/attacks/conditionalattack/packetfilter/ElementaryBlock.h \
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
+  src/attacks/conditionalattack/packetfilter/FilterBlock.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h
+$O/src/attacks/unconditionalattack/PhysicalAttack.o: src/attacks/unconditionalattack/PhysicalAttack.cc \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/action/Move.h \
+  src/utils/utils.h \
+  src/action/Destroy.h \
+  src/action/ASFExpression.h \
+  src/action/Fakeread.h \
+  src/attacks/attackbase/Attack.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/attacks/unconditionalattack/PhysicalAttack.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/action/Action.h \
+  src/helpStructures/CastaliaModule.h \
+  src/variable/Variable.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/RoutingPacket_m.h
+$O/src/attacks/unconditionalattack/UnconditionalAttack.o: src/attacks/unconditionalattack/UnconditionalAttack.cc \
+  src/node/application/ApplicationPacket_m.h \
+  src/action/PutMessages.h \
+  src/action/Retrieve.h \
+  src/CastaliaMessages.h \
+  src/variable/Variable.h \
+  src/node/application/distanceTest/DistanceTestPacket_m.h \
+  src/node/sensorManager/SensorManager.h \
+  src/PacketTypes.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/action/Create.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
+  src/node/communication/mac/tMac/TMacPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
+  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/action/Drop.h \
+  src/physicalProcess/PhysicalProcessMessage_m.h \
+  src/utils/utils.h \
+  src/action/Change.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
+  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
+  src/attacks/attackbase/Attack.h \
+  src/node/communication/routing/aodvRouting/PacketId_m.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/action/ASFExpression.h \
+  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/action/Put.h \
+  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
+  src/action/Send.h \
+  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
+  src/action/Clone.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/attacks/unconditionalattack/UnconditionalAttack.h \
+  src/action/Action.h
+$O/src/globalfilter/GlobalFilter.o: src/globalfilter/GlobalFilter.cc \
+  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
+  src/attacks/attackbase/Attack.h \
+  src/node/communication/routing/aodvRouting/PacketId_m.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/processinginstructionnode.h \
+  src/action/Destroy.h \
+  /usr/include/glib-2.0/glib/gversionmacros.h \
+  /usr/include/glib-2.0/glib.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/xincludeend.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
+  /usr/include/glib-2.0/glib/gbitlock.h \
+  /usr/include/glib-2.0/glib/grand.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/validity_error.h \
+  /usr/include/libxml++-2.6/libxml++/attributenode.h \
+  /usr/include/glibmm-2.4/glibmm/ustring.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/action/Put.h \
+  /usr/include/libxml++-2.6/libxml++/validators/validator.h \
+  /usr/include/glib-2.0/glib/gasyncqueue.h \
+  /usr/include/glib-2.0/glib/gqsort.h \
+  src/attacks/attackentry/Entry.h \
+  /usr/include/libxml++-2.6/libxml++/document.h \
+  src/variable/Variable.h \
+  /usr/include/glib-2.0/glib/gatomic.h \
+  /usr/include/glib-2.0/glib/gstringchunk.h \
+  /usr/include/glib-2.0/glib/gfileutils.h \
+  /usr/include/glib-2.0/glib/gqueue.h \
+  /usr/include/glib-2.0/glib/deprecated/gallocator.h \
+  /usr/include/glib-2.0/glib/ghash.h \
+  /usr/include/glib-2.0/glib/gspawn.h \
+  /usr/include/glib-2.0/glib/gmain.h \
+  /usr/include/glib-2.0/glib/gtimezone.h \
+  /usr/include/glib-2.0/glib/gutils.h \
+  /usr/include/glib-2.0/glib/gmessages.h \
+  /usr/include/glib-2.0/glib/gregex.h \
+  /usr/include/glib-2.0/glib/gsequence.h \
+  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
+  /usr/include/glibmm-2.4/glibmm/unicode.h \
+  /usr/include/glib-2.0/glib/gscanner.h \
+  /usr/include/glib-2.0/glib/gtree.h \
+  src/attacks/conditionalattack/packetfilter/PacketFilter.h \
+  src/action/Fakeread.h \
+  /usr/include/glib-2.0/glib/gtrashstack.h \
+  src/action/Move.h \
+  /usr/include/glib-2.0/glib/gchecksum.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/dtd.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/parser.h \
+  /usr/include/glib-2.0/glib/gdataset.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/xincludestart.h \
+  /usr/include/glib-2.0/glib/gdatetime.h \
+  src/action/Action.h \
+  /usr/include/glib-2.0/glib/gmacros.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/entitydeclaration.h \
+  src/attacks/unconditionalattack/PhysicalAttack.h \
+  /usr/include/glib-2.0/glib/ghook.h \
+  /usr/include/glib-2.0/glib/gdir.h \
+  /usr/include/glib-2.0/glib/gslist.h \
+  /usr/include/glib-2.0/glib/gconvert.h \
+  src/action/Retrieve.h \
+  /usr/include/glib-2.0/glib/gerror.h \
+  /usr/include/libxml++-2.6/libxml++/noncopyable.h \
+  src/node/application/ApplicationPacket_m.h \
+  /usr/include/glib-2.0/glib/gurifuncs.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/textnode.h \
+  /usr/include/glib-2.0/glib/gvariant.h \
+  /usr/include/glib-2.0/glib/gtestutils.h \
+  /usr/include/glib-2.0/glib/goption.h \
+  src/parser/parser.h \
+  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
+  /usr/include/glib-2.0/glib/gmarkup.h \
+  /usr/include/glib-2.0/glib/deprecated/gcache.h \
+  src/physicalProcess/PhysicalProcessMessage_m.h \
+  /usr/include/glib-2.0/glib/gwin32.h \
+  /usr/include/glib-2.0/glib/gtimer.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/element.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/internal_error.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/tMac/TMacPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/exception.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/entityreference.h \
+  src/node/communication/mac/MacPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/cdatanode.h \
+  src/action/ASFExpression.h \
+  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  /usr/include/glib-2.0/glib/gpoll.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/node.h \
+  /usr/include/glib-2.0/glib/gdate.h \
+  /usr/include/glib-2.0/glib/gpattern.h \
+  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/schema.h \
+  src/helpStructures/CastaliaModule.h \
+  /usr/include/libxml++-2.6/libxml++/libxml++.h \
+  src/action/Clone.h \
+  /usr/include/libxml++-2.6/libxml++/validators/dtdvalidator.h \
+  src/attacks/unconditionalattack/UnconditionalAttack.h \
+  /usr/include/glib-2.0/glib/gmem.h \
+  /usr/include/glib-2.0/glib/genviron.h \
+  /usr/include/glib-2.0/glib/gstrfuncs.h \
+  src/action/Send.h \
   /usr/include/glib-2.0/glib/garray.h \
   /usr/include/glib-2.0/glib/gprimes.h \
   src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/libxml++.h \
-  src/utils/utils.h \
-  /usr/include/glib-2.0/glib/gshell.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
-  /usr/include/glib-2.0/glib/gmacros.h \
-  src/attack/UnconditionalAttack.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/parse_error.h \
-  /usr/include/glib-2.0/glib/gdatetime.h \
-  /usr/include/libxml++-2.6/libxml++/noncopyable.h \
-  /usr/include/glib-2.0/glib/gversionmacros.h \
-  /usr/include/glib-2.0/glib/gmarkup.h \
-  src/PacketTypes.h \
-  src/action/Create.h \
-  /usr/include/glib-2.0/glib/gvarianttype.h \
-  src/action/Action.h \
-  src/variable/Variable.h \
-  /usr/include/glib-2.0/glib/gchecksum.h \
-  /usr/include/glib-2.0/glib/gbytes.h \
-  /usr/include/glib-2.0/glib/gmain.h \
-  /usr/include/glib-2.0/glib/gscanner.h \
-  /usr/include/glib-2.0/glib/gnode.h \
-  src/action/Retrieve.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/element.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/textreader.h \
-  src/attack/PhysicalAttack.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/validity_error.h \
-  /usr/include/glib-2.0/glib/gmessages.h \
-  src/node/communication/mac/tMac/TMacPacket_m.h \
-  /usr/include/glib-2.0/glib/gutils.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/xincludeend.h \
-  /usr/include/glib-2.0/glib/gtypes.h \
-  /usr/include/glib-2.0/glib/gbitlock.h \
-  /usr/include/libxml++-2.6/libxml++/dtd.h \
-  /usr/include/glib-2.0/glib/gmem.h \
-  /usr/include/libxml++-2.6/libxml++/attributenode.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/processinginstructionnode.h \
-  src/attack/ConditionalAttack.h \
-  /usr/include/glib-2.0/glib/gasyncqueue.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  /usr/include/glib-2.0/glib/gtimer.h \
-  src/attack/Attack.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/action/Send.h \
-  /usr/include/glib-2.0/glib/gstrfuncs.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/action/ASFExpression.h \
-  /usr/include/glib-2.0/glib/deprecated/gallocator.h \
-  src/action/Fakeread.h \
-  src/action/Put.h \
-  src/node/sensorManager/SensorManager.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  /usr/include/glib-2.0/glib/ghmac.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/exception.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/application/distanceTest/DistanceTestPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/contentnode.h \
-  /usr/include/glib-2.0/glib/ggettext.h \
-  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
-  /usr/include/glib-2.0/glib/gwin32.h \
-  /usr/include/glib-2.0/glib/gerror.h \
-  src/globalfilter/GlobalFilter.h \
-  /usr/include/glib-2.0/glib/gtrashstack.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/textnode.h \
-  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
-  /usr/include/glib-2.0/glib/gunicode.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/saxparser.h \
-  /usr/include/glib-2.0/glib/gthreadpool.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/xincludestart.h \
-  /usr/include/glib-2.0/glib/gspawn.h \
-  /usr/include/glib-2.0/glib/deprecated/grel.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
-  /usr/include/glib-2.0/glib/gbookmarkfile.h \
-  /usr/include/glib-2.0/glib/ghook.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/entityreference.h \
   /usr/include/glib-2.0/glib/glist.h \
-  /usr/include/glib-2.0/glib/gslice.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/commentnode.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
-  /usr/include/glib-2.0/glib/gconvert.h \
-  /usr/include/libxml++-2.6/libxml++/attribute.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
-  /usr/include/glib-2.0/glib/gdate.h \
-  /usr/include/glib-2.0/glib/deprecated/gcompletion.h \
-  /usr/include/glib-2.0/glib/gtree.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/helpStructures/GlobalFilterMessage.h \
-  /usr/include/glib-2.0/glib/deprecated/gcache.h \
-  /usr/include/glib-2.0/glib/gregex.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  /usr/include/glib-2.0/glib/gsequence.h \
-  /usr/include/glib-2.0/glib/genviron.h \
-  /usr/include/glib-2.0/glib/deprecated/gthread.h \
-  src/attack/Entry.h \
-  /usr/include/glib-2.0/glib/gdir.h \
-  /usr/include/libxml++-2.6/libxml++/document.h \
-  src/CastaliaMessages.h \
-  /usr/include/libxml++-2.6/libxml++/attributedeclaration.h \
-  src/action/Destroy.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/entitydeclaration.h \
-  /usr/include/glib-2.0/glib/galloca.h \
-  src/action/Drop.h \
-  /usr/include/glib-2.0/glib/gpattern.h \
   src/action/PutMessages.h \
-  /usr/include/glib-2.0/glib/gmappedfile.h \
-  /usr/include/glib-2.0/glib/gtestutils.h \
-  /usr/include/glib-2.0/glib/gthread.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/internal_error.h \
-  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
-  /usr/include/glib-2.0/glib/gquark.h \
-  /usr/include/glib-2.0/glib/gqueue.h \
-  /usr/include/glib-2.0/glib/goption.h \
-  src/action/Clone.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/domparser.h \
-  /usr/include/glib-2.0/glib/gurifuncs.h \
-  /usr/include/glib-2.0/glib/gatomic.h \
-  src/action/Change.h \
-  /usr/include/glib-2.0/glib.h \
-  /usr/include/glib-2.0/glib/gversion.h \
-  /usr/include/glib-2.0/glib/gstring.h \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  src/parser/parser.h \
-  /usr/include/glib-2.0/glib/giochannel.h \
-  src/helpStructures/LoggerMessage.h \
-  /usr/include/libxml++-2.6/libxml++/schema.h \
-  /usr/include/glib-2.0/glib/gtimezone.h \
-  /usr/include/glib-2.0/glib/gpoll.h \
   /usr/include/glib-2.0/glib/gbacktrace.h \
-  src/physicalProcess/PhysicalProcessMessage_m.h \
-  /usr/include/glib-2.0/glib/grand.h \
-  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/cdatanode.h \
-  /usr/include/glibmm-2.4/glibmm/unicode.h \
+  /usr/include/glib-2.0/glib/deprecated/gcompletion.h \
+  src/CastaliaMessages.h \
+  src/node/sensorManager/SensorManager.h \
+  /usr/include/glib-2.0/glib/ghostutils.h \
+  /usr/include/glib-2.0/glib/gbase64.h \
+  /usr/include/glib-2.0/glib/gversion.h \
+  /usr/include/glib-2.0/glib/gthread.h \
+  /usr/include/glib-2.0/glib/gkeyfile.h \
+  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/domparser.h \
+  /usr/include/glib-2.0/glib/deprecated/grel.h \
+  /usr/include/glib-2.0/glib/gtypes.h \
+  /usr/include/libxml++-2.6/libxml++/attribute.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  /usr/include/glib-2.0/glib/gbytes.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  /usr/include/glib-2.0/glib/ggettext.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/parse_error.h \
+  /usr/include/glib-2.0/glib/ghmac.h \
+  src/attacks/conditionalattack/conditionalattack/ConditionalAttack.h \
+  /usr/include/glib-2.0/glib/galloca.h \
+  /usr/include/libxml++-2.6/libxml++/validators/schemavalidator.h \
+  /usr/include/glib-2.0/glib/gbookmarkfile.h \
+  src/helpStructures/LoggerMessage.h \
+  /usr/include/glib-2.0/glib/gquark.h \
+  src/utils/utils.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/commentnode.h \
+  src/action/Change.h \
+  /usr/lib/libxml++-2.6/include/libxml++config.h \
   /usr/include/glib-2.0/glib/gcharset.h \
-  /usr/include/glib-2.0/glib/gqsort.h \
-  /usr/include/glib-2.0/glib/gstringchunk.h \
-  /usr/include/glib-2.0/glib/gslist.h
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/textreader.h \
+  /usr/include/glib-2.0/glib/gshell.h \
+  /usr/include/glib-2.0/glib/deprecated/gmain.h \
+  src/globalfilter/GlobalFilter.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/saxparser.h \
+  src/attacks/conditionalattack/packetfilter/FilterBlock.h \
+  src/node/application/distanceTest/DistanceTestPacket_m.h \
+  /usr/include/glib-2.0/glib/gunicode.h \
+  /usr/include/glib-2.0/glib/deprecated/gthread.h \
+  src/PacketTypes.h \
+  /usr/include/glib-2.0/glib/gthreadpool.h \
+  /usr/include/glib-2.0/glib/gstring.h \
+  /usr/include/glib-2.0/glib/gmappedfile.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/contentnode.h \
+  /usr/include/glib-2.0/glib/gvarianttype.h \
+  /usr/include/glib-2.0/glib/gnode.h \
+  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/attributedeclaration.h \
+  src/action/Drop.h \
+  /usr/include/glib-2.0/glib/gslice.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
+  src/action/Create.h \
+  /usr/include/glib-2.0/glib/giochannel.h \
+  src/helpStructures/GlobalFilterMessage.h
 $O/src/helpStructures/CastaliaModule.o: src/helpStructures/CastaliaModule.cc \
+  src/CastaliaMessages.h \
   src/helpStructures/CastaliaModule.h \
   src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/CastaliaMessages.h
+  src/node/resourceManager/ResourceManagerMessage_m.h
 $O/src/helpStructures/DebugInfoWriter.o: src/helpStructures/DebugInfoWriter.cc \
   src/helpStructures/DebugInfoWriter.h
 $O/src/helpStructures/GlobalFilterMessage.o: src/helpStructures/GlobalFilterMessage.cc \
@@ -854,970 +936,905 @@ $O/src/helpStructures/GlobalFilterMessage.o: src/helpStructures/GlobalFilterMess
 $O/src/helpStructures/LoggerMessage.o: src/helpStructures/LoggerMessage.cc \
   src/helpStructures/LoggerMessage.h
 $O/src/helpStructures/TimerService.o: src/helpStructures/TimerService.cc \
+  src/CastaliaMessages.h \
   src/helpStructures/TimerServiceMessage_m.h \
-  src/helpStructures/TimerService.h \
-  src/CastaliaMessages.h
-$O/src/helpStructures/TimerServiceMessage_m.o: src/helpStructures/TimerServiceMessage_m.cc \
-  src/helpStructures/TimerServiceMessage_m.h
+  src/helpStructures/TimerService.h
 $O/src/logger/Logger.o: src/logger/Logger.cc \
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/LoggerMessage.h \
   src/logger/Logger.h \
-  src/CastaliaMessages.h \
-  src/helpStructures/LoggerMessage.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h
-$O/src/node/application/ApplicationPacket_m.o: src/node/application/ApplicationPacket_m.cc \
-  src/node/application/ApplicationPacket_m.h
-$O/src/node/application/VirtualApplication.o: src/node/application/VirtualApplication.cc \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/CastaliaMessages.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/application/VirtualApplication.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h
-$O/src/node/application/bridgeTest/BridgeTest.o: src/node/application/bridgeTest/BridgeTest.cc \
-  src/node/application/VirtualApplication.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/application/bridgeTest/BridgeTest.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/radio/Radio.h
-$O/src/node/application/clusterAggregator/ClusterAggregator.o: src/node/application/clusterAggregator/ClusterAggregator.cc \
-  src/node/application/VirtualApplication.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/CastaliaMessages.h \
-  src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/application/clusterAggregator/ClusterAggregator.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
-$O/src/node/application/clusterAggregator/ClusterAggregatorPacket_m.o: src/node/application/clusterAggregator/ClusterAggregatorPacket_m.cc \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  src/node/application/ApplicationPacket_m.h
-$O/src/node/application/connectivityMap/ConnectivityMap.o: src/node/application/connectivityMap/ConnectivityMap.cc \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/node/application/connectivityMap/ConnectivityMap.h \
-  src/node/application/VirtualApplication.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/radio/Radio.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h
-$O/src/node/application/distanceTest/DistanceTest.o: src/node/application/distanceTest/DistanceTest.cc \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/CastaliaMessages.h \
-  src/node/application/VirtualApplication.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/application/distanceTest/DistanceTestPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/application/distanceTest/DistanceTest.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h
-$O/src/node/application/distanceTest/DistanceTestPacket_m.o: src/node/application/distanceTest/DistanceTestPacket_m.cc \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/application/distanceTest/DistanceTestPacket_m.h
-$O/src/node/application/dummyApplication/DummyApplication.o: src/node/application/dummyApplication/DummyApplication.cc \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/application/dummyApplication/DummyApplication.h \
-  src/node/communication/radio/Radio.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/node/application/VirtualApplication.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/mobilityManager/VirtualMobilityManager.h
-$O/src/node/application/roomMonitoring/RoomMonitoring.o: src/node/application/roomMonitoring/RoomMonitoring.cc \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/node/application/VirtualApplication.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/CastaliaMessages.h \
-  src/node/application/roomMonitoring/RoomMonitoring.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
-  src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h
-$O/src/node/application/roomMonitoring/RoomMonitoringPacket_m.o: src/node/application/roomMonitoring/RoomMonitoringPacket_m.cc \
-  src/node/application/ApplicationPacket_m.h \
-  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h
-$O/src/node/application/simpleAggregation/SimpleAggregation.o: src/node/application/simpleAggregation/SimpleAggregation.cc \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/application/simpleAggregation/SimpleAggregation.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/VirtualApplication.h \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h
-$O/src/node/application/throughputTest/ThroughputTest.o: src/node/application/throughputTest/ThroughputTest.cc \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/application/throughputTest/ThroughputTest.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/VirtualApplication.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h
-$O/src/node/application/valuePropagation/ValuePropagation.o: src/node/application/valuePropagation/ValuePropagation.cc \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/node/application/VirtualApplication.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/helpStructures/TimerService.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/application/valuePropagation/ValuePropagation.h \
-  src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h
-$O/src/node/application/valueReporting/ValueReporting.o: src/node/application/valueReporting/ValueReporting.cc \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
-  src/node/application/VirtualApplication.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/CastaliaMessages.h \
-  src/node/application/valueReporting/ValueReporting.h \
-  src/node/communication/radio/RadioSupportFunctions.h
-$O/src/node/application/valueReporting/ValueReportingPacket_m.o: src/node/application/valueReporting/ValueReportingPacket_m.cc \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
-  src/node/application/ApplicationPacket_m.h
-$O/src/node/communication/localfilter/LocalFilter.o: src/node/communication/localfilter/LocalFilter.cc \
-  src/PacketTypes.h \
-  /usr/include/glib-2.0/glib/gmarkup.h \
-  src/action/Create.h \
-  /usr/include/glib-2.0/glib/gvarianttype.h \
-  src/action/Action.h \
-  src/utils/utils.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  /usr/include/glib-2.0/glib/gshell.h \
-  src/attack/UnconditionalAttack.h \
-  /usr/include/glib-2.0/glib/gmacros.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/parse_error.h \
-  /usr/include/glib-2.0/glib/gdatetime.h \
-  src/node/communication/mac/VirtualMac.h \
-  /usr/include/libxml++-2.6/libxml++/noncopyable.h \
-  /usr/include/glib-2.0/glib/gversionmacros.h \
-  /usr/lib/libxml++-2.6/include/libxml++config.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/parser.h \
-  /usr/include/glib-2.0/glib/gfileutils.h \
-  /usr/include/glib-2.0/glib/deprecated/gmain.h \
-  /usr/include/glib-2.0/glib/gvariant.h \
-  /usr/include/glibmm-2.4/glibmm/ustring.h \
-  src/action/Move.h \
-  /usr/include/glib-2.0/glib/gdataset.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  /usr/include/glib-2.0/glib/garray.h \
-  /usr/include/glib-2.0/glib/gprimes.h \
-  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/libxml++.h \
-  /usr/include/libxml++-2.6/libxml++/validators/schemavalidator.h \
-  /usr/include/glib-2.0/glib/ghostutils.h \
-  /usr/include/glib-2.0/glib/gkeyfile.h \
-  src/node/communication/routing/VirtualRouting.h \
-  /usr/include/glib-2.0/glib/ghash.h \
-  /usr/include/libxml++-2.6/libxml++/validators/dtdvalidator.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/node.h \
-  /usr/include/libxml++-2.6/libxml++/validators/validator.h \
-  /usr/include/glib-2.0/glib/gbase64.h \
-  /usr/include/glib-2.0/glib/deprecated/gallocator.h \
-  src/action/Fakeread.h \
-  src/action/Put.h \
-  src/node/sensorManager/SensorManager.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
-  /usr/include/glib-2.0/glib/ghmac.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/exception.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/application/distanceTest/DistanceTestPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/contentnode.h \
-  /usr/include/glib-2.0/glib/ggettext.h \
-  src/attack/ConditionalAttack.h \
-  /usr/include/glib-2.0/glib/gasyncqueue.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  /usr/include/glib-2.0/glib/gtimer.h \
-  src/attack/Attack.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  /usr/include/glib-2.0/glib/gstrfuncs.h \
-  src/action/Send.h \
-  src/action/ASFExpression.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/textreader.h \
-  src/node/communication/radio/Radio.h \
-  src/attack/PhysicalAttack.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/validity_error.h \
-  src/node/communication/mac/tMac/TMacPacket_m.h \
-  /usr/include/glib-2.0/glib/gmessages.h \
-  /usr/include/glib-2.0/glib/gutils.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/xincludeend.h \
-  /usr/include/glib-2.0/glib/gtypes.h \
-  /usr/include/glib-2.0/glib/gbitlock.h \
-  /usr/include/glib-2.0/glib/gmem.h \
-  /usr/include/libxml++-2.6/libxml++/dtd.h \
-  /usr/include/libxml++-2.6/libxml++/attributenode.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/processinginstructionnode.h \
-  src/variable/Variable.h \
-  /usr/include/glib-2.0/glib/gchecksum.h \
-  /usr/include/glib-2.0/glib/gbytes.h \
-  /usr/include/glib-2.0/glib/gmain.h \
-  /usr/include/glib-2.0/glib/gscanner.h \
-  /usr/include/glib-2.0/glib/gnode.h \
-  src/action/Retrieve.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/element.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/helpStructures/TimerService.h \
-  /usr/include/glib-2.0/glib/deprecated/gcache.h \
-  src/helpStructures/GlobalFilterMessage.h \
-  /usr/include/glib-2.0/glib/gregex.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  /usr/include/glib-2.0/glib/gsequence.h \
-  /usr/include/glib-2.0/glib/genviron.h \
-  /usr/include/libxml++-2.6/libxml++/attribute.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
-  /usr/include/glib-2.0/glib/gdate.h \
-  /usr/include/glib-2.0/glib/gtree.h \
-  /usr/include/glib-2.0/glib/deprecated/gcompletion.h \
-  /usr/include/glib-2.0/glib/ghook.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/entityreference.h \
-  /usr/include/glib-2.0/glib/glist.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  /usr/include/glib-2.0/glib/gslice.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/commentnode.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
-  /usr/include/glib-2.0/glib/gconvert.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
-  /usr/include/glib-2.0/glib/gwin32.h \
-  /usr/include/glib-2.0/glib/gerror.h \
-  /usr/include/glib-2.0/glib/gtrashstack.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/textnode.h \
-  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
-  /usr/include/glib-2.0/glib/gunicode.h \
-  /usr/include/glib-2.0/glib/gthreadpool.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/saxparser.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/xincludestart.h \
-  /usr/include/glib-2.0/glib/gspawn.h \
-  /usr/include/glib-2.0/glib/deprecated/grel.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
-  /usr/include/glib-2.0/glib/gbookmarkfile.h \
-  /usr/include/libxml++-2.6/libxml++/schema.h \
-  /usr/include/glib-2.0/glib/gtimezone.h \
-  /usr/include/glib-2.0/glib/gpoll.h \
-  /usr/include/glib-2.0/glib/gbacktrace.h \
-  /usr/include/glib-2.0/glib/grand.h \
-  src/physicalProcess/PhysicalProcessMessage_m.h \
-  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/cdatanode.h \
-  /usr/include/glibmm-2.4/glibmm/unicode.h \
-  src/node/communication/localfilter/LocalFilter.h \
-  /usr/include/glib-2.0/glib/gcharset.h \
-  /usr/include/glib-2.0/glib/gqsort.h \
-  /usr/include/glib-2.0/glib/gstringchunk.h \
-  /usr/include/glib-2.0/glib/gslist.h \
-  /usr/include/glib-2.0/glib/goption.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/domparser.h \
-  src/action/Clone.h \
-  /usr/include/glib-2.0/glib/gurifuncs.h \
-  /usr/include/glib-2.0/glib/gatomic.h \
-  src/action/Change.h \
-  /usr/include/glib-2.0/glib.h \
-  /usr/include/glib-2.0/glib/gversion.h \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  /usr/include/glib-2.0/glib/gstring.h \
-  src/parser/parser.h \
-  /usr/include/glib-2.0/glib/giochannel.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/helpStructures/LoggerMessage.h \
-  /usr/include/glib-2.0/glib/gpattern.h \
-  src/action/PutMessages.h \
-  /usr/include/glib-2.0/glib/gmappedfile.h \
-  /usr/include/glib-2.0/glib/gtestutils.h \
-  /usr/include/glib-2.0/glib/gthread.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/internal_error.h \
-  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
-  /usr/include/glib-2.0/glib/gquark.h \
-  /usr/include/glib-2.0/glib/gqueue.h \
-  /usr/include/glib-2.0/glib/deprecated/gthread.h \
-  src/attack/Entry.h \
-  /usr/include/glib-2.0/glib/gdir.h \
-  /usr/include/libxml++-2.6/libxml++/document.h \
-  src/CastaliaMessages.h \
-  /usr/include/libxml++-2.6/libxml++/attributedeclaration.h \
-  src/action/Destroy.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/entitydeclaration.h \
-  /usr/include/glib-2.0/glib/galloca.h \
-  src/action/Drop.h
-$O/src/node/communication/mac/MacPacket_m.o: src/node/communication/mac/MacPacket_m.cc \
-  src/node/communication/mac/MacPacket_m.h
-$O/src/node/communication/mac/VirtualMac.o: src/node/communication/mac/VirtualMac.cc \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerService.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/node/communication/mac/VirtualMac.h
-$O/src/node/communication/mac/baselineBanMac/BaselineBANMac.o: src/node/communication/mac/baselineBanMac/BaselineBANMac.cc \
-  src/node/resourceManager/ResourceManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/helpStructures/TimerService.h \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
-  src/node/communication/mac/baselineBanMac/BaselineBANMac.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/node/communication/mac/VirtualMac.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h
-$O/src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.o: src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.cc \
-  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
-  src/node/communication/mac/MacPacket_m.h
-$O/src/node/communication/mac/bypassMac/BypassMAC.o: src/node/communication/mac/bypassMac/BypassMAC.cc \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/node/communication/mac/bypassMac/BypassMAC.h \
-  src/helpStructures/TimerService.h \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/VirtualMac.h \
-  src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h
-$O/src/node/communication/mac/mac802154/Mac802154.o: src/node/communication/mac/mac802154/Mac802154.cc \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154.h \
-  src/node/communication/mac/VirtualMac.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerService.h
-$O/src/node/communication/mac/mac802154/Mac802154Packet_m.o: src/node/communication/mac/mac802154/Mac802154Packet_m.cc \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h
-$O/src/node/communication/mac/tMac/TMAC.o: src/node/communication/mac/tMac/TMAC.cc \
-  src/helpStructures/TimerService.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/CastaliaMessages.h \
-  src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/node/communication/mac/VirtualMac.h \
-  src/node/communication/mac/tMac/TMAC.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/mac/tMac/TMacPacket_m.h \
-  src/node/communication/radio/Radio.h
-$O/src/node/communication/mac/tMac/TMacPacket_m.o: src/node/communication/mac/tMac/TMacPacket_m.cc \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/tMac/TMacPacket_m.h
-$O/src/node/communication/mac/tunableMac/TunableMAC.o: src/node/communication/mac/tunableMac/TunableMAC.cc \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/mac/tunableMac/TunableMacControl_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/mac/tunableMac/TunableMAC.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/VirtualMac.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/helpStructures/TimerService.h
-$O/src/node/communication/mac/tunableMac/TunableMacControl_m.o: src/node/communication/mac/tunableMac/TunableMacControl_m.cc \
-  src/node/communication/mac/tunableMac/TunableMacControl_m.h
-$O/src/node/communication/mac/tunableMac/TunableMacPacket_m.o: src/node/communication/mac/tunableMac/TunableMacPacket_m.cc \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h
-$O/src/node/communication/radio/Radio.o: src/node/communication/radio/Radio.cc \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
   src/helpStructures/DebugInfoWriter.h
-$O/src/node/communication/radio/RadioControlMessage_m.o: src/node/communication/radio/RadioControlMessage_m.cc \
-  src/node/communication/radio/RadioControlMessage_m.h
+$O/src/node/application/VirtualApplication.o: src/node/application/VirtualApplication.cc \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/application/VirtualApplication.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/utils/utils.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h
+$O/src/node/application/bridgeTest/BridgeTest.o: src/node/application/bridgeTest/BridgeTest.cc \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/CastaliaMessages.h \
+  src/node/application/VirtualApplication.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/application/bridgeTest/BridgeTest.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
+$O/src/node/application/clusterAggregator/ClusterAggregator.o: src/node/application/clusterAggregator/ClusterAggregator.cc \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/application/clusterAggregator/ClusterAggregator.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/utils/utils.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
+  src/node/application/VirtualApplication.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/sensorManager/SensorManagerMessage_m.h
+$O/src/node/application/connectivityMap/ConnectivityMap.o: src/node/application/connectivityMap/ConnectivityMap.cc \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/application/VirtualApplication.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/application/connectivityMap/ConnectivityMap.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h
+$O/src/node/application/distanceTest/DistanceTest.o: src/node/application/distanceTest/DistanceTest.cc \
+  src/node/application/VirtualApplication.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/application/distanceTest/DistanceTestPacket_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/application/distanceTest/DistanceTest.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h
+$O/src/node/application/dummyApplication/DummyApplication.o: src/node/application/dummyApplication/DummyApplication.cc \
+  src/node/application/ApplicationPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/dummyApplication/DummyApplication.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/utils/utils.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/CastaliaMessages.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/application/VirtualApplication.h \
+  src/helpStructures/CastaliaModule.h
+$O/src/node/application/roomMonitoring/RoomMonitoring.o: src/node/application/roomMonitoring/RoomMonitoring.cc \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/CastaliaMessages.h \
+  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
+  src/node/application/VirtualApplication.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/node/application/roomMonitoring/RoomMonitoring.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
+$O/src/node/application/simpleAggregation/SimpleAggregation.o: src/node/application/simpleAggregation/SimpleAggregation.cc \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/node/application/VirtualApplication.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/node/application/simpleAggregation/SimpleAggregation.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
+$O/src/node/application/throughputTest/ThroughputTest.o: src/node/application/throughputTest/ThroughputTest.cc \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/application/VirtualApplication.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/node/application/throughputTest/ThroughputTest.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h
+$O/src/node/application/valuePropagation/ValuePropagation.o: src/node/application/valuePropagation/ValuePropagation.cc \
+  src/utils/utils.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/application/valuePropagation/ValuePropagation.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/application/VirtualApplication.h \
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h
+$O/src/node/application/valueReporting/ValueReporting.o: src/node/application/valueReporting/ValueReporting.cc \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/CastaliaMessages.h \
+  src/node/application/VirtualApplication.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/application/valueReporting/ValueReporting.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h
+$O/src/node/communication/localfilter/LocalFilter.o: src/node/communication/localfilter/LocalFilter.cc \
+  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
+  src/parser/parser.h \
+  /usr/include/glib-2.0/glib/goption.h \
+  /usr/include/glib-2.0/glib/gmarkup.h \
+  /usr/include/glib-2.0/glib/deprecated/gcache.h \
+  /usr/include/glib-2.0/glib/gwin32.h \
+  /usr/include/glib-2.0/glib/gtimer.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/element.h \
+  src/physicalProcess/PhysicalProcessMessage_m.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/internal_error.h \
+  src/node/communication/mac/tMac/TMacPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/exception.h \
+  src/action/Retrieve.h \
+  /usr/include/glib-2.0/glib/gerror.h \
+  /usr/include/libxml++-2.6/libxml++/noncopyable.h \
+  src/node/application/ApplicationPacket_m.h \
+  /usr/include/glib-2.0/glib/gurifuncs.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/textnode.h \
+  /usr/include/glib-2.0/glib/gtestutils.h \
+  /usr/include/glib-2.0/glib/gvariant.h \
+  /usr/include/glib-2.0/glib/gdataset.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/parser.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/xincludestart.h \
+  /usr/include/glib-2.0/glib/gdatetime.h \
+  /usr/include/glib-2.0/glib/gmacros.h \
+  src/action/Action.h \
+  src/attacks/unconditionalattack/PhysicalAttack.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/entitydeclaration.h \
+  /usr/include/glib-2.0/glib/ghook.h \
+  /usr/include/glib-2.0/glib/gslist.h \
+  /usr/include/glib-2.0/glib/gdir.h \
+  /usr/include/glib-2.0/glib/gconvert.h \
+  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
+  /usr/include/glib-2.0/glib/gscanner.h \
+  /usr/include/glibmm-2.4/glibmm/unicode.h \
+  src/attacks/conditionalattack/packetfilter/PacketFilter.h \
+  /usr/include/glib-2.0/glib/gtree.h \
+  src/action/Fakeread.h \
+  src/action/Move.h \
+  /usr/include/glib-2.0/glib/gchecksum.h \
+  /usr/include/glib-2.0/glib/gtrashstack.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/dtd.h \
+  src/helpStructures/TimerService.h \
+  /usr/include/glib-2.0/glib/gqueue.h \
+  /usr/include/glib-2.0/glib/deprecated/gallocator.h \
+  /usr/include/glib-2.0/glib/ghash.h \
+  /usr/include/glib-2.0/glib/gmain.h \
+  /usr/include/glib-2.0/glib/gspawn.h \
+  /usr/include/glib-2.0/glib/gtimezone.h \
+  src/node/communication/routing/VirtualRouting.h \
+  /usr/include/glib-2.0/glib/gutils.h \
+  src/node/communication/radio/Radio.h \
+  /usr/include/glib-2.0/glib/gmessages.h \
+  /usr/include/glib-2.0/glib/gsequence.h \
+  /usr/include/glib-2.0/glib/gregex.h \
+  src/variable/Variable.h \
+  /usr/include/glib-2.0/glib/gatomic.h \
+  /usr/include/glib-2.0/glib/gstringchunk.h \
+  /usr/include/glib-2.0/glib/gfileutils.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  /usr/include/glib-2.0/glib/grand.h \
+  /usr/include/glib-2.0/glib/gbitlock.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/validity_error.h \
+  /usr/include/libxml++-2.6/libxml++/attributenode.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  /usr/include/glibmm-2.4/glibmm/ustring.h \
+  src/action/Put.h \
+  src/attacks/attackentry/Entry.h \
+  /usr/include/glib-2.0/glib/gqsort.h \
+  /usr/include/glib-2.0/glib/gasyncqueue.h \
+  /usr/include/libxml++-2.6/libxml++/validators/validator.h \
+  /usr/include/libxml++-2.6/libxml++/document.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
+  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/processinginstructionnode.h \
+  src/attacks/attackbase/Attack.h \
+  src/node/communication/routing/aodvRouting/PacketId_m.h \
+  /usr/include/glib-2.0/glib/gversionmacros.h \
+  src/action/Destroy.h \
+  /usr/include/glib-2.0/glib.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/xincludeend.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/attributedeclaration.h \
+  src/action/Drop.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/action/Create.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
+  /usr/include/glib-2.0/glib/gslice.h \
+  src/helpStructures/GlobalFilterMessage.h \
+  /usr/include/glib-2.0/glib/giochannel.h \
+  src/attacks/conditionalattack/packetfilter/FilterBlock.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/saxparser.h \
+  /usr/include/glib-2.0/glib/deprecated/gthread.h \
+  /usr/include/glib-2.0/glib/gunicode.h \
+  src/node/application/distanceTest/DistanceTestPacket_m.h \
+  /usr/include/glib-2.0/glib/gstring.h \
+  /usr/include/glib-2.0/glib/gthreadpool.h \
+  src/PacketTypes.h \
+  /usr/include/glib-2.0/glib/gmappedfile.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/contentnode.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  /usr/include/glib-2.0/glib/gnode.h \
+  /usr/include/glib-2.0/glib/gvarianttype.h \
+  /usr/include/glib-2.0/glib/gshell.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/textreader.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  /usr/include/glib-2.0/glib/deprecated/gmain.h \
+  src/attacks/conditionalattack/conditionalattack/ConditionalAttack.h \
+  /usr/include/libxml++-2.6/libxml++/validators/schemavalidator.h \
+  /usr/include/glib-2.0/glib/galloca.h \
+  /usr/include/glib-2.0/glib/gquark.h \
+  /usr/include/glib-2.0/glib/gbookmarkfile.h \
+  src/helpStructures/LoggerMessage.h \
+  src/utils/utils.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/commentnode.h \
+  src/action/Change.h \
+  /usr/lib/libxml++-2.6/include/libxml++config.h \
+  src/node/communication/mac/VirtualMac.h \
+  /usr/include/glib-2.0/glib/gcharset.h \
+  /usr/include/libxml++-2.6/libxml++/attribute.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  /usr/include/glib-2.0/glib/gbytes.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  /usr/include/glib-2.0/glib/ggettext.h \
+  /usr/include/glib-2.0/glib/ghmac.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/parse_error.h \
+  /usr/include/glib-2.0/glib/gbacktrace.h \
+  /usr/include/glib-2.0/glib/glist.h \
+  src/action/PutMessages.h \
+  src/node/communication/localfilter/LocalFilter.h \
+  src/CastaliaMessages.h \
+  /usr/include/glib-2.0/glib/deprecated/gcompletion.h \
+  /usr/include/glib-2.0/glib/gbase64.h \
+  /usr/include/glib-2.0/glib/ghostutils.h \
+  src/node/sensorManager/SensorManager.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/domparser.h \
+  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
+  /usr/include/glib-2.0/glib/gkeyfile.h \
+  /usr/include/glib-2.0/glib/gversion.h \
+  /usr/include/glib-2.0/glib/gthread.h \
+  /usr/include/glib-2.0/glib/deprecated/grel.h \
+  /usr/include/glib-2.0/glib/gtypes.h \
+  /usr/include/libxml++-2.6/libxml++/schema.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
+  src/action/Clone.h \
+  /usr/include/libxml++-2.6/libxml++/libxml++.h \
+  /usr/include/libxml++-2.6/libxml++/validators/dtdvalidator.h \
+  /usr/include/glib-2.0/glib/gmem.h \
+  src/attacks/unconditionalattack/UnconditionalAttack.h \
+  /usr/include/glib-2.0/glib/gstrfuncs.h \
+  /usr/include/glib-2.0/glib/genviron.h \
+  /usr/include/glib-2.0/glib/gprimes.h \
+  src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
+  /usr/include/glib-2.0/glib/garray.h \
+  src/action/Send.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/entityreference.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/cdatanode.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  src/action/ASFExpression.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/node.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  /usr/include/glib-2.0/glib/gdate.h \
+  /usr/include/glib-2.0/glib/gpoll.h \
+  /usr/include/glib-2.0/glib/gpattern.h
+$O/src/node/communication/mac/VirtualMac.o: src/node/communication/mac/VirtualMac.cc \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/mac/VirtualMac.h \
+  src/utils/utils.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/helpStructures/CastaliaModule.h
+$O/src/node/communication/mac/baselineBanMac/BaselineBANMac.o: src/node/communication/mac/baselineBanMac/BaselineBANMac.cc \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h \
+  src/node/communication/mac/baselineBanMac/BaselineBANMac.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/communication/mac/VirtualMac.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h
+$O/src/node/communication/mac/bypassMac/BypassMAC.o: src/node/communication/mac/bypassMac/BypassMAC.cc \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
+  src/node/communication/mac/bypassMac/BypassMAC.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/utils/utils.h \
+  src/node/communication/mac/VirtualMac.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/radio/Radio.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h
+$O/src/node/communication/mac/mac802154/Mac802154.o: src/node/communication/mac/mac802154/Mac802154.cc \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/communication/mac/VirtualMac.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h
+$O/src/node/communication/mac/tMac/TMAC.o: src/node/communication/mac/tMac/TMAC.cc \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/node/communication/mac/tMac/TMAC.h \
+  src/utils/utils.h \
+  src/node/communication/mac/VirtualMac.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/communication/mac/tMac/TMacPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h
+$O/src/node/communication/mac/tunableMac/TunableMAC.o: src/node/communication/mac/tunableMac/TunableMAC.cc \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/utils/utils.h \
+  src/node/communication/mac/tunableMac/TunableMAC.h \
+  src/node/communication/mac/VirtualMac.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/communication/mac/tunableMac/TunableMacControl_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h
+$O/src/node/communication/radio/Radio.o: src/node/communication/radio/Radio.cc \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/communication/radio/Radio.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h
 $O/src/node/communication/radio/RadioSupportFunctions.o: src/node/communication/radio/RadioSupportFunctions.cc \
   src/CastaliaMessages.h \
   src/node/communication/radio/RadioSupportFunctions.h \
   src/node/communication/radio/RadioControlMessage_m.h
-$O/src/node/communication/routing/RoutingPacket_m.o: src/node/communication/routing/RoutingPacket_m.cc \
-  src/node/communication/routing/RoutingPacket_m.h
 $O/src/node/communication/routing/VirtualRouting.o: src/node/communication/routing/VirtualRouting.cc \
   src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/routing/VirtualRouting.h \
   src/node/communication/radio/RadioSupportFunctions.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/routing/RoutingPacket_m.h \
   src/CastaliaMessages.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
   src/node/resourceManager/ResourceManager.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
   src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/communication/radio/Radio.h \
+  src/node/communication/routing/VirtualRouting.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h
 $O/src/node/communication/routing/aodvRouting/AodvRouting.o: src/node/communication/routing/aodvRouting/AodvRouting.cc \
-  src/node/communication/routing/VirtualRouting.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/utils/utils.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
   src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/communication/routing/aodvRouting/RoutingTable_rt.h \
+  src/node/communication/radio/Radio.h \
+  src/node/communication/routing/VirtualRouting.h \
+  src/helpStructures/TimerService.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
   src/node/communication/routing/aodvRouting/AodvRouting.h \
-  src/node/communication/radio/Radio.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
   src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/node/communication/routing/aodvRouting/PacketId_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
   src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
-  src/node/communication/routing/aodvRouting/RoutingTable_rt.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/CastaliaMessages.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
   src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
-  src/node/communication/radio/RadioSupportFunctions.h
-$O/src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.o: src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.cc \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h
-$O/src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.o: src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.cc \
-  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/node/communication/routing/RoutingPacket_m.h
-$O/src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.o: src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.cc \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h
-$O/src/node/communication/routing/aodvRouting/PacketId_m.o: src/node/communication/routing/aodvRouting/PacketId_m.cc \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h
-$O/src/node/communication/routing/aodvRouting/RoutingTable_rt.o: src/node/communication/routing/aodvRouting/RoutingTable_rt.cc \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/aodvRouting/RoutingTable_rt.h \
-  src/CastaliaMessages.h
-$O/src/node/communication/routing/bypassRouting/BypassRouting.o: src/node/communication/routing/bypassRouting/BypassRouting.cc \
-  src/node/communication/routing/VirtualRouting.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
   src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  src/node/communication/routing/bypassRouting/BypassRouting.h \
-  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
   src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/node/resourceManager/ResourceManager.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
   src/CastaliaMessages.h \
-  src/node/communication/radio/RadioSupportFunctions.h
-$O/src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.o: src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.cc \
-  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h
-$O/src/node/communication/routing/multipathRingsRouting/MultipathRingsRouting.o: src/node/communication/routing/multipathRingsRouting/MultipathRingsRouting.cc \
-  src/utils/utils.h \
-  src/node/communication/radio/RadioControlMessage_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingControl_m.h \
-  src/node/communication/routing/VirtualRouting.h \
   src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/node/communication/radio/Radio.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRouting.h \
-  src/helpStructures/TimerService.h \
-  src/node/application/ApplicationPacket_m.h \
-  src/helpStructures/TimerServiceMessage_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/resourceManager/ResourceManager.h \
   src/node/communication/radio/RadioSupportFunctions.h \
-  src/CastaliaMessages.h
-$O/src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingControl_m.o: src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingControl_m.cc \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingControl_m.h
-$O/src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.o: src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.cc \
+  src/node/communication/mac/MacPacket_m.h \
+  src/helpStructures/CastaliaModule.h
+$O/src/node/communication/routing/aodvRouting/RoutingTable_rt.o: src/node/communication/routing/aodvRouting/RoutingTable_rt.cc \
+  src/CastaliaMessages.h \
+  src/helpStructures/CastaliaModule.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/aodvRouting/RoutingTable_rt.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h
+$O/src/node/communication/routing/bypassRouting/BypassRouting.o: src/node/communication/routing/bypassRouting/BypassRouting.cc \
+  src/node/communication/routing/bypassRouting/BypassRouting.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/utils/utils.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
   src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h
-$O/src/node/mobilityManager/MobilityManagerMessage_m.o: src/node/mobilityManager/MobilityManagerMessage_m.cc \
-  src/node/mobilityManager/MobilityManagerMessage_m.h
+  src/helpStructures/TimerService.h \
+  src/node/communication/routing/VirtualRouting.h \
+  src/node/communication/radio/Radio.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h
+$O/src/node/communication/routing/multipathRingsRouting/MultipathRingsRouting.o: src/node/communication/routing/multipathRingsRouting/MultipathRingsRouting.cc \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/application/ApplicationPacket_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  src/node/communication/routing/VirtualRouting.h \
+  src/node/communication/radio/Radio.h \
+  src/helpStructures/TimerService.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/TimerServiceMessage_m.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/resourceManager/ResourceManager.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingControl_m.h \
+  src/node/communication/radio/RadioControlMessage_m.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRouting.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  src/utils/utils.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/CastaliaModule.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/node/communication/radio/RadioSupportFunctions.h
 $O/src/node/mobilityManager/VirtualMobilityManager.o: src/node/mobilityManager/VirtualMobilityManager.cc \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
   src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/CastaliaMessages.h
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h
 $O/src/node/mobilityManager/lineMobilityManager/LineMobilityManager.o: src/node/mobilityManager/lineMobilityManager/LineMobilityManager.cc \
-  src/node/mobilityManager/MobilityManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
   src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/mobilityManager/MobilityManagerMessage_m.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/CastaliaModule.h \
   src/node/mobilityManager/lineMobilityManager/LineMobilityManager.h \
-  src/CastaliaMessages.h
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h
 $O/src/node/mobilityManager/noMobilityManager/NoMobilityManager.o: src/node/mobilityManager/noMobilityManager/NoMobilityManager.cc \
   src/CastaliaMessages.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/helpStructures/CastaliaModule.h \
   src/node/mobilityManager/noMobilityManager/NoMobilityManager.h \
   src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/helpStructures/DebugInfoWriter.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h
-$O/src/node/resourceManager/ResourceManager.o: src/node/resourceManager/ResourceManager.cc \
-  src/node/resourceManager/ResourceManager.h \
-  src/CastaliaMessages.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/helpStructures/CastaliaModule.h
-$O/src/node/resourceManager/ResourceManagerMessage_m.o: src/node/resourceManager/ResourceManagerMessage_m.cc \
-  src/node/resourceManager/ResourceManagerMessage_m.h
-$O/src/node/sensorManager/SensorManager.o: src/node/sensorManager/SensorManager.cc \
-  src/physicalProcess/PhysicalProcessMessage_m.h \
-  src/CastaliaMessages.h \
   src/node/mobilityManager/VirtualMobilityManager.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/node/sensorManager/SensorManagerMessage_m.h \
+  src/helpStructures/DebugInfoWriter.h
+$O/src/node/resourceManager/ResourceManager.o: src/node/resourceManager/ResourceManager.cc \
+  src/CastaliaMessages.h \
   src/helpStructures/CastaliaModule.h \
-  src/node/sensorManager/SensorManager.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h
-$O/src/node/sensorManager/SensorManagerMessage_m.o: src/node/sensorManager/SensorManagerMessage_m.cc \
-  src/node/sensorManager/SensorManagerMessage_m.h
-$O/src/parser/parser.o: src/parser/parser.cc \
-  src/attack/Attack.h \
-  /usr/include/glib-2.0/glib/gtimer.h \
+  src/node/resourceManager/ResourceManager.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
-  /usr/include/glib-2.0/glib/gasyncqueue.h \
-  src/attack/ConditionalAttack.h \
-  src/action/ASFExpression.h \
-  /usr/include/glib-2.0/glib/gstrfuncs.h \
-  src/node/communication/routing/aodvRouting/PacketId_m.h \
-  src/action/Send.h \
+  src/helpStructures/DebugInfoWriter.h
+$O/src/node/sensorManager/SensorManager.o: src/node/sensorManager/SensorManager.cc \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/physicalProcess/PhysicalProcessMessage_m.h \
   src/helpStructures/DebugInfoWriter.h \
-  /usr/include/glib-2.0/glib/ghmac.h \
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
   src/node/sensorManager/SensorManager.h \
   src/node/sensorManager/SensorManagerMessage_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/action/Put.h \
-  src/action/Fakeread.h \
-  /usr/include/glib-2.0/glib/deprecated/gallocator.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/contentnode.h \
-  /usr/include/glib-2.0/glib/ggettext.h \
-  src/node/application/distanceTest/DistanceTestPacket_m.h \
-  src/node/communication/routing/RoutingPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/exception.h \
-  /usr/include/glib-2.0/glib/gmain.h \
-  /usr/include/glib-2.0/glib/gbytes.h \
-  /usr/include/glib-2.0/glib/gchecksum.h \
-  src/variable/Variable.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/element.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/action/Retrieve.h \
-  /usr/include/glib-2.0/glib/gnode.h \
-  /usr/include/glib-2.0/glib/gscanner.h \
-  src/node/communication/mac/tMac/TMacPacket_m.h \
-  /usr/include/glib-2.0/glib/gmessages.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/validity_error.h \
-  src/attack/PhysicalAttack.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/textreader.h \
-  /usr/include/libxml++-2.6/libxml++/attributenode.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/processinginstructionnode.h \
-  /usr/include/libxml++-2.6/libxml++/dtd.h \
-  /usr/include/glib-2.0/glib/gmem.h \
-  /usr/include/glib-2.0/glib/gbitlock.h \
-  /usr/include/glib-2.0/glib/gtypes.h \
-  /usr/include/glib-2.0/glib/gutils.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/xincludeend.h \
-  /usr/include/glib-2.0/glib/gshell.h \
-  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
-  src/utils/utils.h \
-  /usr/include/glib-2.0/glib/gversionmacros.h \
-  /usr/include/libxml++-2.6/libxml++/noncopyable.h \
-  /usr/include/glib-2.0/glib/gdatetime.h \
-  src/attack/UnconditionalAttack.h \
-  /usr/include/glib-2.0/glib/gmacros.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/parse_error.h \
-  src/PacketTypes.h \
-  /usr/include/glib-2.0/glib/gmarkup.h \
-  src/action/Action.h \
-  /usr/include/glib-2.0/glib/gvarianttype.h \
-  src/action/Create.h \
-  /usr/include/glib-2.0/glib/ghash.h \
-  /usr/include/glib-2.0/glib/gkeyfile.h \
-  /usr/include/glib-2.0/glib/ghostutils.h \
-  /usr/include/libxml++-2.6/libxml++/validators/schemavalidator.h \
-  /usr/include/glib-2.0/glib/gbase64.h \
-  /usr/include/libxml++-2.6/libxml++/validators/validator.h \
-  /usr/include/libxml++-2.6/libxml++/validators/dtdvalidator.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h
+$O/src/parser/parser.o: src/parser/parser.cc \
+  src/node/application/valueReporting/ValueReportingPacket_m.h \
+  src/action/ASFExpression.h \
+  /usr/include/glib-2.0/glib/gpoll.h \
   /usr/include/libxml++-2.6/libxml++/nodes/node.h \
-  /usr/include/glib-2.0/glib/gvariant.h \
-  /usr/include/glibmm-2.4/glibmm/ustring.h \
-  /usr/include/glib-2.0/glib/deprecated/gmain.h \
-  /usr/include/glib-2.0/glib/gfileutils.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/parser.h \
-  /usr/lib/libxml++-2.6/include/libxml++config.h \
+  /usr/include/glib-2.0/glib/gdate.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/entityreference.h \
+  src/node/communication/mac/MacPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/cdatanode.h \
+  /usr/include/glib-2.0/glib/gpattern.h \
+  /usr/include/libxml++-2.6/libxml++/validators/dtdvalidator.h \
+  src/attacks/unconditionalattack/UnconditionalAttack.h \
+  /usr/include/glib-2.0/glib/gmem.h \
+  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
+  src/helpStructures/CastaliaModule.h \
+  /usr/include/libxml++-2.6/libxml++/schema.h \
+  src/action/Clone.h \
   /usr/include/libxml++-2.6/libxml++/libxml++.h \
+  /usr/include/glib-2.0/glib/gstrfuncs.h \
+  /usr/include/glib-2.0/glib/genviron.h \
+  /usr/include/glib-2.0/glib/garray.h \
   src/node/application/roomMonitoring/RoomMonitoringPacket_m.h \
   /usr/include/glib-2.0/glib/gprimes.h \
-  /usr/include/glib-2.0/glib/garray.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/action/Move.h \
-  /usr/include/glib-2.0/glib/gdataset.h \
-  /usr/include/glib-2.0/glib.h \
-  src/action/Change.h \
-  /usr/include/glib-2.0/glib/gatomic.h \
-  /usr/include/glib-2.0/glib/gurifuncs.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/domparser.h \
-  src/action/Clone.h \
-  /usr/include/glib-2.0/glib/goption.h \
-  /usr/include/glib-2.0/glib/giochannel.h \
-  src/parser/parser.h \
-  /usr/include/glib-2.0/glib/gstring.h \
-  src/node/application/clusterAggregator/ClusterAggregatorPacket_m.h \
-  /usr/include/glib-2.0/glib/gversion.h \
-  src/physicalProcess/PhysicalProcessMessage_m.h \
-  /usr/include/glib-2.0/glib/grand.h \
-  /usr/include/glib-2.0/glib/gbacktrace.h \
-  /usr/include/glib-2.0/glib/gpoll.h \
-  /usr/include/glib-2.0/glib/gtimezone.h \
-  /usr/include/libxml++-2.6/libxml++/schema.h \
-  /usr/include/glib-2.0/glib/gqsort.h \
-  /usr/include/glib-2.0/glib/gstringchunk.h \
-  /usr/include/glib-2.0/glib/gslist.h \
-  /usr/include/glib-2.0/glib/gcharset.h \
-  /usr/include/glibmm-2.4/glibmm/unicode.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/cdatanode.h \
-  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
-  src/CastaliaMessages.h \
-  /usr/include/libxml++-2.6/libxml++/document.h \
-  src/attack/Entry.h \
-  /usr/include/glib-2.0/glib/gdir.h \
-  /usr/include/glib-2.0/glib/deprecated/gthread.h \
-  src/action/Drop.h \
-  /usr/include/glib-2.0/glib/galloca.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/entitydeclaration.h \
-  src/action/Destroy.h \
-  /usr/include/libxml++-2.6/libxml++/attributedeclaration.h \
-  /usr/include/glib-2.0/glib/gpattern.h \
-  /usr/include/glib-2.0/glib/gqueue.h \
-  /usr/include/glib-2.0/glib/gquark.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
-  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
-  /usr/include/libxml++-2.6/libxml++/exceptions/internal_error.h \
-  /usr/include/glib-2.0/glib/gthread.h \
-  /usr/include/glib-2.0/glib/gtestutils.h \
-  /usr/include/glib-2.0/glib/gmappedfile.h \
+  src/action/Send.h \
+  src/node/sensorManager/SensorManager.h \
+  /usr/include/glib-2.0/glib/ghostutils.h \
+  /usr/include/glib-2.0/glib/gbase64.h \
   src/action/PutMessages.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/attribute.h \
-  /usr/include/glib-2.0/glib/gtree.h \
-  /usr/include/glib-2.0/glib/deprecated/gcompletion.h \
-  /usr/include/glib-2.0/glib/gdate.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
-  /usr/include/glib-2.0/glib/gregex.h \
-  /usr/include/glib-2.0/glib/deprecated/gcache.h \
-  src/node/application/ApplicationPacket_m.h \
-  /usr/include/glib-2.0/glib/genviron.h \
-  /usr/include/glib-2.0/glib/gsequence.h \
-  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/textnode.h \
-  /usr/include/glib-2.0/glib/gtrashstack.h \
-  /usr/include/glib-2.0/glib/gerror.h \
-  /usr/include/glib-2.0/glib/gwin32.h \
-  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
-  /usr/include/glib-2.0/glib/gbookmarkfile.h \
-  /usr/include/glib-2.0/glib/deprecated/grel.h \
-  /usr/include/glib-2.0/glib/gspawn.h \
-  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/xincludestart.h \
-  /usr/include/glib-2.0/glib/gthreadpool.h \
-  /usr/include/libxml++-2.6/libxml++/parsers/saxparser.h \
-  /usr/include/glib-2.0/glib/gunicode.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/entityreference.h \
-  /usr/include/glib-2.0/glib/ghook.h \
-  /usr/include/glib-2.0/glib/gconvert.h \
-  src/node/application/valueReporting/ValueReportingPacket_m.h \
-  src/wirelessChannel/WirelessChannelMessages_m.h \
-  /usr/include/libxml++-2.6/libxml++/nodes/commentnode.h \
-  /usr/include/glib-2.0/glib/gslice.h \
-  /usr/include/glib-2.0/glib/glist.h
-$O/src/physicalProcess/PhysicalProcessMessage_m.o: src/physicalProcess/PhysicalProcessMessage_m.cc \
-  src/physicalProcess/PhysicalProcessMessage_m.h
-$O/src/physicalProcess/carsPhysicalProcess/CarsPhysicalProcess.o: src/physicalProcess/carsPhysicalProcess/CarsPhysicalProcess.cc \
+  /usr/include/glib-2.0/glib/glist.h \
+  /usr/include/glib-2.0/glib/gbacktrace.h \
   src/CastaliaMessages.h \
+  /usr/include/glib-2.0/glib/deprecated/gcompletion.h \
+  /usr/include/glib-2.0/glib/gtypes.h \
+  /usr/include/glib-2.0/glib/gversion.h \
+  /usr/include/glib-2.0/glib/gthread.h \
+  /usr/include/glib-2.0/glib/gkeyfile.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/domparser.h \
+  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
+  /usr/include/glib-2.0/glib/deprecated/grel.h \
+  src/node/sensorManager/SensorManagerMessage_m.h \
+  /usr/include/libxml++-2.6/libxml++/attribute.h \
+  /usr/include/glib-2.0/glib/gbytes.h \
+  /usr/include/glib-2.0/glib/ggettext.h \
+  /usr/include/glib-2.0/glib/ghmac.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/parse_error.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  /usr/include/glib-2.0/glib/galloca.h \
+  /usr/include/libxml++-2.6/libxml++/validators/schemavalidator.h \
+  /usr/include/glib-2.0/glib/gbookmarkfile.h \
+  /usr/include/glib-2.0/glib/gquark.h \
+  src/attacks/conditionalattack/conditionalattack/ConditionalAttack.h \
+  /usr/lib/libxml++-2.6/include/libxml++config.h \
+  /usr/include/glib-2.0/glib/gcharset.h \
+  src/utils/utils.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/commentnode.h \
+  src/action/Change.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/textreader.h \
+  src/wirelessChannel/WirelessChannelMessages_m.h \
+  /usr/include/glib-2.0/glib/gshell.h \
+  /usr/include/glib-2.0/glib/deprecated/gmain.h \
+  src/node/application/distanceTest/DistanceTestPacket_m.h \
+  /usr/include/glib-2.0/glib/gunicode.h \
+  /usr/include/glib-2.0/glib/deprecated/gthread.h \
+  src/PacketTypes.h \
+  /usr/include/glib-2.0/glib/gstring.h \
+  /usr/include/glib-2.0/glib/gthreadpool.h \
+  src/attacks/conditionalattack/packetfilter/FilterBlock.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/saxparser.h \
+  /usr/include/glib-2.0/glib/gvarianttype.h \
+  /usr/include/glib-2.0/glib/gnode.h \
+  /usr/include/glib-2.0/glib/gmappedfile.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/contentnode.h \
+  src/action/Drop.h \
+  src/node/communication/mac/baselineBanMac/BaselineMacPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/attributedeclaration.h \
+  /usr/include/glib-2.0/glib/giochannel.h \
+  /usr/include/glib-2.0/glib/gslice.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingRrepPacket_m.h \
+  src/action/Create.h \
+  src/action/Destroy.h \
+  /usr/include/glib-2.0/glib/gversionmacros.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingDataPacket_m.h \
+  src/node/communication/mac/tunableMac/TunableMacPacket_m.h \
+  src/attacks/attackbase/Attack.h \
+  src/node/communication/routing/aodvRouting/PacketId_m.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/processinginstructionnode.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/xincludeend.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  /usr/include/glib-2.0/glib.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/validity_error.h \
+  /usr/include/libxml++-2.6/libxml++/attributenode.h \
+  src/node/communication/routing/aodvRouting/AodvRoutingPacket_m.h \
+  /usr/include/glib-2.0/glib/gbitlock.h \
+  /usr/include/glib-2.0/glib/grand.h \
+  /usr/include/libxml++-2.6/libxml++/validators/validator.h \
+  src/attacks/attackentry/Entry.h \
+  /usr/include/glib-2.0/glib/gqsort.h \
+  /usr/include/glib-2.0/glib/gasyncqueue.h \
+  /usr/include/libxml++-2.6/libxml++/document.h \
+  /usr/include/glibmm-2.4/glibmm/ustring.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/action/Put.h \
+  /usr/include/glib-2.0/glib/gstringchunk.h \
+  src/variable/Variable.h \
+  /usr/include/glib-2.0/glib/gatomic.h \
+  /usr/include/glib-2.0/glib/gfileutils.h \
+  /usr/include/glib-2.0/glib/deprecated/gallocator.h \
+  /usr/include/glib-2.0/glib/ghash.h \
+  /usr/include/glib-2.0/glib/gqueue.h \
+  /usr/include/glib-2.0/glib/gutils.h \
+  /usr/include/glib-2.0/glib/gmessages.h \
+  /usr/include/glib-2.0/glib/gregex.h \
+  /usr/include/glib-2.0/glib/gsequence.h \
+  /usr/include/glib-2.0/glib/gspawn.h \
+  /usr/include/glib-2.0/glib/gtimezone.h \
+  /usr/include/glib-2.0/glib/gmain.h \
+  src/attacks/conditionalattack/packetfilter/PacketFilter.h \
+  /usr/include/glib-2.0/glib/gtree.h \
+  src/action/Fakeread.h \
+  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
+  /usr/include/glibmm-2.4/glibmm/unicode.h \
+  /usr/include/glib-2.0/glib/gscanner.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/dtd.h \
+  /usr/include/glib-2.0/glib/gtrashstack.h \
+  src/action/Move.h \
+  /usr/include/glib-2.0/glib/gchecksum.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/xincludestart.h \
+  src/action/Action.h \
+  /usr/include/glib-2.0/glib/gdatetime.h \
+  /usr/include/glib-2.0/glib/gmacros.h \
+  /usr/include/libxml++-2.6/libxml++/parsers/parser.h \
+  /usr/include/glib-2.0/glib/gdataset.h \
+  /usr/include/glib-2.0/glib/gdir.h \
+  /usr/include/glib-2.0/glib/gslist.h \
+  /usr/include/glib-2.0/glib/gconvert.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/entitydeclaration.h \
+  src/attacks/unconditionalattack/PhysicalAttack.h \
+  /usr/include/glib-2.0/glib/ghook.h \
+  /usr/include/libxml++-2.6/libxml++/noncopyable.h \
+  src/action/Retrieve.h \
+  /usr/include/glib-2.0/glib/gerror.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/textnode.h \
+  /usr/include/glib-2.0/glib/gvariant.h \
+  /usr/include/glib-2.0/glib/gtestutils.h \
+  src/node/application/ApplicationPacket_m.h \
+  /usr/include/glib-2.0/glib/gurifuncs.h \
+  /usr/include/glib-2.0/glib/deprecated/gcache.h \
+  /usr/include/glib-2.0/glib/gmarkup.h \
   src/physicalProcess/PhysicalProcessMessage_m.h \
-  src/physicalProcess/carsPhysicalProcess/CarsPhysicalProcess.h \
+  /usr/include/glib-2.0/glib/gtimer.h \
+  /usr/include/glib-2.0/glib/gwin32.h \
+  /usr/include/libxml++-2.6/libxml++/nodes/element.h \
+  src/parser/parser.h \
+  /usr/include/glib-2.0/glib/goption.h \
+  src/node/communication/routing/bypassRouting/BypassRoutingPacket_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/tMac/TMacPacket_m.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/exception.h \
+  /usr/include/libxml++-2.6/libxml++/exceptions/internal_error.h
+$O/src/physicalProcess/carsPhysicalProcess/CarsPhysicalProcess.o: src/physicalProcess/carsPhysicalProcess/CarsPhysicalProcess.cc \
   src/node/resourceManager/ResourceManagerMessage_m.h \
   src/helpStructures/DebugInfoWriter.h \
-  src/helpStructures/CastaliaModule.h
+  src/physicalProcess/PhysicalProcessMessage_m.h \
+  src/CastaliaMessages.h \
+  src/helpStructures/CastaliaModule.h \
+  src/physicalProcess/carsPhysicalProcess/CarsPhysicalProcess.h
 $O/src/physicalProcess/customizablePhysicalProcess/CustomizablePhysicalProcess.o: src/physicalProcess/customizablePhysicalProcess/CustomizablePhysicalProcess.cc \
+  src/CastaliaMessages.h \
   src/helpStructures/CastaliaModule.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
   src/physicalProcess/customizablePhysicalProcess/CustomizablePhysicalProcess.h \
   src/physicalProcess/PhysicalProcessMessage_m.h \
-  src/CastaliaMessages.h
+  src/helpStructures/DebugInfoWriter.h
 $O/src/utils/utils.o: src/utils/utils.cc \
-  src/utils/utils.h \
-  src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/RoutingPacket_m.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
   src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/CastaliaMessages.h
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/mac/MacPacket_m.h \
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
+  src/node/communication/routing/RoutingPacket_m.h \
+  src/utils/utils.h
 $O/src/variable/Variable.o: src/variable/Variable.cc \
   src/CastaliaMessages.h \
-  src/helpStructures/DebugInfoWriter.h \
-  src/node/resourceManager/ResourceManagerMessage_m.h \
   src/node/communication/routing/RoutingPacket_m.h \
-  src/helpStructures/CastaliaModule.h \
-  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h \
-  src/variable/Variable.h \
-  src/utils/utils.h \
   src/node/communication/mac/MacPacket_m.h \
-  src/node/communication/mac/mac802154/Mac802154Packet_m.h
-$O/src/wirelessChannel/WirelessChannel.o: src/wirelessChannel/WirelessChannel.cc \
   src/helpStructures/CastaliaModule.h \
-  src/helpStructures/DebugInfoWriter.h \
+  src/utils/utils.h \
+  src/variable/Variable.h \
   src/node/resourceManager/ResourceManagerMessage_m.h \
-  src/wirelessChannel/WirelessChannelTemporal.h \
-  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/communication/mac/mac802154/Mac802154Packet_m.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/communication/routing/multipathRingsRouting/MultipathRingsRoutingPacket_m.h
+$O/src/wirelessChannel/WirelessChannel.o: src/wirelessChannel/WirelessChannel.cc \
   src/wirelessChannel/WirelessChannelMessages_m.h \
-  src/wirelessChannel/WirelessChannel.h \
-  src/CastaliaMessages.h
-$O/src/wirelessChannel/WirelessChannelMessages_m.o: src/wirelessChannel/WirelessChannelMessages_m.cc \
-  src/wirelessChannel/WirelessChannelMessages_m.h
+  src/helpStructures/CastaliaModule.h \
+  src/CastaliaMessages.h \
+  src/wirelessChannel/WirelessChannelTemporal.h \
+  src/helpStructures/DebugInfoWriter.h \
+  src/node/mobilityManager/VirtualMobilityManager.h \
+  src/node/resourceManager/ResourceManagerMessage_m.h \
+  src/wirelessChannel/WirelessChannel.h
 $O/src/wirelessChannel/WirelessChannelTemporal.o: src/wirelessChannel/WirelessChannelTemporal.cc \
   src/wirelessChannel/WirelessChannelTemporal.h

@@ -38,16 +38,27 @@ Note: the simulator does not performs attacks, it only simulates the final effec
 Workflow
 ========
 Step 0
-The user has to build a simulation scenario (based on Castalia) by using the NED language.
+Build the simulator.
 
 Step 1
-The user has to produce an ASL file by using a simple text editor (and the ASL, of course). The ASL file, e.g. 'attacks.asl', contains the description of the attacks.
+Build a simulation scenario (based on Castalia) by using the NED language.
 
 Step 2
-The user has to invoke the interpreter. The interpreter take the ASL file 'attacks.asl' as input and produces the xml file 'attacks.xml'.
+Produce an ASL file by using a simple text editor (and the ASL, of course). The ASL file, e.g. 'attacks.asl', contains the description of the attacks.
 
 Step 3
-The user has to launch the simulation.
+Invoke the interpreter. The interpreter take the ASL file 'attacks.asl' as input and produces the xml file 'attacks.xml'.
+
+Step 4
+Launch the simulation.
+
+
+Build the simulator
+===================
+``` sh
+$ ./makemake
+$ make
+```
 
 
 User manual
