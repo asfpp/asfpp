@@ -10,7 +10,7 @@
 			<var><name>5000</name><value>5000</value><type>NUMBER</type></var>
 			<var><name>value</name><value>1234</value><type>NUMBER</type></var>
 			<var><name>"myapp"</name><value>myapp</value><type>STRING</type></var>
-			<filter>[:NET.sourcePort:==:1000|2000:]:[:NET.destPort:==:1024:]:AND</filter>
+			<filter>[:(:NET.sourcePort:%:3:):==:0:]</filter>
 
 			<action>
 				<name>Clone</name>

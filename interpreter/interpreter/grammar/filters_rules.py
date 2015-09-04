@@ -61,7 +61,7 @@ def p_filter_content_paren(p):
 
 # Handle composite condition
 def p_filter_elem_composite(p):
-    "filter_elem : LPAREN operand comp_operator operand RPAREN comp_operator operand"
+    "filter_elem : LPAREN operand arithmetic_operator operand RPAREN comp_operator operand"
     
     p[0] = "[" + ":" + str(p[1]) + ":" + str(p[2]) + ":" + str(p[3]) + ":" + str(p[4]) + ":" + str(p[5]) + ":" + str(p[6]) + ":" + str(p[7]) + ":" + "]"
     #print "[p_filter_elem_composite] filter_elem: " + str(p[0])
@@ -69,7 +69,7 @@ def p_filter_elem_composite(p):
 
 # Handle composite condition reverse
 def p_filter_elem_composite_reverse(p):
-    "filter_elem : operand comp_operator LPAREN operand comp_operator operand RPAREN"
+    "filter_elem : operand comp_operator LPAREN operand arithmetic_operator operand RPAREN"
     
     # Re-assemble condition as in 'p_filter_elem_composite'
     p[0] = "[" + ":" + str(p[3]) + ":" + str(p[4]) + ":" + str(p[5]) + ":" + str(p[6]) + ":" + str(p[7]) + ":" + str(p[2]) + ":" + str(p[1]) + ":" + "]"
@@ -106,7 +106,19 @@ def p_comp_operator(p):
                   | LESSTHAN
                   | GREQTHAN
                   | LEQTHAN
-                  | MODULE
+    """
+    
+    p[0] = p[1]
+
+
+# Arithmetic operator
+def p_arithmetic_operator(p):
+    """
+    arithmetic_operator : PLUS
+                        | MINUS
+                        | TIMES
+                        | DIVIDE
+                        | MODULE
     """
     
     p[0] = p[1]
