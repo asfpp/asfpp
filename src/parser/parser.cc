@@ -296,10 +296,11 @@ bool Parser::attackInit(const xmlpp::Node* xml_attack, Attack* attack, SimTime& 
 			if(action_name == "Drop") {
 
 				//debug<<"\n-> DROP"<<endl;
-
-				Drop* drop = new Drop();
-
-				drop->setPacketName(tokens[1]);
+                string packetName = tokens[1];
+                double threshold = atof(tokens[3].c_str());
+				
+                Drop* drop = new Drop(threshold);
+				drop->setPacketName(packetName);
 				//debug<<"\t-> Packet Name "<<tokens[1]<<endl;
 
 				attack->addAction(drop);

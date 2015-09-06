@@ -13,7 +13,7 @@
 
 			<action>
 				<name>Drop</name>
-				<parameters>packetName:original:likelyhood:1</parameters>
+				<parameters>packetName:original:threshold:1</parameters>
 			</action>
 
 			<action>

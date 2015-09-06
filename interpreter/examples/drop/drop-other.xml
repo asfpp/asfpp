@@ -16,7 +16,7 @@
 
 			<action>
 				<name>Drop</name>
-				<parameters>packetName:dolly:likelyhood:1</parameters>
+				<parameters>packetName:dolly:threshold:1</parameters>
 			</action>
 		</Attack>
 

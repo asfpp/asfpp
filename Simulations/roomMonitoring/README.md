@@ -4,17 +4,17 @@ Usage
 $ ../../bin/Castalia -c config
 $ ./compute.sh
 $ cd plot
-$ gnuplot plot.plt
+plot$ gnuplot plot.plt
 ```
 
 
 Example
 =======
 ``` sh
-$ ../../bin/Castalia -c ChangeCluster1
+$ ../../bin/Castalia -c DropCluster1
 $ ./compute.sh
 $ cd plot
-$ gnuplot plot.plt
+plot$ gnuplot plot.plt
 ```
 
 

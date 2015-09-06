@@ -141,7 +141,7 @@ def p_statement_fakeread(p):
 
 # drop (packet p, signed_double likelyhood)
 def p_statement_drop(p):
-    "logical_statement : DROP LPAREN arg_id COMMA arg_likelyhood RPAREN"
+    "logical_statement : DROP LPAREN arg_id COMMA arg_number RPAREN"
     
     if p[3] != "original":
         packet_check(p[3], p.lineno(1))

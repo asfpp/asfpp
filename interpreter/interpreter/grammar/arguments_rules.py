@@ -129,13 +129,3 @@ def p_argsPair_create(p):
     
     p[0] = str(p[1]) + ":" + str(p[3])
 
-
-# Likelyhood
-def p_arg_likelyhood(p):
-    """
-    arg_likelyhood : RND
-                   | INTEGER
-                   | REAL
-    """
-    
-    p[0] = str(p[1])

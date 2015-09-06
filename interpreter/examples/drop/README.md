@@ -9,11 +9,11 @@ It is a logical primitive, i.e. a primitive that can be used in conditional or u
 
 Sintax
 ======
-drop(packetName, likelyhood)
+drop(packetName, threshold)
 
 args:
  + packetName is the name of the packet to drop
- + likelyhood is the probability that the drop action occurs
+ + threshold defines the probability that the drop action occurs
 
 
 Usage of the interpreter

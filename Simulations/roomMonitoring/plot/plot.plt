@@ -1,6 +1,6 @@
 set terminal postscript eps enhanced color "Times-New-Roman" 18
 set grid
-set output "test.eps"
+set output "simulation-result.eps"
 set xlabel "Time (s)"
 set ylabel "Celsius"
 set key left
