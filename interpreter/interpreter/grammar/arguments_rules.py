@@ -24,78 +24,82 @@ from engine.utilities import check_layer_name
 from config import *
 
 
-# List members
-def p_listMembers(p):
-    "listMembers : listMembers COMMA listMembers"
-    
-    p[0] = str(p[1]) + "|" + str(p[3])
-
-
-# Member of a list
-def p_listMember(p):
-    "listMembers : INTEGER"
-    
-    p[0] = str(p[1])
-
-
-# Number
-def p_arg_number(p):
+# Unsigned real
+def p_unsigned_real(p):
     """
-    arg_number : REAL
-               | INTEGER
-    """
-    
-    p[0] = str(p[1])
-
-
-# Signed number
-def p_arg_signed_number(p):
-    """arg_signed_number : REAL
-                         | SIGNED_REAL
-                         | INTEGER
-                         | SIGNED_INTEGER
-    """
-    
-    p[0] = str(p[1])
-
-
-# Multi-type
-def p_arg_multiType(p):
-    """
-    arg_multiType : REAL
+    unsigned_real : REAL
                   | INTEGER
-                  | STRING
-                  | ID
     """
     
-    p[0] =  str(p[1])
+    p[0] = str(p[1])
+
+
+# Signed real
+def p_signed_real(p):
+    """
+    signed_real : REAL
+                | SIGNED_REAL
+                | INTEGER
+                | SIGNED_INTEGER
+    """
+    
+    p[0] = str(p[1])
 
 
 # Boolean
-def p_arg_boolean(p):
+def p_boolean(p):
     """
-    arg_boolean : TRUE
-                | FALSE
+    boolean : TRUE
+            | FALSE
     """
     
     p[0] = str(p[1]).lower()
 
 
-# Direction (of the transmission)
-def p_arg_direction(p):
+# Arg multi type
+def p_layer_field_pair(p):
+    "layer_field_pair : STRING"
+    
+    # Remove quotes
+    p[0] = p[1].replace("\"", "")
+
+
+# Arg multi type
+def p_multi_type(p):
     """
-    arg_direction : TX
-                  | RX
+    multi_type : INTEGER
+               | SIGNED_INTEGER
+               | REAL
+               | SIGNED_REAL
+               | STRING
+               | ID
+    """
+    
+    p[0] =  str(p[1])
+
+
+# Node id
+def p_node_id(p):
+    "node_id : INTEGER"
+    
+    p[0] = str(p[1])
+
+
+# Time
+def p_time(p):
+    """
+    time : INTEGER
+         | REAL
     """
     
     p[0] = str(p[1])
 
 
 # Identifier
-def p_arg_id(p):
+def p_identifier(p):
     """
-    arg_id : ID
-           | ORIGINAL
+    identifier : ID
+               | ORIGINAL
     """
     
     # Check if the ID is present in the global symbol dictionary (i.e. it refers to a list)
@@ -113,19 +117,97 @@ def p_arg_id(p):
         p[0] = str(p[1])
 
 
-# List of arguments (for the primitive 'create')
-def p_args_create(p):
-    "args_create : args_create COMMA args_create"
+# Sensor id (actually used only by fakeread)
+def p_sensor_id(p):
+    "sensor_id : INTEGER"
+    
+    p[0] = str(p[1])
+
+
+# Noise 4 args (actually used only by fakeread)
+def p_noise_4_args(p):
+    "noise_4_args : CON"
+    
+    p[0] = str(p[1])
+
+
+# Noise 5 args (actually used only by fakeread)
+def p_noise_5_args(p):
+    """
+    noise_5_args : FIX
+                 | SEN
+                 | SAT
+                 | MIN
+                 | MAX
+                 | AVG
+                 | INF
+                 | SUP
+                 | MED
+                 | SGN
+                 | RND
+                 | LIN
+    """
+    
+    p[0] = str(p[1])
+
+
+# Noise 6 args (actually used only by fakeread)
+def p_noise_6_args(p):
+    """
+    noise_6_args : SYM
+                 | SHP
+    """
+    
+    p[0] = str(p[1])
+
+
+# Noise 7 args (actually used only by fakeread)
+def p_noise_7_args(p):
+    """
+    noise_7_args : SIN
+                 | SAW
+                 | TRI
+                 | SQR
+    """
+    
+    p[0] = str(p[1])
+
+
+# Direction (actually used only by put)
+def p_direction(p):
+    """
+    direction : TX
+              | RX
+    """
+    
+    p[0] = str(p[1])
+
+
+# Threshold (actually used only by drop)
+def p_threshold(p):
+    """
+    threshold : INTEGER
+              | REAL
+    """
+    
+    if float(p[1]) <= 1.0:
+        p[0] = str(p[1])
+    else:
+        raise ValueError("Threshold must be in the interval [0,1]")
+
+
+# Create list (actually used only by create)
+def p_create_list(p):
+    "create_list : create_list COMMA create_list"
     
     p[0] = str(p[1]) + ":" + str(p[3])
 
 
-# Argument pair (for the primitive 'create': <layer.field, value>)
-def p_argsPair_create(p):
-    "args_create : STRING COMMA arg_multiType"
+# Create pair (actually used only by create)
+def p_create_pair(p):
+    "create_list : STRING COMMA multi_type"
     
     if check_layer_name(p[1]) == False:
         print_error("Error: layer name unknown, you can use only: APP or NET or MAC", str(p.lineno(1)))
     
     p[0] = str(p[1]) + ":" + str(p[3])
-

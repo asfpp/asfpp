@@ -90,7 +90,9 @@ def p_right_operand(p):
     operand : ID
             | STRING
             | INTEGER
+            | SIGNED_INTEGER
             | REAL
+            | SIGNED_REAL
             | SELF
     """
     

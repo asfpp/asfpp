@@ -12,4 +12,4 @@ fakeread(1, 50, 0, rnd, 0, 2, 25)
 fakeread(2, 100, 0, sin, 0.1, 5, 100, 0, 0)
 
 # tampers the sensor 0 of node 3 from time 200, it applies the noise 'lin'
-fakeread(3, 200, 0, lin, 0, 0.05, 25)
+fakeread(3, 200, 0, lin, 0, 0.05, -25)

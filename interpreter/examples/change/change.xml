@@ -7,9 +7,9 @@
 		<Attack>
 			<start_time>100</start_time>
 			<node>1</node>
-			<var><name>5000</name><value>5000</value><type>NUMBER</type></var>
-			<var><name>value</name><value>1234</value><type>NUMBER</type></var>
+			<var><name>value</name><value>-1234</value><type>NUMBER</type></var>
 			<var><name>"myapp"</name><value>myapp</value><type>STRING</type></var>
+			<var><name>5000.1</name><value>5000.1</value><type>NUMBER</type></var>
 			<filter>[:NET.sourcePort:==:1000:]</filter>
 
 			<action>
@@ -24,7 +24,7 @@
 
 			<action>
 				<name>Change</name>
-				<parameters>packetName:original:field_name:NET.destPort:value:5000</parameters>
+				<parameters>packetName:original:field_name:NET.destPort:value:5000.1</parameters>
 			</action>
 
 			<action>

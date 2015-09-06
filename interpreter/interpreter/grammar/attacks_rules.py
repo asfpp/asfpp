@@ -45,7 +45,7 @@ def p_attack(p):
 
 # Conditional attack
 def p_conditional_attack(p):
-    "conditional_attack : FROM number NODES IN ID DO LCBRACKET filter_codeblock RCBRACKET"
+    "conditional_attack : FROM time NODES IN list_id DO LCBRACKET filter_codeblock RCBRACKET"
     
     # Check if the node list has been declared
     if str(p[5]) not in lists.keys():
@@ -64,7 +64,7 @@ def p_conditional_attack(p):
 
 # Unconditional attack
 def p_unconditional_attack(p):
-    'unconditional_attack : FROM number EVERY number DO LCBRACKET codeblock RCBRACKET'
+    'unconditional_attack : FROM time EVERY time DO LCBRACKET codeblock RCBRACKET'
     
     # Build the attack and add it to the unconditional attack list
     attack = UnconditionalAttack(p[2], p[4], variables, actions)

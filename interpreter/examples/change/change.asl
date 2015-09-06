@@ -20,7 +20,7 @@ from 100 nodes in targetList do {
 		packet dolly
 		
 		# declare and initialize a variable
-		var value = 1234
+		var value = -1234
 		
 		# clone the original packet
 		clone(original, dolly)
@@ -29,8 +29,8 @@ from 100 nodes in targetList do {
     	change(original, "APP.appName", "myapp")
     	
 		# change the field 'destPort' of the layer 'NET' with the value 5000 (NUMBER)
-    	change(original, "NET.destPort", 5000)
-    	
+    	change(original, "NET.destPort", 5000.1)
+        
     	# change the field 'destPort' of the layer 'NET' with the value contained in the variable value
     	change(dolly, "NET.destPort", value)
 

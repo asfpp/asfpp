@@ -96,7 +96,9 @@ def p_expression_string(p):
 def p_expression_number(p):
     """
     expression : INTEGER 
+               | SIGNED_INTEGER
                | REAL
+               | SIGNED_REAL
     """
     
     # If the number is not in the variable table add it

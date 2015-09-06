@@ -34,7 +34,6 @@ precedence = (
 # Program
 def p_program(p):
     "program : global_entries"
-    #print "program: " + str(p[1])
 
 
 # Global entries
@@ -44,12 +43,32 @@ def p_global_entries(p):
                     | list_statement
                     | global_entries global_entries
     """
-    #print "global_entries: " + str(p[1])
 
 
+# List id
+def p_list_id(p):
+    "list_id : ID"
+    
+    p[0] = str(p[1])
+
+
+# List members
+def p_list_members(p):
+    "list_members : list_members COMMA list_members"
+    
+    p[0] = str(p[1]) + "|" + str(p[3])
+
+
+# List member
+def p_list_member(p):
+    "list_members : INTEGER"
+    
+    p[0] = str(p[1])
+    
+    
 # List definition
 def p_statement_list(p):
-    "list_statement : LIST ID EQUALS LCBRACKET listMembers RCBRACKET"
+    "list_statement : LIST list_id EQUALS LCBRACKET list_members RCBRACKET"
     
     # Check if the list identifier is already declared
     if (str(p[2]) in global_symbol_table.keys() or str(p[2]) in symbol_table.keys()):
@@ -58,41 +77,28 @@ def p_statement_list(p):
     else:
         # Add the list identifier to the global symbol table
         global_symbol_table[str(p[2])] = "LIST"
-        lists[str(p[2])] = p[5]
-
-
-# Occurrence time
-def p_time(p):
-    """
-    number : INTEGER
-           | REAL
-    """
+        lists[str(p[2])] = p[5]  
     
-    p[0] = str(p[1])
-
 
 # Filter codeblock
 def p_filter_codeblock(p):
     "filter_codeblock : filter_code codeblock"
 
-    p[0] = p[1]
-    #print "filter_codeblock: " + str(p[0])
-    #print "filter_code: " + str(p[1])
-    #print "codeblock: " + str(p[2])
-    
+    p[0] = p[1]    
+
+
 # Codeblock
 def p_codeblock(p):
     "codeblock : statements"
-    #print "codeblock " + str(p[1])
     
 
 # Statements (logical primitives; variable declaration-initialization; packet declaration)
 def p_statements(p):
-    """statements : statement
-                  | logical_statement
-                  | statements statements
     """
-    #print "statements: " + str(p[1])
+    statements : statement
+               | logical_statement
+               | statements statements
+    """
     
 
 # Variable initialization
@@ -145,6 +151,8 @@ def p_init_real(p):
     """
     init : REAL
          | INTEGER
+         | SIGNED_REAL
+         | SIGNED_INTEGER
     """
     
     p[0] = "<value>" + str(p[1]) + "</value><type>NUMBER</type>"
@@ -179,13 +187,6 @@ def p_args_original(p):
     "args : ORIGINAL"
     
     p[0] = "original"
-	
-
-# Argument is the keyword "rnd"
-def p_arg_rnd(p):
-    "args : RND"
-    
-    p[0] = "rnd"
 
 
 # Argument
@@ -194,6 +195,8 @@ def p_args_simple(p):
     args : REAL
          | INTEGER
          | STRING
+         | SIGNED_INTEGER
+         | SIGNED_REAL
          | TX
          | RX
          | SELF

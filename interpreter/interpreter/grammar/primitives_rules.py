@@ -39,7 +39,7 @@ from config import *
 
 # destroy(int nodeID, double occurrence_time)
 def p_statement_destroy(p):
-    "physical_statement : DESTROY LPAREN INTEGER COMMA arg_number RPAREN"
+    "physical_statement : DESTROY LPAREN node_id COMMA unsigned_real RPAREN"
     
     # 'destroy' invocations are grouped according to their occurrence time
     if not p[5] in destroy_actions.keys():
@@ -51,7 +51,7 @@ def p_statement_destroy(p):
 
 # disable(int nodeID, double occurrence_time)
 def p_statement_disable(p):
-    "physical_statement : DISABLE LPAREN INTEGER COMMA arg_number RPAREN"
+    "physical_statement : DISABLE LPAREN node_id COMMA time RPAREN"
     
     # 'disable' invocations are grouped according to their occurrence time
     if not p[5] in disable_actions.keys():
@@ -63,7 +63,7 @@ def p_statement_disable(p):
 
 # move(int nodeID, double occurrence_time, double coord_x, double coord_y, double coord_z)
 def p_statement_move(p):
-    "physical_statement : MOVE LPAREN INTEGER COMMA arg_number COMMA arg_number COMMA arg_number COMMA arg_number RPAREN"
+    "physical_statement : MOVE LPAREN node_id COMMA time COMMA unsigned_real COMMA unsigned_real COMMA unsigned_real RPAREN"
     
     # 'move' invocations are grouped according to their occurrence time. They are also further sub-grouped according to specified coordinates
     moveArgs = "" + str(p[7]) + ":" + str(p[9]) + ":" + str(p[11])
@@ -81,25 +81,10 @@ def p_statement_move(p):
 # 'fakeread' is an overloaded primitive
 def p_statement_fakeread(p):
     """
-    physical_statement : FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA CON COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA FIX COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SEN COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SAT COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA MIN COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA MAX COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA AVG COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA INF COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SUP COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA MED COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SGN COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA RND COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA LIN COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SYM COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SHP COMMA arg_signed_number COMMA arg_signed_number COMMA arg_number COMMA arg_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SIN COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SQR COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA SAW COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
-                       | FAKEREAD LPAREN INTEGER COMMA arg_number COMMA INTEGER COMMA TRI COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number COMMA arg_signed_number RPAREN
+    physical_statement : FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA noise_4_args COMMA signed_real COMMA signed_real RPAREN
+                       | FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA noise_5_args COMMA signed_real COMMA signed_real COMMA signed_real RPAREN
+                       | FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA noise_6_args COMMA signed_real COMMA signed_real COMMA signed_real COMMA signed_real RPAREN
+                       | FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA noise_7_args COMMA signed_real COMMA signed_real COMMA signed_real COMMA signed_real COMMA signed_real RPAREN
     """
     
     if p[9] in Fakeread.argc4noises:
@@ -139,9 +124,9 @@ def p_statement_fakeread(p):
             fakeread_argc7_actions[p[5]][fakeread_args] = fakeread_argc7_actions[p[5]][fakeread_args] + ":" + str(p[3])
 
 
-# drop (packet p, signed_double likelyhood)
+# drop (packet p, signed_double threshold)
 def p_statement_drop(p):
-    "logical_statement : DROP LPAREN arg_id COMMA arg_number RPAREN"
+    "logical_statement : DROP LPAREN identifier COMMA threshold RPAREN"
     
     if p[3] != "original":
         packet_check(p[3], p.lineno(1))
@@ -153,7 +138,7 @@ def p_statement_drop(p):
 
 # send (packet p, double delay)
 def p_statement_send(p):
-    "logical_statement : SEND LPAREN arg_id COMMA arg_number RPAREN"
+    "logical_statement : SEND LPAREN identifier COMMA unsigned_real RPAREN"
     
     if p[3] != "original":
         packet_check(p[3], p.lineno(1))
@@ -165,7 +150,7 @@ def p_statement_send(p):
 
 # clone (srcPacket p1, dstPacket p2)
 def p_statement_clone(p):
-    "logical_statement : CLONE LPAREN arg_id COMMA arg_id RPAREN"
+    "logical_statement : CLONE LPAREN identifier COMMA identifier RPAREN"
     
     if p[3] != "original":
         packet_check(p[3], p.lineno(1))
@@ -178,7 +163,7 @@ def p_statement_clone(p):
 
 # create (packet p, string layer1.type, type_t content1, string layer2.type, type_t content2, ...)
 def p_statement_create(p):
-    "logical_statement : CREATE LPAREN arg_id COMMA args_create RPAREN"
+    "logical_statement : CREATE LPAREN identifier COMMA create_list RPAREN"
     
     packet_check(p[3], p.lineno(1))
     
@@ -190,16 +175,16 @@ def p_statement_create(p):
 
 # change (packet p, string layer.field, type_t content)
 def p_statement_change(p):
-    "logical_statement : CHANGE LPAREN arg_id COMMA STRING COMMA arg_multiType RPAREN"
+    "logical_statement : CHANGE LPAREN identifier COMMA layer_field_pair COMMA multi_type RPAREN"
     
     # Check the third argument
     if p[3] != "original":
         packet_check(p[3], p.lineno(1))
     
-    # p[7] is multiType (NUMBER, STRING, ID) 
+    # p[7] is multi_type (NUMBER, STRING, ID) 
     if p[7] not in reserved_name and p[7] not in symbol_table.keys():
         
-        re_pattern = r"^[0-9]"
+        re_pattern = r"^-?[0-9].[0-9]"
         pattern = re.compile(re_pattern)
         
         # Add an entry in the variable table if STRING is not present in it
@@ -236,7 +221,7 @@ def p_statement_change(p):
 
 # retrieve (packet p, string layer.field, ID content)
 def p_statement_retrieve(p):
-    "logical_statement : RETRIEVE LPAREN arg_id COMMA STRING COMMA arg_id RPAREN"
+    "logical_statement : RETRIEVE LPAREN identifier COMMA layer_field_pair COMMA identifier RPAREN"
     
     if p[3] != "original":
         packet_check(p[3], p.lineno(1))
@@ -264,7 +249,7 @@ def p_statement_retrieve(p):
 
 # put (packet p, list dstNodes, direction dir, bool updateStat, double delay)
 def p_statement_put(p):
-    "logical_statement : PUT LPAREN arg_id COMMA arg_id COMMA arg_direction COMMA arg_boolean COMMA arg_number RPAREN"
+    "logical_statement : PUT LPAREN identifier COMMA identifier COMMA direction COMMA boolean COMMA unsigned_real RPAREN"
     
     if p[3] != "original":
         packet_check(p[3], p.lineno(1))

@@ -10,7 +10,7 @@
 
 			<action>
 				<name>Fakeread</name>
-				<parameters>0:lin:0:0.05:25</parameters>
+				<parameters>0:lin:0:0.05:-25</parameters>
 			</action>
 		</Attack>
 
