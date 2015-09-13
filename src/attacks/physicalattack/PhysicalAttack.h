@@ -13,6 +13,7 @@
 #include "Fakeread.h"
 #include "CastaliaModule.h"
 #include "Attack.h"
+#include "Disable.h"
 
 
 using namespace std;
@@ -25,7 +26,8 @@ class PhysicalAttack : public Attack {
 	virtual ~PhysicalAttack() {}
 	
 	void execute(bool& destroyed, vector< vector<Noise> >& theNoises, vector< vector< vector<double> > >& theNoisesParams, vector< vector<double> >& theNoisesValues, vector< vector<double> >& theSensorsValues); // <F.R.>
-	
+	// only for disable
+    void execute();
 };
 
 #endif

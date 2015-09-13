@@ -16,8 +16,7 @@ cp cluster1_round_avg plot/cluster1_round_avg
 cp cluster2_round_avg plot/cluster2_round_avg
 cp cluster3_round_avg plot/cluster3_round_avg
 
-echo "File moved in folder 'plot'"
+echo "Files moved in folder 'plot'"
 
 rm *.txt
 rm *_avg
-

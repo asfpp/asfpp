@@ -9,6 +9,8 @@
 #ifndef PARSE_H
 #define PARSE_H
 
+#include <omnetpp.h>
+
 #include <libxml++/libxml++.h>
 #include <vector>
 
@@ -20,10 +22,14 @@
 #include "ASFExpression.h"
 #include "utils.h"
 #include "Fakeread.h" // <F.R.>
+#include "Disable.h" // <F.R.>
 
 class Parser{
 
 	private:
+
+        // actually used only by disable
+        cModule* callerNode;
 
 		string xmlFile;
 		int nodeID; // It is -1 in case the parsing is performed by the GlobalFilter module
@@ -40,7 +46,7 @@ class Parser{
 		string get_node_value(const xmlpp::Node* node);
 
 	public:
-		Parser(const string xmlFilename, const string appName,  const string netProtocol, const string macProtocol, int nodeID = -1, SensorManager* sensorModule = NULL, VirtualMobilityManager* mobModule = NULL);
+		Parser(cModule* callerNode, const string xmlFilename, const string appName,  const string netProtocol, const string macProtocol, int nodeID = -1, SensorManager* sensorModule = NULL, VirtualMobilityManager* mobModule = NULL);
 		~Parser();
 
 		void parse(const string attackTypeName, vector<Entry*>& attacksVector);

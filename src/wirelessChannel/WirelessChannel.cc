@@ -433,8 +433,14 @@ void WirelessChannel::handleMessage(cMessage * msg)
 					receptioncount++;
 					WirelessChannelSignalBegin *signalMsgCopy = signalMsg->dup();
 					signalMsgCopy->setPower_dBm(currentSignalReceived);
-					send(signalMsgCopy, "toNode", *it2);
-					nodesAffectedByTransmitter[srcAddr].push_front(*it2);
+					
+                    // check if the gate is connected outside <F.R.>
+                    cGate* gateToCheck = gate("toNode", *it2);
+                    if (gateToCheck->isConnectedOutside()) {
+                        send(signalMsgCopy, "toNode", *it2);
+					}
+                    
+                    nodesAffectedByTransmitter[srcAddr].push_front(*it2);
 				}	//for it2
 			}	//for it1
 
@@ -456,7 +462,14 @@ void WirelessChannel::handleMessage(cMessage * msg)
 			for (it1 = nodesAffectedByTransmitter[srcAddr].begin();
 					it1 != nodesAffectedByTransmitter[srcAddr].end(); it1++) {
 				WirelessChannelSignalEnd *signalMsgCopy = signalMsg->dup();
-				send(signalMsgCopy, "toNode", *it1);
+				
+                // check if the gate is connected outside <F.R.>
+                cGate* gateToCheck = gate("toNode", *it1);
+                if (gateToCheck->isConnectedOutside()) {
+                    send(signalMsgCopy, "toNode", *it1);
+                }
+                
+                
 			}	//for it1
 
 			/* Now that we are done processing the msg we delete the whole list

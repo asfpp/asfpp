@@ -48,9 +48,9 @@ simple WirelessChannel {
 												// individual nodes
 
  gates:
- 	output toNode[];
+ 	output toNode[] @loose;
 	output toGlobalFilter;
 	input fromMobilityModule @ directIn;
-	input fromNode[];
+	input fromNode[] @loose;
 	input fromGlobalFilter;
 }

@@ -20,7 +20,9 @@ string Parser::get_node_value(const xmlpp::Node* node) {
  * In such a case, pointers to the SensorManager and MobilityManager remain set to NULL.
  * This is not an issue, since the GlobalFilter does not perform physical attacks and does not require to access such modules.
  */
-Parser::Parser(const string xmlFilename, const string appName, const string netProtocol, const string macProtocol, int node, SensorManager* sensor, VirtualMobilityManager* mobility ){
+Parser::Parser(cModule* callerNode, const string xmlFilename, const string appName, const string netProtocol, const string macProtocol, int node, SensorManager* sensor, VirtualMobilityManager* mobility ){
+
+    this->callerNode = callerNode;
 
 	xmlFile = xmlFilename;
 	applicationName = appName;
@@ -182,6 +184,15 @@ bool Parser::attackInit(const xmlpp::Node* xml_attack, Attack* attack, SimTime& 
 			  	
 				Destroy *destroy = new Destroy();
 				attack->addAction(destroy);
+				//debug<< "-> Add Destroy Action"<<endl;
+				
+			}
+            
+            /* "Disable" does not require any additional parameters */
+			if(action_name == "Disable") {
+			  	
+				Disable *disable = new Disable(callerNode);
+				attack->addAction(disable);
 				//debug<< "-> Add Destroy Action"<<endl;
 				
 			}

@@ -6,8 +6,8 @@
  * thanks to it is possible to perform Conditional and Physical attacks. 
  *
  *
- * Author : Alessandro Pischedda
- * E-mail : alessandro.pischedda@gmail.com
+ * Author : Alessandro Pischedda, Francesco Racciatti
+ * E-mail : alessandro.pischedda@gmail.com, racciatti.francesco@gmail.com
  */
 
 #ifndef _LOCAL_FILTER_H_
@@ -16,6 +16,8 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include <omnetpp.h>
 
 #include <libxml++/libxml++.h>
 #include <algorithm>
@@ -42,7 +44,8 @@
 
 
 #include "parser.h"
-#include "Fakeread.h"	// <F.R.>
+#include "Fakeread.h"
+#include "ExMachina.h"
 
 
 enum attackTimer {

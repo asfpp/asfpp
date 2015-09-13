@@ -21,8 +21,3 @@ plot$ gnuplot plot.plt
 Authors
 =======
 + Francesco Racciatti  	<racciatti.francesco@gmail.com>
-
-
-Maintainer
-==========
-+ Francesco Racciatti	<racciatti.francesco@gmail.com>

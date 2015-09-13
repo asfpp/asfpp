@@ -6,13 +6,11 @@ It is not much flexible.
 Authors:
  + Alessandro Pischedda <alessandro.pischedda@gmail.com>
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
-Maintainer:
- + Francesco Racciatti <racciatti.francesco@gmail.com>
 """
 
 
-# This software is used to compute the average of different run. It's a beta version and isn't much flexible.
+# This software is used to compute the average of different run. 
+# It's a beta version and isn't much flexible.
 # The output filename is the original one plus "_avg".
 #
 # Usage: python average.py <filename>

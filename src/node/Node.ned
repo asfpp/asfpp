@@ -35,11 +35,11 @@ module Node {
 	string MobilityManagerName = default ("NoMobilityManager");	//the name of the implemented Mobility Module
 
  gates:
-	output toWirelessChannel;
+	output toWirelessChannel @loose;
 	output toPhysicalProcess[];
 	output toGlobalFilter; // M.T.
 	output toLogger; // M.T.
-	input fromWirelessChannel;
+	input fromWirelessChannel @loose;
 	input fromPhysicalProcess[];
 	input fromGlobalFilter; // M.T.
 
@@ -54,7 +54,7 @@ module Node {
 	Communication: node.communication.CommunicationModule;
 	Application: <ApplicationName> like node.application.iApplication;
 
- connections:
+ connections allowunconnected:
 	Communication.toNodeContainerModule --> toWirelessChannel;
 	fromWirelessChannel --> Communication.fromNodeContainerModule;
 	Application.toCommunicationModule --> Communication.fromApplicationModule;

@@ -4,9 +4,6 @@ Round data to the nearest multiple of 10.
 Authors:
  + Alessandro Pischedda <alessandro.pischedda@gmail.com>
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
-Maintainer:
- + Francesco Racciatti <racciatti.francesco@gmail.com>
 """
 
 import sys

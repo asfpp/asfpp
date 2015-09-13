@@ -36,3 +36,14 @@ Attack::~Attack() {
 
 }
 
+
+Action* Attack::getAction (size_t index) const {
+    
+    if (index >= actions.size())
+        opp_error("[Attack::getAction(size_t)] Error, index passed is out of bound");
+    
+    return actions[index];
+    
+    
+}
+

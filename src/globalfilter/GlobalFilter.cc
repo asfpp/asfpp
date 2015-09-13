@@ -27,7 +27,7 @@ void GlobalFilter::attackInit() {
 	if(configurationFile == "none")
 		return;
 
-	Parser parser( configurationFile, applicationName, routingProtocolName, macProtocolName );
+	Parser parser( static_cast<cModule*>(this), configurationFile, applicationName, routingProtocolName, macProtocolName );
 
 	/* Parse the attack configuration file, and fill the unconditionalAttacks vector */
 	parser.parse("Unconditional", unconditionalAttacks);

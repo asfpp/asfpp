@@ -96,7 +96,10 @@ void LocalFilter::attackInit(int nodeID) {
 		trace() <<" -> no configuration file";	// <F.R.>
 		return;
 	}
-	Parser parser( configurationFile, applicationName, routingProtocolName, macProtocolName, nodeID, sensorModule, mobilityModule );
+    
+    cModule* callerNode = (getParentModule()->getParentModule());
+    
+	Parser parser( callerNode, configurationFile, applicationName, routingProtocolName, macProtocolName, nodeID, sensorModule, mobilityModule);
 
 	/* Fill the physicalAttacks vector */
 	parser.parse("Physical", physicalAttacks);
@@ -111,12 +114,62 @@ void LocalFilter::attackInit(int nodeID) {
 	if( logicalAttacks.size() > 0 )
 		sort(logicalAttacks.begin(), logicalAttacks.end(), entrySort);
 
-	/* Set timers of physical attacks */
-	for(int i = 0; i < physicalAttacks.size(); i++) {
+	// TODO remove, it is an old statement
+    // Set timers of physical attacks 
+	/*
+    for(int i = 0; i < physicalAttacks.size(); i++) {
 		cMessage* message = new cMessage("Start physical attack", PHYSICAL_ATTACK);
 		scheduleAt(physicalAttacks[i]->getTime(), message);
 	}
-
+    */
+       
+    // schedule self messages according to the occurrence time and attach to it the physical attacks, except disable attack
+    for (int i=0; i<physicalAttacks.size(); i++) {
+    
+        // get the attack
+        Attack* attack = physicalAttacks[i]->getAttack();
+        
+        // recognize the physical action 'disable' (physical attacks are made by a single physical action)
+        Action* action = attack->getAction(0);
+        
+        if (action->getName() == DISABLE) {
+            
+            // find the module 'ExMachina' in the network
+            cModule* network = (getParentModule()->getParentModule())->getParentModule();
+            cModule* subModule = nullptr;
+            bool exMachinaFound = false;
+            for (cModule::SubmoduleIterator iter(network); !iter.end(); iter++) {
+                subModule = iter();
+                string className = subModule->getClassName();
+                // ExMachina found
+                if (className == "ExMachina") {
+                    exMachinaFound = true;
+                    break;
+                }
+            }
+            
+            // if ExMachina found
+            if (exMachinaFound == true) {
+                ExMachina* exMachina = check_and_cast<ExMachina*>(subModule);
+                exMachina->scheduleDisableAttack(physicalAttacks[i]);
+            }
+            else {
+                opp_error("Error: ExMachina module not found in the network, please add it in the ned file");
+            }
+            
+            // adjust vector of physical attacks and index
+            physicalAttacks.erase(physicalAttacks.begin()+i);
+            i--;
+            
+        }
+        
+        // schedule other physical actions: destroy, move, fakeread
+        else {
+            cMessage* message = new cMessage("Start physical attack", PHYSICAL_ATTACK);
+            scheduleAt(physicalAttacks[i]->getTime(), message);
+        }
+    }
+    
 	/* Set timers of logical attacks */
 	for(int i = 0; i < logicalAttacks.size(); i++) {
 	  	
@@ -225,7 +278,6 @@ void LocalFilter::handleMessage(cMessage* msg)
 		switch(msgKind) {
 
 			case PHYSICAL_ATTACK:
-			  
 				trace()<<"-> Active Physical Attack";
 				PhysicalAttack *attack;	
 

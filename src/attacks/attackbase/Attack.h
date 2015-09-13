@@ -1,8 +1,8 @@
 /* 
  * This class represents a generic attack, defined as a sequence of actions. 
  *
- *  Author : Alessandro Pischedda
- *  e-mail : alessandro.pischedda@gmail.com
+ *  Author : Alessandro Pischedda, Francesco Racciatti
+ *  e-mail : alessandro.pischedda@gmail.com, racciatti.francesco@gmail.com
  */
 
 #ifndef ATTACK_H
@@ -40,6 +40,8 @@ class Attack {
 	cMessage* execute() {};
 	virtual void addAction(Action* action);
 	void addVarTable(const map<string, Variable*> varTable);
+    
+    Action* getAction(size_t index) const;
 		
 };
 

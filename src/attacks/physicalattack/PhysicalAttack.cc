@@ -35,3 +35,11 @@ void PhysicalAttack::execute(bool& destroyed, vector< vector<Noise> >& theNoises
 	}// END FOR
 
 }
+
+
+void PhysicalAttack::execute() {
+    
+    Disable* disable = (Disable*)(actions[0]);
+    disable->execute();
+    
+}
