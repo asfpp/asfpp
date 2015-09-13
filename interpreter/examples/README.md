@@ -1,17 +1,6 @@
 Description
 ============
-This is the interpreter of the Attack Specification Language (ASL) for ASF++.
-
-
-Source tree
-===========
-interpreter
- - interpreter/
- - examples/
-   
-Content of sub-dirs: 
- + interpreter contains the source code of the interpreter;
- + examples contains a complete set of examples of ASL usage.
+This is a set of examples of use of the interpreter of the Attack Specification Language (ASL) for ASF++.
  
 
 Usage
@@ -47,16 +36,9 @@ The interpreter produces always an '.xml' file.
 
 ASL details
 ===========
-To obtain further details on ASL (of ASF++) read the user manual or see the sub-dir 'examples'.
+To obtain further details on ASL (of ASF++) read the user manual or see the sub-dirs in 'examples'.
 
 
 Authors
 =======
-+ Alessandro Pischedda	<alessandro.pischedda@gmail.com>
-+ Marco Tiloca		    <marco.tiloca84@gmail.com>
 + Francesco Racciatti  	<racciatti.francesco@gmail.com>
-
-
-Maintainer
-==========
-+ Francesco Racciatti	<racciatti.francesco@gmail.com>

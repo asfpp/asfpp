@@ -15,7 +15,7 @@ list targetList = {1}
 from 100 nodes in targetList do {
 
 	# packet filter, it filters all packets having the field 'source' of the layer 'APP' equals to 1000
-	filter("APP.source" == "1000")
+	filter("APP.source" == 1000)
 		
 		# declare a packet
 		packet fakePacket

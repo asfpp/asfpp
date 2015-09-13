@@ -1,6 +1,9 @@
 Description
 ============
-Example of use of the 'expressions' in ASL.
+Example of physical attacks.
+
+A physical attack is an attack composed by a single physical primitive  (i.e. destroy, disable, move, fakeread).
+In this way, N different physical primitive correspond to N different physical attacks.
 
 
 Usage of the interpreter
@@ -18,19 +21,19 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i expression.asl -o expression.xml
+$ python ../../interpreter.py -i physical-attacks.asl -o physical-attacks.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i expression.asl
+$ python ../../interpreter.py -i physical-attacks.asl
 ```
 
 or you can use the pre-built bash script
 
 ``` sh
-$ ./expression.sh
+$ ./physical-attacks.sh
 ```
 
 

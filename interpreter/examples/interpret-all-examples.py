@@ -5,10 +5,7 @@ Interprets all example .asl files in sub-dirs.
 Usage:
  $ python interpret-all-examples.py
 
-Author:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
-Maintainer:
+Authors:
  + Francesco Racciatti  <racciatti.francesco@gmail.com>
  
 """

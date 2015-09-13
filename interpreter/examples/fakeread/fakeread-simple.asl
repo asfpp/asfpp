@@ -1,7 +1,7 @@
 # This is an example of ASL file that contains a set of fakeread actions.
 #
 # usage: 
-#  python ../../interpreter/interpreter.py -i fakeread.asl -o fakeread.xlm
+#  python ../../interpreter/interpreter.py -i fakeread-simple.asl -o fakeread-simple.xlm
 # 
 # author: Francesco Racciatti <racciatti.francesco@gmail.com>
 

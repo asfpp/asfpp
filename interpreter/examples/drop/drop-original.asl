@@ -13,7 +13,7 @@ list targetList = {1}
 from 100 nodes in targetList do {
 
 	# packet filter, it filters all packets having the field 'sourcePort' of the layer 'NET' equals to 1000
-	filter("NET.sourcePort" == "1000")
+	filter("NET.sourcePort" == 1000)
 
 		# drop the original intercepted packet
     	drop(original, 1)

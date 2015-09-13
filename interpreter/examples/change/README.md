@@ -23,7 +23,7 @@ Usage of the interpreter
 $ python path/interpreter.py -i inputfile -o outputfile
 ```
 
-or you can use the bash script for conveniente (if present, else you can build it):
+or you can use the bash script for convenience:
 
 ``` sh
 $ ./bash_script.sh
@@ -51,8 +51,3 @@ $ ./change.sh
 Authors
 =======
 + Francesco Racciatti  	<racciatti.francesco@gmail.com>
-
-
-Maintainer
-==========
-+ Francesco Racciatti	<racciatti.francesco@gmail.com>
