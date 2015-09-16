@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Conditional>
+
+		<Attack>
+			<start_time>200</start_time>
+			<node>9:10</node>
+			<var><name>1000</name><value>1000</value><type>NUMBER</type></var>
+			<filter>[:APP.sourceNodeID:==:9|10:]</filter>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:original:field_name:APP.data:value:1000</parameters>
+			</action>
+		</Attack>
+
+	</Conditional>
+
+</configuration>

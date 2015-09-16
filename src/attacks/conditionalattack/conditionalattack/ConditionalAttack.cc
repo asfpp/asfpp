@@ -167,7 +167,7 @@ void ConditionalAttack::execute(cMessage **packet, vector<cMessage*> &new_messag
 				packetTable[new_packet_name] = new_messages.size() - 1;
 				
 				break;
-								
+            
 			}
 
 			case CREATE:{

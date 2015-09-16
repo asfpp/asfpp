@@ -1,5 +1,6 @@
 #include "GlobalFilter.h"
 
+
 Define_Module(GlobalFilter);
 
 GlobalFilter::GlobalFilter() {
@@ -100,7 +101,7 @@ void GlobalFilter::handleMessage(cMessage* msg) {
 					break;
 
 				/* Compute the next time the attack will be performed */
-				new_time = attack->getFrequency() + simTime().dbl();
+				new_time = (attack->getFrequency()) + simTime().dbl();
 
 				/* Schedule next occurrance of the attack. Each message name is the index of the attack in the unconditionalAttacks vector. */
 				cMessage* message = new cMessage( msg->getName(), UNCONDITIONAL_ATTACK);

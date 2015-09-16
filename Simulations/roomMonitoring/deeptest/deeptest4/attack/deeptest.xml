@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Conditional>
+
+		<Attack>
+			<start_time>50</start_time>
+			<node>3:4:9:10:15:16</node>
+			<filter>[:APP.sourceNodeID:==:3|4|9|10|15|16:]</filter>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:fakePacket</parameters>
+			</action>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+		</Attack>
+
+	</Conditional>
+
+</configuration>

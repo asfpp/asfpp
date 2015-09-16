@@ -1,81 +1,129 @@
-#include "Change.h"
-
-Change::Change(const string field_name, const string new_value) : Action(CHANGE) {
-
-	vector<string> tokens;
-	
-	/* Split layer/field information */
-	tokenize(tokens, field_name, '.');
-
-	layer = layertoi (tokens[0]);
-	field = tokens[1];
-
-	value = new_value;
-
-}
-
-/* 
- * Modify the value of a certain filed (the name of the field is a private class information).
- * To access the correct field, and have a generic method, it uses the packet descriptor class. 
- * 
- * @param msg	is the packet to modify
+/**
+ * @file Change.cc
+ * @authors Francesco Racciatti <racciatti.francesco@gmail.com>
+ *          Alessandro Pischedda <alessandro.pischedda@gmail.com>
+ *          
  */
-void Change::execute(cMessage** msg, string new_value) {
 
-	cClassDescriptor* descriptor; 
-	cMessage* substitute_pkt = NULL; 
-	cMessage* temp_packet = NULL ;
 
-	int msgKind;
+#include "Change.h"
+#include "utils.h"
 
-	int field_int; // Integer associated to the field to be edited
 
-	msgKind = (*msg)->getKind();
-
-	/* Create a full copy of the original packet */
-	substitute_pkt = (cMessage* )hardCopy( (cPacket*)(*msg) );
-
-	temp_packet = substitute_pkt;
-
-	/* Retrieve the encapsulated packet until the right layer is reached */
-	while( msgKind < layer ) {
-
-		temp_packet = ((cPacket*)temp_packet)->getEncapsulatedPacket();
-
-		/* avoid the segmentation fault if you try to access to an encapsulated
-			packet doesn't exists in this packet. */
-		if( temp_packet == NULL){
-			string error_message = "\nYou try to access in a layer not contained in this packet,";
-			error_message+=" check carefully your filter specification";
-			opp_error(error_message.c_str());
-		}
-
-		msgKind = temp_packet->getKind();
-	}
-
-	/* Use the classDescriptor to access the field */
-	descriptor = cClassDescriptor::getDescriptorFor(temp_packet);
-
-	field_int = descriptor->findField(temp_packet, field.c_str());
-	
-	/* The specified field has not been found. This should never happen! */
-	if(field_int == -1){
-		string error_message = "\nCHANGE : The packet hasn't a field called "+field;
-		opp_error(error_message.c_str());
-	}
-
-	/* Edit the value of the specified field (it requires an integer to identify the right field) */
-	descriptor->setFieldAsString(temp_packet, field_int, 0, new_value.c_str());
-
-	/* Delete the original packet and replace it with the copy */
-	delete *msg;
-	*msg = substitute_pkt;
-	
+Change::Change (const string completePath, const string varName) : Action (CHANGE) {
+    
+    // split layer from the path of fields
+    vector<string> tokens = tokenize(completePath, '.');
+    // store the target layer
+    layer = layertoi(tokens[0]);
+    // store the target path of fields
+    for (size_t i = 1; i < tokens.size(); i++) {
+        this->pathOfFields.push_back(tokens[i]);
+    }
+    // store the name of the variable that contains the value
+    this->varName = varName;
+    
 }
 
-Change::~Change() {
 
-	field.clear();
-	value.clear();
+Change::~Change () {
   
 }
+
+
+void Change::execute (cMessage** msg, string value) {
+
+    // clone the original packet
+    cMessage* substituteMsg = (cMessage*)hardCopy((cPacket*)(*msg));
+    cMessage* encapsulatedMsg = substituteMsg;
+    
+    // get packet kind (usefull to determine its layer)
+    int msgKind = (*msg)->getKind();
+    
+    // de-caspulate packets until the right layer is reached 
+    while (msgKind < layer) {
+        
+        encapsulatedMsg = ((cPacket*)encapsulatedMsg)->getEncapsulatedPacket();
+        // check if the encapsulated packet exists
+        if (encapsulatedMsg==nullptr) {
+            opp_error("[void Change::execute(cMessage**, string)] The layer at which you tried to access does not exist in the current packet, please check the packet-filter");
+        }
+        msgKind = encapsulatedMsg->getKind();
+	
+    }
+    
+    // try to follow the path of fields until the last field is reached
+    cClassDescriptor* descriptor = cClassDescriptor::getDescriptorFor(encapsulatedMsg);
+    void* compoundField = (void*)encapsulatedMsg;
+    int fieldIndex = -1;
+    for (size_t i = 0; i < pathOfFields.size(); i++) {
+        
+        // the first entry is message's top field (if exists)
+        if (i==0) {
+            fieldIndex = descriptor->findField(encapsulatedMsg, pathOfFields[i].c_str());
+        }
+        else {
+            fieldIndex = descriptor->findField(compoundField, pathOfFields[i].c_str());
+        }
+        
+        // check if the searched field exists
+        if (fieldIndex==-1) {
+            string msgErr = "[void Change::execute(cMessage**, string)] The field '" + pathOfFields[i];
+            msgErr += "' in the indicated layer does not exist, please check the path of fields or the packet-filter";
+            opp_error(msgErr.c_str());
+        }
+        
+        // all entries (except the last) refer compound fields
+        if (i != pathOfFields.size()-1) {
+        
+            string structName;
+            
+            // get the pointer-to the compound field
+            if (i==0) {
+                structName = descriptor->getFieldStructName(encapsulatedMsg, fieldIndex);
+                compoundField = descriptor->getFieldStructPointer(encapsulatedMsg, fieldIndex, 0);
+            }
+            else {
+                structName = descriptor->getFieldStructName(compoundField, fieldIndex);
+                compoundField = descriptor->getFieldStructPointer(compoundField, fieldIndex, 0);
+            }
+            
+            // get the descriptor of the compound field
+            descriptor = cClassDescriptor::getDescriptorFor(structName.c_str());
+        
+        }
+        
+    }
+    
+    // change the content of the field
+    descriptor->setFieldAsString((cObject*)compoundField, fieldIndex, 0, value.c_str());
+    
+    // replace the original packet with its (tampered) clone
+    delete *msg;
+    *msg = substituteMsg;
+
+}
+
+
+string Change::getField () const {
+    
+    string monolithicPathOfFields;
+    for (size_t i = 0; i < pathOfFields.size(); i++) {
+        monolithicPathOfFields.append(pathOfFields[i]);
+        if (i != pathOfFields.size()-1) {
+            monolithicPathOfFields.append(".");
+        }
+    }
+    
+    return monolithicPathOfFields;
+    
+}
+
+
+string Change::getValue () const {
+    
+    return varName;
+    
+}
+
+

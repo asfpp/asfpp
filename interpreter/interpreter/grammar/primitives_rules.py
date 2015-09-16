@@ -184,7 +184,7 @@ def p_statement_change(p):
     # p[7] is multi_type (NUMBER, STRING, ID) 
     if p[7] not in reserved_name and p[7] not in symbol_table.keys():
         
-        re_pattern = r"^-?[0-9].[0-9]"
+        re_pattern = r"^-?\d+(\.\d+)?"
         pattern = re.compile(re_pattern)
         
         # Add an entry in the variable table if STRING is not present in it
@@ -214,6 +214,38 @@ def p_statement_change(p):
     if check_layer_name(p[5]) == False:
         print_error("Error: layer name unknown, you can use only: APP or NET or MAC", str(p.lineno(1)))
     
+    # Check coerency of layer_field structure "layer.field1.field2.field3 ..."
+    layer_field = str(p[5])
+    id_counter = 0
+    while len(layer_field) != 0:
+        # search identifier in the string head
+        try:
+            substring_found = re.search('^[a-zA-Z_][a-zA-Z_0-9]*', layer_field).group(0)
+            id_counter += 1
+        except AttributeError:
+            print_error("Error: layer.field attribute in change action has a bad structure, id missing", str(p.lineno(1)))
+        
+        # remove substring found
+        layer_field = layer_field.replace(substring_found, "", 1)
+        
+        if len(layer_field) == 0:
+            break;
+        
+        # search '.' in the string head
+        try:
+            substring_found = re.search('^\.', layer_field).group(0)
+        except AttributeError:
+            print_error("Error: layer.field attribute in change action has a bad structure, '.' missing", str(p.lineno(1)))
+        
+        layer_field = layer_field.replace(substring_found, "", 1)
+    
+        if len(layer_field) == 0:
+            print_error("Error: layer.field attribute in change action has a bad structure, id missing", str(p.lineno(1)))    
+    
+    if id_counter < 2:
+        print_error("Error: layer.field attribute in change action has a bad structure, field missing", str(p.lineno(1)))    
+    
+    # Coerency test passed, build the object
     args = str(p[3]) + ":" + str(p[5]) + ":" + str(p[7])
     action = Change(args)
     actions.append(action)
@@ -242,6 +274,38 @@ def p_statement_retrieve(p):
     if check_layer_name(p[5]) == False:
         print_error("Error: layer name unknown, you can use only: APP or NET or MAC", str(p.lineno(1)))
     
+    # Check coerency of layer_field structure "layer.field1.field2.field3 ..."
+    layer_field = str(p[5])
+    id_counter = 0
+    while len(layer_field) != 0:
+        # search identifier in the string head
+        try:
+            substring_found = re.search('^[a-zA-Z_][a-zA-Z_0-9]*', layer_field).group(0)
+            id_counter += 1
+        except AttributeError:
+            print_error("Error: layer.field attribute in retrieve action has a bad structure, id missing", str(p.lineno(1)))
+        
+        # remove substring found
+        layer_field = layer_field.replace(substring_found, "", 1)
+        
+        if len(layer_field) == 0:
+            break;
+        
+        # search '.' in the string head
+        try:
+            substring_found = re.search('^\.', layer_field).group(0)
+        except AttributeError:
+            print_error("Error: layer.field attribute in retrieve action has a bad structure, '.' missing", str(p.lineno(1)))
+        
+        layer_field = layer_field.replace(substring_found, "", 1)
+    
+        if len(layer_field) == 0:
+            print_error("Error: layer.field attribute in retrieve action has a bad structure, id missing", str(p.lineno(1)))    
+    
+    if id_counter < 2:
+        print_error("Error: layer.field attribute in retrieve action has a bad structure, field missing", str(p.lineno(1)))    
+    
+    # Coerency test passed, build the object
     args = str(p[3]) + ":" + str(p[5]) + ":" + str(p[7])
     action = Retrieve(args)
     actions.append(action)

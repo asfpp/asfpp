@@ -1,34 +1,45 @@
-/*
- * This action retrieves the value of a specified packet field of a given packet
- * The adopted format is LAYER.FIELD_NAME (e.g. APP.sourceNodeID)
- *
- *  Author : Alessandro Pischedda
- *  e-mail : alessandro.pischedda@gmail.com
+/**
+ * @file Retrieve.h
+ * @authors Francesco Racciatti <asfpp.francesco.racciatti@gmail.com>
+ *          Alessandro Pischedda <alessandro.pischedda@gmail.com>
+ * @brief The class Retrieve models the action 'retrieve'.
+ *        It retrieves the value of a specified field (even in a structure) of a given packet.
  */
+
 
 #ifndef RETRIEVE_H
 #define RETRIEVE_H
 
-#include <map>
 
 #include "Action.h"
+#include <vector>
+#include <omnetpp.h>
 #include "Variable.h"
-#include "utils.h"
+
 
 class Retrieve: public Action {
-
-	string field;		// Name of the field to be accessed
-	string variable_name;	// Variable where the retrieved value will be stored after being retrieved
-	
-	public:
-	  
-	Retrieve(const string field_name, const string var_name);
-	virtual ~Retrieve();
-	
-	Variable* execute(cMessage* packet) const;
-	string getField() const { return field; }
-	string getVarName() const { return variable_name; }
-		
+    
+    private:
+        // path to the field
+        vector<string> pathOfFields;
+        // name of the variable in which store the retrieved value
+        string varName;
+    
+    public:
+        Retrieve(const string completePath, const string varName);
+        virtual ~Retrieve();
+        
+        /**
+         * @brief Retrieve the value of the specified packet field.
+         * @param msg packet from which the field has to be retrieved
+         * @return pointer-to the variable that stores the retrieved value
+         */
+        Variable* execute(cMessage* msg) const;
+        
+        // TODO change in 'getMonolithicPathOfFields'
+        string getField() const;
+        string getVarName() const;
+    
 };
 
 #endif

@@ -31,7 +31,7 @@ def parse_options():
     epilog = "All arguments and options are mandatory"
     
     # The RawDescriptionHelpFormatter is required to show the epilog
-    parser = ArgumentParser(epilog=epilog, formatter_class=RawDescriptionHelpFormatter,version="%prog 0.9")
+    parser = ArgumentParser(epilog=epilog, formatter_class=RawDescriptionHelpFormatter,version="%prog 1.0")
     
     parser.add_argument("-i", "--input",
                         metavar = "\"INPUT\"",

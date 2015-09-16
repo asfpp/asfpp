@@ -1,4 +1,6 @@
 #include "parser.h"
+#include "SensorManager.h"
+
 
 /* Return either the content of an XML Text node (<tag>value</tag>), or an empty string if it is not a Text node 
  * A.P.
@@ -26,7 +28,8 @@ Parser::Parser(cModule* callerNode, const string xmlFilename, const string appNa
 
 	xmlFile = xmlFilename;
 	applicationName = appName;
-	macProtocolName = macProtocol;
+	routingProtocolName = netProtocol;
+    macProtocolName = macProtocol;
 
 	nodeID = node;
 
@@ -508,7 +511,7 @@ bool Parser::attackInit(const xmlpp::Node* xml_attack, Attack* attack, SimTime& 
 				//debug<<"\t-> NET.type "<<netType<<endl;
 				//debug<<"\t-> MAC.type "<<macType<<endl;
 
-				Create* create = new Create(applicationName, routingProtocolName, macProtocolName, appType, netType, macType);
+				Create* create = new Create(callerNode, applicationName, routingProtocolName, macProtocolName, appType, netType, macType);
 
 				create->setPacketName(packetName);
 				attack->addAction(create);

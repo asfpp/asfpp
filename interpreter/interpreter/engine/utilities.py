@@ -60,4 +60,4 @@ def print_error(error_msg, error_lineno):
     Print error messages
     """
     print error_msg + " - Line " + str(error_lineno)
-    raise SyntaxError
+    exit(-1)

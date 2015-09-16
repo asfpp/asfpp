@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Physical>
+
+		<Attack>
+			<start_time>200</start_time>
+			<node>9:10</node>
+
+			<action>
+				<name>Fakeread</name>
+				<parameters>0:sin:0.1:5:20:0:0</parameters>
+			</action>
+		</Attack>
+
+	</Physical>
+
+</configuration>

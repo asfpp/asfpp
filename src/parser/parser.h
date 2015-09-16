@@ -13,7 +13,7 @@
 
 #include <libxml++/libxml++.h>
 #include <vector>
-
+#include "SensorManager.h"
 #include "Entry.h"
 #include "PhysicalAttack.h"
 #include "ConditionalAttack.h"

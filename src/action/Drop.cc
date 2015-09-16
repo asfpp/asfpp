@@ -35,9 +35,11 @@ void Drop::execute(cMessage** packet) const{
     double draw = ((double)rand())/((double)RAND_MAX);
     
     // drop the packet if the random number is below to the threshold
-    if (draw < threshold) {
+    if (draw <= threshold) {
         delete *packet;
         *packet = nullptr;
     }
+    
+    
 	
 }

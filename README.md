@@ -55,10 +55,18 @@ Launch the simulation.
 
 Build the simulator
 ===================
+After building OMNeT++ 4.6 type:
+
 ``` sh
 $ ./makemake
 $ make
 ```
+
+Designed and tested
+===================
+ASF++ is based on Castalia 3.2. It was succesfully tested with:
+ + Ubuntu 14.04
+ + OMNeT++ 4.5, OMNeT++ 4.6
 
 
 User manual

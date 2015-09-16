@@ -1,7 +1,7 @@
 Description
 ============
-This tool is an interpreter for ASF++. The user/s can write attacks by using the Attack Specification Language (aka ASL) 
-available for ASF++. The interpreter parses the ASL file (which contains the attacks) and produces the Attack Configuration
+This tool is an interpreter for ASF++. The user can write attacks by using the Attack Specification Language (aka ASL).
+The interpreter parses the ASL file (containing the attacks) and produces the Attack Configuration
 File (aka ACF), i.e. an XML representation of the ASL file that is understandable by ASF++.
 
 

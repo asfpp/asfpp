@@ -99,7 +99,7 @@ void LocalFilter::attackInit(int nodeID) {
     
     cModule* callerNode = (getParentModule()->getParentModule());
     
-	Parser parser( callerNode, configurationFile, applicationName, routingProtocolName, macProtocolName, nodeID, sensorModule, mobilityModule);
+	Parser parser(callerNode, configurationFile, applicationName, routingProtocolName, macProtocolName, nodeID, sensorModule, mobilityModule);
 
 	/* Fill the physicalAttacks vector */
 	parser.parse("Physical", physicalAttacks);
@@ -823,11 +823,12 @@ void LocalFilter::handleMessage(cMessage* msg)
 
 					/* Send packets created during the attacks */
 					if(new_messages.size() != 0) {
-					  for(int i=0 ; i< new_messages.size(); i++) {
+                      
+                      for(int i=0 ; i< new_messages.size(); i++) {
 
 						/* The new packet has been destroyed after being created */
 						if(new_messages[i] == NULL) {
-						  
+                            
 						  trace()<<"-> the new message was deleted by drop action, thus IGNORE it";
 						  continue;
 
@@ -851,7 +852,7 @@ void LocalFilter::handleMessage(cMessage* msg)
 						  /* A "real" packet aimed to be sent to the right layer of the communication stack */
 						  default:{
 
-						    trace()<<" -> Clone/Create Packet";
+						    trace()<<" -> Clone/Create Packet, check";
 
 						    cClassDescriptor* descriptor; 
 						    int field_int, packetKind;
@@ -870,14 +871,15 @@ void LocalFilter::handleMessage(cMessage* msg)
 
 						    sended = descriptor->getFieldAsString(new_messages[i], field_int, 0);
 
-						    /* This packet must not be sent */
+						    //This packet must not be sent 
 						    if( sended == "0") {
 						      
 							trace()<<" -> someone has forgotten to send the new packet";
 							continue;
 							
 						    }
-
+                            
+                        
 						    /* The packet is sent to the layer below the current one */
 
 						    /* Set the field 'sended' to 0 */
@@ -893,7 +895,8 @@ void LocalFilter::handleMessage(cMessage* msg)
 							case APPLICATION_PACKET:{
 
 								trace()<<" -> send to toRoutingFromCommunication";
-								sendDelayed(new_messages[i], delays[i], "toRoutingFromCommunication");
+								send(new_messages[i], "toRoutingFromCommunication");
+                                //sendDelayed(new_messages[i], delays[i], "toRoutingFromCommunication");
 								break;
 
 							}

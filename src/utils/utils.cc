@@ -45,37 +45,44 @@ string dtos(const double number){
 int layertoi(const string layer) {
 
 	if(layer == "MAC")
-		return MAC_LAYER_PACKET;
+		return 30;
 	if(layer == "NET")
-		return NETWORK_LAYER_PACKET;
+		return 40;
 	if(layer == "APP")
-		return APPLICATION_PACKET;
-
-	string message = "ERROR : in the XML file -> the layer "+layer+" doesn't exist\n";
+		return 50;
+    
+    string message = "ERROR : in the XML file -> the layer "+layer+" doesn't exist\n";
 	opp_error(message.c_str());
 }
 
 
 int getPacketLayer(cPacket* packet) {
     
-    int kind = (int)(packet->getKind());
+    switch (packet->getKind()) {
     
-    switch (kind) {
-        
-        case APPLICATION_PACKET: {
-            return 5;
-        }
-        
-        case NETWORK_LAYER_PACKET: {
-            return 3;
-        }
-        
-        case MAC_LAYER_PACKET : {
-            return 2;
-        }
-        
-    }    
-    
+        case(NODE_STARTUP):{return 0;}
+        case(TIMER_SERVICE):{return 0;}
+        case(OUT_OF_ENERGY):{return 0;}
+        case(DESTROY_NODE):{return 0;}
+        case(SENSOR_READING_MESSAGE):{return 0;}
+        case(RESOURCE_MANAGER_DRAW_POWER):{return 0;}
+        case(PHYSICAL_PROCESS_SAMPLING):{return 0;}
+        case(WC_SIGNAL_START):{return 0;}
+        case(WC_SIGNAL_END):{return 0;}
+        case(WC_NODE_MOVEMENT):{return 0;}
+        case(RADIO_CONTROL_MESSAGE):{return 20;}
+        case(RADIO_CONTROL_COMMAND):{return 20;}
+        case(RADIO_ENTER_STATE):{return 20;}
+        case(RADIO_CONTINUE_TX):{return 20;}
+        case(MAC_LAYER_PACKET):{return 30;}
+        case(MAC_CONTROL_MESSAGE):{return 30;}
+        case(MAC_CONTROL_COMMAND):{return 30;}
+        case(NETWORK_LAYER_PACKET):{return 40;}
+        case(NETWORK_CONTROL_MESSAGE):{return 40;}
+        case(NETWORK_CONTROL_COMMAND):{return 40;}
+        case(APPLICATION_PACKET):{return 50;}
+        default:{opp_error("Cannot recognize the packet kind");}
+    }
 }
 
 void setFilteredRecursively(cMessage* packet, const int value) {

@@ -1,4 +1,8 @@
-# destroy cluster 1
+# Destroy cluster-1's packets.
+#
+# author: Francesco Racciatti <racciatti.francesco@gmail.com>
+
+# cluster-1: 1, 2, 7, 8, 13, 14
 destroy(1, 100)
 destroy(2, 100)
 destroy(7, 100)

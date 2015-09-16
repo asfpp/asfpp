@@ -18,5 +18,5 @@ cp cluster3_round_avg plot/cluster3_round_avg
 
 echo "Files moved in folder 'plot'"
 
-rm *.txt
+#rm *.txt
 rm *_avg
