@@ -1,5 +1,5 @@
 #include "LocalFilter.h"
-
+#include "RoomMonitoringPacket_m.h"
 Define_Module(LocalFilter);
 
 /* This function is used by the std::sort to sort the physicalAttacks and logicalAttacks vectors */
@@ -773,10 +773,11 @@ void LocalFilter::handleMessage(cMessage* msg)
 				}
 
 				logic_attack = (ConditionalAttack *)(logicalAttacks[i]->getAttack());
+                
 
 				/* Check whether the intercepted packet match with the packet filter */
 				if(logic_attack->matchFilter(msg)) {
-				  
+                  
 					/* Positive match: the attack is executed */
 
 					trace()<<"-> Filter Matched";
@@ -933,6 +934,10 @@ void LocalFilter::handleMessage(cMessage* msg)
 					return;
 
 				} // END IF logic_attack->matchFilter(msg)
+
+                else {
+                    trace()<<" -> does not match packet-filter";
+                }
 
 			} // END FOR
 		

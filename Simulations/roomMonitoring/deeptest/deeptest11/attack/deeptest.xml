@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Conditional>
+
+		<Attack>
+			<start_time>50</start_time>
+			<node>3:4:9:10:15:16</node>
+			<var><name>source</name><value>0</value><type>NUMBER</type></var>
+			<var><name>sourceNodeID</name><value>0</value><type>NUMBER</type></var>
+			<var><name>sequenceNumber</name><value>0</value><type>NUMBER</type></var>
+			<var><name>applicationID</name><value>0</value><type>NUMBER</type></var>
+			<var><name>timestamp</name><value>0</value><type>NUMBER</type></var>
+			<var><name>destination</name><value>0</value><type>NUMBER</type></var>
+			<var><name>data</name><value>110</value><type>NUMBER</type></var>
+			<filter>[:APP.sourceNodeID:==:3|4|9|10|15|16:]</filter>
+
+			<action>
+				<name>Retrieve</name>
+				<parameters>packetName:original:field_name:APP.applicationID:varName:applicationID</parameters>
+			</action>
+
+			<action>
+				<name>Retrieve</name>
+				<parameters>packetName:original:field_name:APP.sequenceNumber:varName:sequenceNumber</parameters>
+			</action>
+
+			<action>
+				<name>Retrieve</name>
+				<parameters>packetName:original:field_name:APP.sourceNodeID:varName:sourceNodeID</parameters>
+			</action>
+
+			<action>
+				<name>Retrieve</name>
+				<parameters>packetName:original:field_name:APP.appNetInfoExchange.source:varName:source</parameters>
+			</action>
+
+			<action>
+				<name>Retrieve</name>
+				<parameters>packetName:original:field_name:APP.appNetInfoExchange.destination:varName:destination</parameters>
+			</action>
+
+			<action>
+				<name>Retrieve</name>
+				<parameters>packetName:original:field_name:APP.appNetInfoExchange.timestamp:varName:timestamp</parameters>
+			</action>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket:field_name:APP.applicationID:value:applicationID</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket:field_name:APP.sequenceNumber:value:sequenceNumber</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket:field_name:APP.sourceNodeID:value:sourceNodeID</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket:field_name:APP.data:value:data</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket:field_name:APP.appNetInfoExchange.source:value:source</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket:field_name:APP.appNetInfoExchange.destination:value:destination</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket:field_name:APP.appNetInfoExchange.timestamp:value:timestamp</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:fakePacket:delay:0</parameters>
+			</action>
+		</Attack>
+
+	</Conditional>
+
+</configuration>

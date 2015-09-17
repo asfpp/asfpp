@@ -10,7 +10,7 @@
 			<var><name>value</name><value>-1234</value><type>NUMBER</type></var>
 			<var><name>"myapp"</name><value>myapp</value><type>STRING</type></var>
 			<var><name>5000.1</name><value>5000.1</value><type>NUMBER</type></var>
-			<filter>[:NET.sourcePort:==:1000:]</filter>
+			<filter>[:APP.source:==:2:]:[:NET.may:==:3:]:OR:[:APP.sousou:==:2:]:AND</filter>
 
 			<action>
 				<name>Clone</name>

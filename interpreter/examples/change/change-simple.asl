@@ -14,7 +14,7 @@ list targetList = {1}
 from 100 nodes in targetList do {
 
 	# packet filter, it filters all packets having the field 'sourcePort' of the layer 'NET' equals to 1000
-	filter("NET.sourcePort" == 1000)
+	filter((("APP.source"==2) or ("NET.may"==3)) and ("APP.sousou" == 2))
 		
 		# declare a packet
 		packet dolly

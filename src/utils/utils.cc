@@ -1,4 +1,6 @@
 #include "utils.h"
+#include "stdlib.h"
+
 
 void tokenize(vector<string>& tokens, const string str, const char delim) {
     

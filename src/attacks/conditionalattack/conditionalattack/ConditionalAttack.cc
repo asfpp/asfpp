@@ -1,5 +1,4 @@
 #include "ConditionalAttack.h"
-#include "RoutingPacket_m.h"
 
 ConditionalAttack::ConditionalAttack():Attack() {
 

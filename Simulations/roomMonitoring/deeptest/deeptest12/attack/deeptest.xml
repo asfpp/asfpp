@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Unconditional>
+
+		<Attack>
+			<start_time>50</start_time>
+			<frequency>0.1</frequency>
+			<var><name>10</name><value>10</value><type>NUMBER</type></var>
+			<var><name>15</name><value>15</value><type>NUMBER</type></var>
+			<var><name>16</name><value>16</value><type>NUMBER</type></var>
+			<var><name>seqNumb</name><value>10000</value><type>NUMBER</type></var>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>0</name><value>0</value><type>NUMBER</type></var>
+			<var><name>3</name><value>3</value><type>NUMBER</type></var>
+			<var><name>4</name><value>4</value><type>NUMBER</type></var>
+			<var><name>9</name><value>9</value><type>NUMBER</type></var>
+			<var><name>20</name><value>20</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket3:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket4:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket9:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket10:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket15:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket16:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket3:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket4:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket9:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket10:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket15:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket16:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket3:field_name:APP.sourceNodeID:value:3</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket4:field_name:APP.sourceNodeID:value:4</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket9:field_name:APP.sourceNodeID:value:9</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket10:field_name:APP.sourceNodeID:value:10</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket15:field_name:APP.sourceNodeID:value:15</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket16:field_name:APP.sourceNodeID:value:16</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket3:field_name:APP.data:value:20</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket4:field_name:APP.data:value:20</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket9:field_name:APP.data:value:20</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket10:field_name:APP.data:value:20</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket15:field_name:APP.data:value:20</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket16:field_name:APP.data:value:20</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket3:field_name:APP.appNetInfoExchange.source:value:3</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket4:field_name:APP.appNetInfoExchange.source:value:4</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket9:field_name:APP.appNetInfoExchange.source:value:9</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket10:field_name:APP.appNetInfoExchange.source:value:10</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket15:field_name:APP.appNetInfoExchange.source:value:15</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket16:field_name:APP.appNetInfoExchange.source:value:16</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket3:field_name:APP.appNetInfoExchange.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket4:field_name:APP.appNetInfoExchange.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket9:field_name:APP.appNetInfoExchange.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket10:field_name:APP.appNetInfoExchange.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket15:field_name:APP.appNetInfoExchange.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket16:field_name:APP.appNetInfoExchange.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket3:nodes:3:direction:TX:throughWC:false:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket4:nodes:4:direction:TX:throughWC:false:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket9:nodes:9:direction:TX:throughWC:false:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket10:nodes:10:direction:TX:throughWC:false:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket15:nodes:15:direction:TX:throughWC:false:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket16:nodes:16:direction:TX:throughWC:false:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>seqNumb</item>
+			</action>
+		</Attack>
+
+	</Unconditional>
+
+</configuration>

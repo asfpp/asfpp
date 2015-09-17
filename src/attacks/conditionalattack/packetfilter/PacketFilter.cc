@@ -8,14 +8,17 @@
 #include "ElementaryBlock.h"
 #include "CompoundBlock.h"
 #include "utils.h"
+#include <algorithm>
 
 
 PacketFilter::PacketFilter (string monolithicPacketFilter) {
+    
     
     // split monolithicPacketFilter in single elements
     vector<string> filterElements = tokenize(monolithicPacketFilter, ':');
     
     // build blocks and logical conditions (tadily)
+    vector<string> reverseLogicalOperators;
     for (size_t i = 0; i < filterElements.size(); i++) {
         
         // build block
@@ -42,12 +45,15 @@ PacketFilter::PacketFilter (string monolithicPacketFilter) {
 
         }
         
-        // logical conditions, insert in reverse order
+        // logical conditions (stored in inverse order)
         if (filterElements[i] == "AND" || filterElements[i] == "OR") {
-            filterOperators.insert(filterOperators.begin(), filterElements[i]);
+            filterOperators.push_back(filterElements[i]);
         }
-                
+    
     }
+    
+    // reverse filter logical operators
+    std::reverse(filterOperators.begin(), filterOperators.end());
     
 }
 
@@ -63,7 +69,7 @@ PacketFilter::~PacketFilter () {
 
 
 bool PacketFilter::isMatchingPacketFilter (cPacket* packet) const {
-
+    
     // solve all filter blocks for the current packet
     vector<bool> solvedBlocks;
     for (size_t i = 0; i < filterBlocks.size(); i++) {
@@ -72,31 +78,47 @@ bool PacketFilter::isMatchingPacketFilter (cPacket* packet) const {
     
     // duplicate filter operators
     vector<string> operators (filterOperators);
-    
+    // append an OR operator for convenience
+    operators.push_back("OR");
+
     // solve ANDs
-    for (size_t i = 0; i < operators.size(); ) {
+    for (size_t i = 0; i < operators.size(); i++) {
+        
+        // solve the chain of ANDs
         if (operators[i] == "AND") {
-            solvedBlocks[i] = solvedBlocks[i] && solvedBlocks[i+1];
-            solvedBlocks.erase(solvedBlocks.begin() + i + 1);
-            operators.erase(operators.begin() + i);
+            
+            bool result = solvedBlocks[i];
+            for (size_t j = i; j < operators.size(); j++) {
+                
+                if (operators[j] == "AND") {
+                    // solve AND left to right
+                    result = result && solvedBlocks[j+1];
+                }
+                else {
+                    // return true if the result is true (it is a logical operand between ORs)
+                    if (result == true) {
+                        return true;
+                    }
+                    
+                    // update the main index and break the sub-loop
+                    i = j;
+                    break;
+                }
+                
+            }
+            
         }
         else {
-            i++;
+            // return true if the result is true (it is a logical operand between ORs)
+            if (solvedBlocks[i] == true) {
+                return true;
+            }
+            
         }
+        
     }
-    
-    // solve the packet filter (remain only ORs)
-    bool isMatching = false;
-    for (size_t i=0; i < solvedBlocks.size(); i++) {
-        isMatching = isMatching || solvedBlocks[i];
-    }
-    
-    return isMatching;
+
+    return false;
     
 }
-
-
-
-
-
 
