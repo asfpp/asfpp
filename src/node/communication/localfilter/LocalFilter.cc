@@ -1,5 +1,11 @@
 #include "LocalFilter.h"
+#include "DestroyRequest_m.h"
+#include "EntryWrapper.h"
 #include "RoomMonitoringPacket_m.h"
+#include <time.h>
+#include <omnetpp.h>
+
+
 Define_Module(LocalFilter);
 
 /* This function is used by the std::sort to sort the physicalAttacks and logicalAttacks vectors */
@@ -13,7 +19,7 @@ bool entrySort(Entry* a, Entry* b) {
 LocalFilter::LocalFilter() {
 
     falseAttackIndex = 0;
-	
+
 }
 
 LocalFilter::~LocalFilter() {
@@ -50,7 +56,9 @@ void LocalFilter::initializeGates() {
 	arrivalGatesList.push_back("fromCommunicationToRadio");
 	arrivalGatesList.push_back("fromCommunicationToRouting");
 	arrivalGatesList.push_back("fromRoutingToCommunication");
-	
+	arrivalGatesList.push_back("fromSensorDeviceManagerToApplicationIn");
+    arrivalGatesList.push_back("fromApplicationToSensorDeviceManagerIn");
+    
 	senderGatesList.push_back("toMacFromRouting");
 	senderGatesList.push_back("toRoutingFromMac");
 	senderGatesList.push_back("toRadioFromMac");
@@ -59,7 +67,8 @@ void LocalFilter::initializeGates() {
 	senderGatesList.push_back("toRadioFromCommunication");
 	senderGatesList.push_back("toRoutingFromCommunication");
 	senderGatesList.push_back("toCommunicationFromRouting");	
-
+    senderGatesList.push_back("fromSensorDeviceManagerToApplicationOut");
+    senderGatesList.push_back("fromApplicationToSensorDeviceManagerOut");
 	it1 = arrivalGatesList.begin();
 	it2 = senderGatesList.begin();
 	
@@ -92,14 +101,12 @@ void LocalFilter::attackInit(int nodeID) {
 	trace() << "-> XML : "<< configurationFile;
 	
 	/* There is no configuration attack file */
-	if(configurationFile == "none"){
-		trace() <<" -> no configuration file";	// <F.R.>
+	if(configurationFile == "none")
 		return;
-	}
-    
-    cModule* callerNode = (getParentModule()->getParentModule());
-    
-	Parser parser(callerNode, configurationFile, applicationName, routingProtocolName, macProtocolName, nodeID, sensorModule, mobilityModule);
+
+    cModule* targetNode = getParentModule()->getParentModule();
+
+	Parser parser(targetNode, configurationFile, applicationName, routingProtocolName, macProtocolName, nodeID, sensorModule, mobilityModule );
 
 	/* Fill the physicalAttacks vector */
 	parser.parse("Physical", physicalAttacks);
@@ -114,48 +121,22 @@ void LocalFilter::attackInit(int nodeID) {
 	if( logicalAttacks.size() > 0 )
 		sort(logicalAttacks.begin(), logicalAttacks.end(), entrySort);
 
-	// TODO remove, it is an old statement
-    // Set timers of physical attacks 
-	/*
-    for(int i = 0; i < physicalAttacks.size(); i++) {
-		cMessage* message = new cMessage("Start physical attack", PHYSICAL_ATTACK);
-		scheduleAt(physicalAttacks[i]->getTime(), message);
-	}
-    */
-       
-    // schedule self messages according to the occurrence time and attach to it the physical attacks, except disable attack
+	// schedule self messages according to the occurrence time and attach to it the physical attacks, except destroy attack
     for (int i=0; i<physicalAttacks.size(); i++) {
     
         // get the attack
         Attack* attack = physicalAttacks[i]->getAttack();
         
-        // recognize the physical action 'disable' (physical attacks are made by a single physical action)
+        // recognize the physical action 'destroy' (physical attacks consists of a single physical action)
         Action* action = attack->getAction(0);
         
-        if (action->getName() == DISABLE) {
-            
-            // find the module 'ExMachina' in the network
-            cModule* network = (getParentModule()->getParentModule())->getParentModule();
-            cModule* subModule = nullptr;
-            bool exMachinaFound = false;
-            for (cModule::SubmoduleIterator iter(network); !iter.end(); iter++) {
-                subModule = iter();
-                string className = subModule->getClassName();
-                // ExMachina found
-                if (className == "ExMachina") {
-                    exMachinaFound = true;
-                    break;
-                }
-            }
-            
-            // if ExMachina found
-            if (exMachinaFound == true) {
-                ExMachina* exMachina = check_and_cast<ExMachina*>(subModule);
-                exMachina->scheduleDisableAttack(physicalAttacks[i]);
-            }
-            else {
-                opp_error("Error: ExMachina module not found in the network, please add it in the ned file");
-            }
+        if (action->getName() == DESTROY) {
+            // build an EntryWrapper for the current physical attack (i.e. the action destroy)
+            EntryWrapper entryWrapper = EntryWrapper(physicalAttacks[i]);
+            // send a destroyRequest to the global-filter
+            DestroyRequest* destroyRequest = new DestroyRequest("DestroyRequest");
+            destroyRequest->setEntryWrapper(entryWrapper);
+            send(destroyRequest, "toGlobalFilter");
             
             // adjust vector of physical attacks and index
             physicalAttacks.erase(physicalAttacks.begin()+i);
@@ -163,13 +144,15 @@ void LocalFilter::attackInit(int nodeID) {
             
         }
         
-        // schedule other physical actions: destroy, move, fakeread
+        // schedule other physical actions: disable, move, fakeread
         else {
             cMessage* message = new cMessage("Start physical attack", PHYSICAL_ATTACK);
             scheduleAt(physicalAttacks[i]->getTime(), message);
         }
     }
     
+    
+
 	/* Set timers of logical attacks */
 	for(int i = 0; i < logicalAttacks.size(); i++) {
 	  	
@@ -215,44 +198,11 @@ void LocalFilter::initialize() {
 
 	injected_bytes = 0;
 
-	// <F.R.>
-	// Retrieve the number of sensors and build the fakeread data structures
-	sensorManager = check_and_cast <SensorManager*>(getParentModule()->getParentModule()->getSubmodule("SensorManager"));
-	int numberOfSensors = sensorManager->getNumSensingDevices();
-	
-	for( int i=0; i<numberOfSensors; i++){
-		
-		// build the first layer of noises vector
-		noises.push_back( vector<Noise>() );
-		
-		// build the first layer of noisesParams vector
-		noisesParams.push_back( vector< vector<double> >() );
-		
-		// build the first layer of noisesParams vector
-		noisesValues.push_back( vector<double>() );
-		
-		// build the first and second layers of sensorsValues vector
-		sensorsValues.push_back( vector<double>(numbSensorsValues, 0.0) );
-		// sensorsValues[i][0] is the last sensed value
-		// sensorsValues[i][1] is the counter
-		// sensorsValues[i][2] is the sensitivity
-		// sensorsValues[i][3] is the saturation
-		// sensorsValues[i][4] is the minimum sensed value
-		// sensorsValues[i][5] is the maximum sensed value
-		// sensorsValues[i][6] is the average of sensed value
-		sensorsValues[i][2] = sensorManager -> getSensorDeviceSensitivity(i); // set sensitivity
-		sensorsValues[i][3] = sensorManager -> getSensorDeviceSaturation(i); // set saturation
-
-	}
-
-	srand((unsigned)time(NULL));
-
 }
-
 
 /* Handle packets and actually reproduce attacks */
 void LocalFilter::handleMessage(cMessage* msg)
-{	
+{
 	int msgKind;
 	cGate* arrivalGate;
 	int arrivalGateID;
@@ -277,16 +227,26 @@ void LocalFilter::handleMessage(cMessage* msg)
 		/* Check if the message either requires to perform a Physical attack, or enables a Conditional attack */
 		switch(msgKind) {
 
-			case PHYSICAL_ATTACK:
-				trace()<<"-> Active Physical Attack";
-				PhysicalAttack *attack;	
-
-				/* The first element of physicalAttacks is the attack to be performed */
-				attack = (PhysicalAttack *)(physicalAttacks[0]->getAttack());
-				attack->execute(destroyed, noises, noisesParams, noisesValues, sensorsValues); // <F.R.>	
-				/* Remove the attack from the list of physical attacks */
+			case PHYSICAL_ATTACK: {
+				// the attack to be performed or enabled is in the first position
+				PhysicalAttack* attack = (PhysicalAttack*)(physicalAttacks[0]->getAttack());
+                // physical attacks are made by one node action
+                Action* action = ((Attack*)attack)->getAction(0);
+                ActionName actionName = action->getName();
+                switch (actionName) {
+                    case FAKEREAD: {
+                        // enable the actual fakeread action
+                        enabledFakereads.push_back((Fakeread*)action);
+                        break;
+                    }
+                    default: {
+                        attack->execute(destroyed);  
+                    }
+                }
+                // remove the entry
 				physicalAttacks.erase(physicalAttacks.begin());
 				break;
+            }
 
 			case LOGICAL_ATTACK:
 
@@ -312,294 +272,15 @@ void LocalFilter::handleMessage(cMessage* msg)
 	arrivalGateID = arrivalGate -> getId();
 	arrivalGateName = arrivalGate -> getFullName();
 
-	// <F.R.>
-	/* perform fakeread attack */
-	if (arrivalGateName.compare("fromSensorDeviceModuleToLocalFilterModule") == 0){
-	
-		if(msg->getKind() == SENSOR_READING_MESSAGE){
-			
-			trace()<<"-> received SENSOR_READING_MESSAGE";
-			
-			SensorReadingMessage *sMsg = check_and_cast <SensorReadingMessage*>(msg);			
-			int sensorID = sMsg->getSensorIndex();
-			
-			// init sensorsValues vector at first sensor reading
-			if( sensorsValues[sensorID][1] == 0 ){
-				
-				// sensorsValues[sensorID][2] already initialized in LocalFilter::Initialize()
-				// sensorsValues[sensorID][3] already initialized in LocalFilter::Initialize()
-				sensorsValues[sensorID][4] = sMsg->getSensedValue(); // init min sensed value with first sensor reading
-				sensorsValues[sensorID][5] = sMsg->getSensedValue(); // init max sensed value with first sensor reading
-				sensorsValues[sensorID][6] = sMsg->getSensedValue(); // init avg sensed value with first sensor reading
-				
-			}
+    // handle enabled fakeread actions
+    if (arrivalGateName == "fromSensorDeviceManagerToApplicationIn") {
+        for (size_t i = 0; i < enabledFakereads.size(); i++) {
+            enabledFakereads[i]->execute(msg);
+        }
+        send(msg, "fromSensorDeviceManagerToApplicationOut");
+        return;
+    }
 
-			sensorsValues[sensorID][0] = sMsg->getSensedValue(); // update last sensed value
-			sensorsValues[sensorID][1]++;  // update counter
-			
-			// update the minimum sensed value
-			if(sensorsValues[sensorID][0] < sensorsValues[sensorID][4]){
-				sensorsValues[sensorID][4] = sensorsValues[sensorID][0];
-			}
-
-			// update maximum sensed value
-			if(sensorsValues[sensorID][0] > sensorsValues[sensorID][5]){
-				sensorsValues[sensorID][5] = sensorsValues[sensorID][0];
-			}
-			
-			// update the average of the sensed values
-			sensorsValues[sensorID][6] = ( sensorsValues[sensorID][6] * (sensorsValues[sensorID][1]-1) + sensorsValues[sensorID][0] ) / sensorsValues[sensorID][1];
-
-
-			// fakeread attack engine
-			double fValue = 0;
-			for(int i=0; i<(int)noises[sensorID].size(); i++){
-				
-				switch( noises[sensorID][i] ){
-				
-					case CON:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						noisesValues[sensorID][i] = 1;
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i];
-						break;
-					}
-					
-					case SEN:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						noisesValues[sensorID][i] = sensorsValues[sensorID][2]; // sensitivity
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-					
-					case SAT:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						noisesValues[sensorID][i] = sensorsValues[sensorID][3]; // saturation
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;		
-					}	
-				
-					case FIX:
-					case MIN:
-					case MAX:
-					case AVG:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						// noisesValues[sensorID][i] already setted by Fakeread::execute
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;	
-					}
-					
-					case INF:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						noisesValues[sensorID][i] = sensorsValues[sensorID][4]; // minimum sensed value
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-						
-					case SUP:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						noisesValues[sensorID][i] = sensorsValues[sensorID][5]; // maximum sensed value
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;	
-					}
-										
-					case MED:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						noisesValues[sensorID][i] = sensorsValues[sensorID][6]; // average of the sensed values
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;	
-					}
-					
-					case SGN:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						if(sensorsValues[sensorID][0] == 0.0){
-							noisesValues[sensorID][i] = 0.0;
-						}
-						else{
-							if(sensorsValues[sensorID][0] > 0.0){
-								noisesValues[sensorID][i] = 1.0;
-							}
-							else{
-								noisesValues[sensorID][i] = -1.0;
-							}
-						}
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-								
-					case RND:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						noisesValues[sensorID][i] = (double)rand()/((double)RAND_MAX);
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-											
-					case LIN:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double gamma = noisesParams[sensorID][i][2];
-						noisesValues[sensorID][i] = simTime().dbl();									
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-					
-					case SYM:{
-						double alpha = noisesParams[sensorID][i][0];
-						double gamma = noisesParams[sensorID][i][1];
-						double deltaH = noisesParams[sensorID][i][2];
-						double deltaL =  noisesParams[sensorID][i][3];
-						double upperBound = gamma + deltaH;
-						double lowerBound = gamma - deltaL;
-						double argValue = alpha * sensorsValues[sensorID][0] + gamma;
-						if( (argValue >= lowerBound) && (argValue <= upperBound) ){
-							noisesValues[sensorID][i] = 0.0;	
-						}
-						else{
-							
-							do{
-								double exceed;
-								
-								if(argValue > upperBound){
-									exceed = argValue - upperBound;
-									argValue = upperBound - exceed;								
-								}
-								
-								if(argValue < lowerBound){
-									exceed = lowerBound - argValue;
-									argValue = lowerBound + exceed;
-								}
-								
-							}
-							while( (argValue > upperBound) || (argValue < lowerBound) );
-							
-							noisesValues[sensorID][i] = argValue - sensorsValues[sensorID][0];					
-
-						}
-						
-						//fValue = fValue + alpha * sensorsValues[sensorID][0] + noisesValues[sensorID][i];
-						fValue = fValue + argValue;
-						
-						break;
-					
-					}
-					
-					case SHP:{
-						double alpha = noisesParams[sensorID][i][0];
-						double gamma = noisesParams[sensorID][i][1];
-						double deltaH = noisesParams[sensorID][i][2];
-						double deltaL = noisesParams[sensorID][i][3];
-						double upperBound = gamma + deltaH;
-						double lowerBound = gamma - deltaL;				
-						double argValue = alpha * sensorsValues[sensorID][0] + gamma;
-						if( (argValue >= lowerBound) && (argValue <= upperBound) ){
-							noisesValues[sensorID][i] = 0.0;	
-						}
-						else{
-							
-							if(argValue > upperBound){
-								noisesValues[sensorID][i] = upperBound - argValue;
-								argValue = upperBound;
-							}
-							else{
-								noisesValues[sensorID][i] = lowerBound - argValue;
-								argValue = lowerBound;
-							}							
-						}
-						//fValue = fValue + alpha * sensorsValues[sensorID][0] + noisesValues[sensorID][i] + gamma;
-						fValue = fValue + argValue;
-						break;
-					}
-					
-					case SIN:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double tau = noisesParams[sensorID][i][2];
-						double phi = noisesParams[sensorID][i][3];
-						double gamma = noisesParams[sensorID][i][4];			
-						noisesValues[sensorID][i] = sin( ((2*M_PI)/tau) * simTime().dbl() + phi );
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-											
-					case SQR:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double tau = noisesParams[sensorID][i][2];
-						double phi = noisesParams[sensorID][i][3];
-						double gamma = noisesParams[sensorID][i][4];			
-						double sinValue = sin( ((2*M_PI)/tau) * simTime().dbl() + phi );
-						if(sinValue == 0){
-							noisesValues[sensorID][i] = 0.0;
-						}
-						else{
-							if(sinValue > 0){
-								noisesValues[sensorID][i] = 1.0;
-							}
-							else{
-								noisesValues[sensorID][i] = -1.0;
-							}
-						}
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-						
-					case SAW:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double tau = noisesParams[sensorID][i][2];
-						double phi = noisesParams[sensorID][i][3];
-						double gamma = noisesParams[sensorID][i][4];			
-						double argValue = (simTime().dbl() + phi) / tau;
-						noisesValues[sensorID][i] = 2 * ( argValue - floor(0.5 + argValue) );
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-											
-					case TRI:{
-						double alpha = noisesParams[sensorID][i][0];
-						double beta = noisesParams[sensorID][i][1];
-						double tau = noisesParams[sensorID][i][2];
-						double phi = noisesParams[sensorID][i][3];
-						double gamma = noisesParams[sensorID][i][4];			
-						double argValue = (simTime().dbl() + phi) / tau;
-						noisesValues[sensorID][i] = 2 * fabs( argValue - floor(0.5 + argValue) );
-						fValue = fValue + alpha * sensorsValues[sensorID][0] + beta * noisesValues[sensorID][i] + gamma;
-						break;
-					}
-				};
-						
-				sMsg->setSensedValue(fValue);
-				
-				//trace()<<"fValue: "<<fValue;
-			
-			} // end for (fake read engine)
-			
-			send(sMsg, "toApplicationModuleFromLocalFilterModule");
-
-		} // end if
-
-		else{
-			send(msg, "toApplicationModuleFromLocalFilterModule");
-		}
-		
-		return;
-	}
 
 	/* Message received from the Global Filter */
 	if (!arrivalGateName.compare("fromGlobalFilter")) {
@@ -773,11 +454,10 @@ void LocalFilter::handleMessage(cMessage* msg)
 				}
 
 				logic_attack = (ConditionalAttack *)(logicalAttacks[i]->getAttack());
-                
 
 				/* Check whether the intercepted packet match with the packet filter */
 				if(logic_attack->matchFilter(msg)) {
-                  
+				  
 					/* Positive match: the attack is executed */
 
 					trace()<<"-> Filter Matched";
@@ -824,12 +504,11 @@ void LocalFilter::handleMessage(cMessage* msg)
 
 					/* Send packets created during the attacks */
 					if(new_messages.size() != 0) {
-                      
-                      for(int i=0 ; i< new_messages.size(); i++) {
+					  for(int i=0 ; i< new_messages.size(); i++) {
 
 						/* The new packet has been destroyed after being created */
 						if(new_messages[i] == NULL) {
-                            
+						  
 						  trace()<<"-> the new message was deleted by drop action, thus IGNORE it";
 						  continue;
 
@@ -853,7 +532,7 @@ void LocalFilter::handleMessage(cMessage* msg)
 						  /* A "real" packet aimed to be sent to the right layer of the communication stack */
 						  default:{
 
-						    trace()<<" -> Clone/Create Packet, check";
+						    trace()<<" -> Clone/Create Packet";
 
 						    cClassDescriptor* descriptor; 
 						    int field_int, packetKind;
@@ -872,15 +551,14 @@ void LocalFilter::handleMessage(cMessage* msg)
 
 						    sended = descriptor->getFieldAsString(new_messages[i], field_int, 0);
 
-						    //This packet must not be sent 
+						    /* This packet must not be sent */
 						    if( sended == "0") {
 						      
 							trace()<<" -> someone has forgotten to send the new packet";
 							continue;
 							
 						    }
-                            
-                        
+
 						    /* The packet is sent to the layer below the current one */
 
 						    /* Set the field 'sended' to 0 */
@@ -896,8 +574,7 @@ void LocalFilter::handleMessage(cMessage* msg)
 							case APPLICATION_PACKET:{
 
 								trace()<<" -> send to toRoutingFromCommunication";
-								send(new_messages[i], "toRoutingFromCommunication");
-                                //sendDelayed(new_messages[i], delays[i], "toRoutingFromCommunication");
+								sendDelayed(new_messages[i], delays[i], "toRoutingFromCommunication");
 								break;
 
 							}
@@ -928,16 +605,12 @@ void LocalFilter::handleMessage(cMessage* msg)
 
 					  }// END FOR
 
-				    }// END if new_messages.size()
+				        }// END if new_messages.size()
 			
 					/* The packet has been set as filtered. Thus, it will not be further processed by this node */
 					return;
 
 				} // END IF logic_attack->matchFilter(msg)
-
-                else {
-                    trace()<<" -> does not match packet-filter";
-                }
 
 			} // END FOR
 		

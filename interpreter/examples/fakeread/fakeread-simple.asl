@@ -5,11 +5,12 @@
 # 
 # author: Francesco Racciatti <racciatti.francesco@gmail.com>
 
-# tampers the sensor 0 of node 1 from time 50, it applies the noise 'rnd'
-fakeread(1, 50, 0, rnd, 0, 2, 25)
 
-# tampers the sensor 0 of node 2 from time 100, it applies the noise 'sin'
-fakeread(2, 100, 0, sin, 0.1, 5, 100, 0, 0)
+function f1 = "sin(2*pi*t) + s"
+function f2 = "cos(2*pi*t) + 0.5 * s"
 
-# tampers the sensor 0 of node 3 from time 200, it applies the noise 'lin'
-fakeread(3, 200, 0, lin, 0, 0.05, -25)
+# tampers the sensor 0 of node 1 from time 50
+fakeread(1, 50, 0, f1)
+
+# tampers the sensor 0 of node 2 from time 100
+fakeread(2, 100, 0, f2)

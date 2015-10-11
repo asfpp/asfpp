@@ -1,5 +1,4 @@
 """
-
 Move class models the 'move' primitive. It moves a node.
 
 The sintax of the primitive is: 
@@ -11,13 +10,9 @@ move(nodeId, time, x, y, z)
 NB: nodeId and the occurrence time are not stored in this object.
 
 Authors:
- + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca			<marco.tiloca84@gmail.com>
- + Francesco Racciatti	<racciatti.francesco@gmail.com>
-
-Maintainer:
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
+ + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 

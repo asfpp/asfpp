@@ -22,15 +22,17 @@ module CommunicationModule {
 	output toNodeContainerModule;
 	output toGlobalFilterModule; // <M.T.>
 	output toLoggerModule; // <M.T.>
-	output toApplicationModuleFromSensorDeviceModule; // <F.R.>
 	input fromApplicationModule;
 	input fromNodeContainerModule;
 	input fromResourceManager2Net;
 	input fromResourceManager2Mac;
 	input fromResourceManager2Radio;
 	input fromGlobalFilterModule; // <M.T.>
-	input fromSensorDeviceModuleToApplicationModule; // <F.R.>
-
+    
+    input fromApplicationToSensorDeviceManagerIn;
+    output fromApplicationToSensorDeviceManagerOut;
+    input fromSensorDeviceManagerToApplicationIn;
+    output fromSensorDeviceManagerToApplicationOut;
 
  submodules:
  	Radio: node.communication.radio.Radio;
@@ -40,6 +42,12 @@ module CommunicationModule {
 
  connections:
 	
+    fromApplicationToSensorDeviceManagerIn --> LocalFilter.fromApplicationToSensorDeviceManagerIn;
+    LocalFilter.fromApplicationToSensorDeviceManagerOut --> fromApplicationToSensorDeviceManagerOut;
+    
+    fromSensorDeviceManagerToApplicationIn --> LocalFilter.fromSensorDeviceManagerToApplicationIn;
+    LocalFilter.fromSensorDeviceManagerToApplicationOut --> fromSensorDeviceManagerToApplicationOut;
+    
 	fromResourceManager2Net --> Routing.fromCommModuleResourceMgr;
 	fromResourceManager2Mac --> MAC.fromCommModuleResourceMgr;
 	fromResourceManager2Radio --> Radio.fromCommModuleResourceMgr;
@@ -76,12 +84,6 @@ module CommunicationModule {
 	
 	// <M.T.> Local Filter wiring with the Communication module (to the Logger)
 	LocalFilter.toLogger --> toLoggerModule;
-
-	// <F.R.> Local Filter wiring with the Communication module (from the SensorDeviceModule)
-	fromSensorDeviceModuleToApplicationModule --> LocalFilter.fromSensorDeviceModuleToLocalFilterModule;
-
-	// <F.R.> Local Filter wiring with the Communication module (to the ApplicationModule)
-	LocalFilter.toApplicationModuleFromLocalFilterModule --> toApplicationModuleFromSensorDeviceModule;
 	
 }
 

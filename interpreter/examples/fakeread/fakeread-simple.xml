@@ -5,12 +5,12 @@
 	<Physical>
 
 		<Attack>
-			<start_time>200</start_time>
-			<node>3</node>
+			<start_time>100</start_time>
+			<node>2</node>
 
 			<action>
 				<name>Fakeread</name>
-				<parameters>0:lin:0:0.05:-25</parameters>
+				<parameters>sensor_id:0:function:cos(2*pi*t) + 0.5 * s</parameters>
 			</action>
 		</Attack>
 
@@ -20,17 +20,7 @@
 
 			<action>
 				<name>Fakeread</name>
-				<parameters>0:rnd:0:2:25</parameters>
-			</action>
-		</Attack>
-
-		<Attack>
-			<start_time>100</start_time>
-			<node>2</node>
-
-			<action>
-				<name>Fakeread</name>
-				<parameters>0:sin:0.1:5:100:0:0</parameters>
+				<parameters>sensor_id:0:function:sin(2*pi*t) + s</parameters>
 			</action>
 		</Attack>
 

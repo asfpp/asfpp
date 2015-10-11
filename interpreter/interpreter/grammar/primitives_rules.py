@@ -1,16 +1,12 @@
 """
-
 Grammar rules for (ASL) primitives.
  
-Author:
+Authors:
+ + Francesco Racciatti <racciatti.francesco@gmail.com> 
  + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca	        <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com> 
- 
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
+ + Marco Tiloca	<marco.tiloca84@gmail.com>
 """
+
 
 # Import the lexer for ASL
 from lexer.asllexer import *
@@ -49,7 +45,7 @@ def p_statement_destroy(p):
         destroy_actions[p[5]] = destroy_actions[p[5]] + ":" + str(p[3])
 
 
-# disable(int nodeID, double occurrence_time)
+# disable(int node_id, double occurrence_time)
 def p_statement_disable(p):
     "physical_statement : DISABLE LPAREN node_id COMMA time RPAREN"
     
@@ -61,67 +57,44 @@ def p_statement_disable(p):
         disable_actions[p[5]] = disable_actions[p[5]] + ":" + str(p[3])
 
 
-# move(int nodeID, double occurrence_time, double coord_x, double coord_y, double coord_z)
+# move(int node_id, double occurrence_time, double coord_x, double coord_y, double coord_z)
 def p_statement_move(p):
     "physical_statement : MOVE LPAREN node_id COMMA time COMMA unsigned_real COMMA unsigned_real COMMA unsigned_real RPAREN"
     
     # 'move' invocations are grouped according to their occurrence time. They are also further sub-grouped according to specified coordinates
-    moveArgs = "" + str(p[7]) + ":" + str(p[9]) + ":" + str(p[11])
+    move_args = "" + str(p[7]) + ":" + str(p[9]) + ":" + str(p[11])
 
     if not p[5] in move_actions.keys():
         move_actions[p[5]] = {}
     
-    if not moveArgs in move_actions[p[5]].keys():
-        move_actions[p[5]][moveArgs] = "" + str(p[3])
+    if not move_args in move_actions[p[5]].keys():
+        move_actions[p[5]][move_args] = "" + str(p[3])
     
     else:
-        move_actions[p[5]][moveArgs] = move_actions[p[5]][moveArgs] + ":" + str(p[3])
+        move_actions[p[5]][move_args] = move_actions[p[5]][move_args] + ":" + str(p[3])
 
 
-# 'fakeread' is an overloaded primitive
+# fakeread(int node_id, double occurrence_time, int sensor_id, string function)
 def p_statement_fakeread(p):
-    """
-    physical_statement : FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA noise_4_args COMMA signed_real COMMA signed_real RPAREN
-                       | FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA noise_5_args COMMA signed_real COMMA signed_real COMMA signed_real RPAREN
-                       | FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA noise_6_args COMMA signed_real COMMA signed_real COMMA signed_real COMMA signed_real RPAREN
-                       | FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA noise_7_args COMMA signed_real COMMA signed_real COMMA signed_real COMMA signed_real COMMA signed_real RPAREN
-    """
+    "physical_statement : FAKEREAD LPAREN node_id COMMA time COMMA sensor_id COMMA identifier RPAREN"
     
-    if p[9] in Fakeread.argc4noises:
-        fakeread_args = "" + str(p[7]) + ":" + str(p[9]) + ":" + str(p[11]) + ":" + str(p[13])
-        if not p[5] in fakeread_argc4_actions.keys():
-            fakeread_argc4_actions[p[5]] = {}
-        if not fakeread_args in fakeread_argc4_actions[p[5]].keys():
-            fakeread_argc4_actions[p[5]][fakeread_args] = "" + str(p[3])
-        else:
-            fakeread_argc4_actions[p[5]][fakeread_args] = fakeread_argc4_actions[p[5]][fakeread_args] + ":" + str(p[3])
+    # Check if the function has been already declared
+    if p[9] not in functions.keys():
+        print_error("Error: function '" + p[9] + "' is not declared", str(p.lineno(1)) )
     
-    if p[9] in Fakeread.argc5noises:
-        fakeread_args = "" + str(p[7]) + ":" + str(p[9]) + ":" + str(p[11]) + ":" + str(p[13]) + ":" + str(p[15])
-        if not p[5] in fakeread_argc5_actions.keys():
-            fakeread_argc5_actions[p[5]] = {}
-        if not fakeread_args in fakeread_argc5_actions[p[5]].keys():
-            fakeread_argc5_actions[p[5]][fakeread_args] = "" + str(p[3])
-        else:
-            fakeread_argc5_actions[p[5]][fakeread_args] = fakeread_argc5_actions[p[5]][fakeread_args] + ":" + str(p[3])
+    # Replace the identifier with its content
+    p[9] = str(functions[str(p[9])])
+        
+    fakeread_args = "" + str(p[7]) + ":" + str(p[9])
+     
+    if not p[5] in fakeread_actions.keys():
+        fakeread_actions[p[5]] = {}
     
-    if p[9] in Fakeread.argc6noises:
-        fakeread_args = "" + str(p[7]) + ":" + str(p[9]) + ":" +str(p[11]) + ":" + str(p[13]) + ":" + str(p[15]) + ":" + str(p[17])
-        if not p[5] in fakeread_argc6_actions.keys():
-            fakeread_argc6_actions[p[5]] = {}
-        if not fakeread_args in fakeread_argc6_actions[p[5]].keys():
-            fakeread_argc6_actions[p[5]][fakeread_args] = "" + str(p[3])
-        else:
-            fakeread_argc6_actions[p[5]][fakeread_args] = fakeread_argc6_actions[p[5]][fakeread_args] + ":" + str(p[3])
+    if not fakeread_args in fakeread_actions[p[5]].keys():
+        fakeread_actions[p[5]][fakeread_args] = "" + str(p[3])
     
-    if p[9] in Fakeread.argc7noises:
-        fakeread_args = "" + str(p[7]) + ":" + str(p[9]) + ":" +str(p[11]) + ":" + str(p[13]) + ":" + str(p[15]) + ":" + str(p[17]) + ":" + str(p[19])
-        if not p[5] in fakeread_argc7_actions.keys():
-            fakeread_argc7_actions[p[5]] = {}
-        if not fakeread_args in fakeread_argc7_actions[p[5]].keys():
-            fakeread_argc7_actions[p[5]][fakeread_args] = "" + str(p[3])
-        else:
-            fakeread_argc7_actions[p[5]][fakeread_args] = fakeread_argc7_actions[p[5]][fakeread_args] + ":" + str(p[3])
+    else:
+        fakeread_actions[p[5]][fakeread_args] = fakeread_actions[p[5]][fakeread_args] + ":" + str(p[3])
 
 
 # drop (packet p, signed_double threshold)

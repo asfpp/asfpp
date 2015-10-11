@@ -1,5 +1,4 @@
 """
-
 Send class models the 'send' primitive. It sends a packet to the next
 layer in the communication stack.
 
@@ -9,13 +8,9 @@ send(packetName, delay)
  + delay is the forwarding delay.
 
 Authors:
- + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca			<marco.tiloca84@gmail.com>
- + Francesco Racciatti	<racciatti.francesco@gmail.com>
-
-Maintainer:
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
+ + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 

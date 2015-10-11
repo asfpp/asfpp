@@ -1,13 +1,8 @@
 """
-
 Remove .pyc files from root and all sub-dirs
 
-Author:
+Authors:
  + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
- 
 """
 
 

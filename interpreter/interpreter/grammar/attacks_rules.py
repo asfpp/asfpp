@@ -1,20 +1,15 @@
 """
-
 Grammar rules for (ASL) attacks.
 
 An attack is either:
- + a single physical primitive (destroy, move or fakeread);
+ + a single node primitive
  + a conditional attack block;
  + an unconditional attack block.
  
-Author:
+Authors:
+ + Francesco Racciatti <racciatti.francesco@gmail.com> 
  + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca	        <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com> 
- 
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
+ + Marco Tiloca	<marco.tiloca84@gmail.com>
 """
 
 

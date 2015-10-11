@@ -1,16 +1,11 @@
 """
-
 Utility functions.
 
-Author:
+Authors:
+ + Francesco Racciatti <racciatti.francesco@gmail.com> 
  + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca	        <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com> 
- 
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
- 
- """
+ + Marco Tiloca <marco.tiloca84@gmail.com>
+"""
 
 
 import sys

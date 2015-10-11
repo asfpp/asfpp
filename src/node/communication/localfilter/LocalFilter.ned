@@ -1,17 +1,14 @@
 package node.communication.localfilter;
 
 simple LocalFilter {
+    parameters:
+        bool collectTraceInfo = default(false);
+        bool evaluateAttacks = default(false);
 
- parameters:
-    bool collectTraceInfo = default (false);
-    bool evaluateAttacks = default (false);
-
-  gates:
-    // gates to/from the Communication module
+    gates:
+        // gates to/from the Communication module
     output toCommunicationFromRouting;
     input fromCommunicationToRouting;
-	input fromSensorDeviceModuleToLocalFilterModule;	// <F.R.>
-	output toApplicationModuleFromLocalFilterModule;	// <F.R.>
   
     // gates to/from the Routing module
     output toRoutingFromCommunication;
@@ -41,7 +38,9 @@ simple LocalFilter {
 
     // gate to the Logger module
     output toLogger; // to Logger module
-	
-
-
+        
+        input fromSensorDeviceManagerToApplicationIn;
+        output fromSensorDeviceManagerToApplicationOut;
+        input fromApplicationToSensorDeviceManagerIn;
+        output fromApplicationToSensorDeviceManagerOut;
 }

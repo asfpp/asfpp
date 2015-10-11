@@ -1,15 +1,10 @@
 """
-
 Printer functions, used to print messages and to print files.
 
-Author:
+Authors:
+ + Francesco Racciatti <racciatti.francesco@gmail.com> 
  + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca	        <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com> 
- 
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
- 
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 
@@ -41,7 +36,7 @@ def write_output_file(out_name):
     out_file.write("\n<configuration>\n")
     
     # Write physical attacks
-    if (len(destroy_actions) or len(disable_actions) or len(move_actions) or len(fakeread_argc4_actions) or len(fakeread_argc5_actions) or len(fakeread_argc6_actions) or len(fakeread_argc7_actions)):
+    if (len(destroy_actions) or len(disable_actions) or len(move_actions) or len(fakeread_actions)):
         
         # Begin physical attack section
         out_file.write("\n\t<Physical>\n")
@@ -86,60 +81,18 @@ def write_output_file(out_name):
             move_actions.clear()
         
         # Build compact 'fakeread' blocks
-        if len(fakeread_argc4_actions):
+        if len(fakeread_actions):
              # key1 is the occurrence time
-            for key1 in fakeread_argc4_actions:
+            for key1 in fakeread_actions:
                 # key2 includes the parameters 'sensorID:alpha:beta'
-                for key2 in fakeread_argc4_actions[key1]: 
+                for key2 in fakeread_actions[key1]: 
                     action = Fakeread(key2)
                     actions.append(action) 
-                    attack = PhysicalAttack(key1, fakeread_argc4_actions[key1][key2], actions)
+                    attack = PhysicalAttack(key1, fakeread_actions[key1][key2], actions)
                     physical_attacks.append(attack)
                     del actions[:]
             
-            fakeread_argc4_actions.clear()
-        
-        # Build compact 'fakeread' blocks
-        if len(fakeread_argc5_actions):
-            # key1 is the occurrence time
-            for key1 in fakeread_argc5_actions:
-                # key2 includes the parameters 'sensorID:alpha:beta:gamma'
-                for key2 in fakeread_argc5_actions[key1]:
-                    action = Fakeread(key2)
-                    actions.append(action) 
-                    attack = PhysicalAttack(key1, fakeread_argc5_actions[key1][key2], actions)
-                    physical_attacks.append(attack)
-                    del actions[:]
-            
-            fakeread_argc5_actions.clear()
-        
-        # Build compact 'fakeread' blocks
-        if len(fakeread_argc6_actions):
-            # key1 is the occurrence time
-            for key1 in fakeread_argc6_actions:
-                # key2 includes the parameters 'sensorID:alpha:gamma:deltaH:deltaL'
-                for key2 in fakeread_argc6_actions[key1]: 
-                    action = Fakeread(key2)
-                    actions.append(action) 
-                    attack = PhysicalAttack(key1, fakeread_argc6_actions[key1][key2], actions)
-                    physical_attacks.append(attack)
-                    del actions[:]
-            
-            fakeread_argc6_actions.clear()
-
-        # Build compact 'fakeread' blocks
-        if len(fakeread_argc7_actions):
-            # key1 is the occurrence time
-            for key1 in fakeread_argc7_actions:
-                # key2 includes the parameters 'sensorID:alpha:beta:tau:phi:gamma'
-                for key2 in fakeread_argc7_actions[key1]:
-                    action = Fakeread(key2)
-                    actions.append(action) 
-                    attack = PhysicalAttack(key1, fakeread_argc7_actions[key1][key2], actions)
-                    physical_attacks.append(attack)
-                    del actions[:]
-            
-            fakeread_argc7_actions.clear()
+            fakeread_actions.clear()
         
         # Write an XML block for each physical attack
         for attack in physical_attacks:

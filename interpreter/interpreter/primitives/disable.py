@@ -1,5 +1,4 @@
 """
-
 Disable class models the 'disable' primitive. It disables a node.
 
 The sintax of the primitive is: 
@@ -10,12 +9,9 @@ disable(nodeId, time)
 NB: nodeId and the occurrence time are not stored in this object.
 
 Authors:
- + Francesco Racciatti	<racciatti.francesco@gmail.com>
- + Marco Tiloca			<marco.tiloca84@gmail.com>
- 
-Maintainer:
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
+ + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 

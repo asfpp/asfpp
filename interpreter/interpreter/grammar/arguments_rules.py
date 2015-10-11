@@ -1,15 +1,10 @@
 """
-
 Grammar rules for (ASL) arguments of primitives.
 
 Author:
+ + Francesco Racciatti <racciatti.francesco@gmail.com> 
  + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca	        <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com> 
- 
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 
@@ -102,10 +97,12 @@ def p_identifier(p):
                | ORIGINAL
     """
     
-    # Check if the ID is present in the global symbol dictionary (i.e. it refers to a list)
+    # Check if the ID is present in the global symbol dictionary (i.e. it refers to a list or to a function)
     if str(p[1]) in global_symbol_table.keys():
         if global_symbol_table[str(p[1])] == "LIST":
             #p[0] = str(lists[str(p[1])])
+            p[0] = str(p[1])
+        if global_symbol_table[str(p[1])] == "FUNCTION":
             p[0] = str(p[1])
     
     # Check if the ID is present in the local symbol dictionary
@@ -120,55 +117,6 @@ def p_identifier(p):
 # Sensor id (actually used only by fakeread)
 def p_sensor_id(p):
     "sensor_id : INTEGER"
-    
-    p[0] = str(p[1])
-
-
-# Noise 4 args (actually used only by fakeread)
-def p_noise_4_args(p):
-    "noise_4_args : CON"
-    
-    p[0] = str(p[1])
-
-
-# Noise 5 args (actually used only by fakeread)
-def p_noise_5_args(p):
-    """
-    noise_5_args : FIX
-                 | SEN
-                 | SAT
-                 | MIN
-                 | MAX
-                 | AVG
-                 | INF
-                 | SUP
-                 | MED
-                 | SGN
-                 | RND
-                 | LIN
-    """
-    
-    p[0] = str(p[1])
-
-
-# Noise 6 args (actually used only by fakeread)
-def p_noise_6_args(p):
-    """
-    noise_6_args : SYM
-                 | SHP
-    """
-    
-    p[0] = str(p[1])
-
-
-# Noise 7 args (actually used only by fakeread)
-def p_noise_7_args(p):
-    """
-    noise_7_args : SIN
-                 | SAW
-                 | TRI
-                 | SQR
-    """
     
     p[0] = str(p[1])
 

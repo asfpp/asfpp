@@ -1,15 +1,10 @@
 """
-
 Grammar rules for (ASL) packet filter (conditional attack).
  
-Author:
+Authors:
+ + Francesco Racciatti <racciatti.francesco@gmail.com> 
  + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca	        <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com> 
- 
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 
@@ -116,7 +111,7 @@ def p_full_path(p):
             substring_found = re.search('^[a-zA-Z_][a-zA-Z_0-9]*', full_path).group(0)
             id_counter += 1
         except AttributeError:
-            print_error("Error: layer.field attribute in the packet-filter has a bad structure, layer/field name is missing", str(p.lineno(1)))
+            print_error("Error: layer.field attribute in the packet-filter has a bad structure, layer or field name is missing", str(p.lineno(1)))
         
         # Check if the layer is valid
         if id_counter == 1:

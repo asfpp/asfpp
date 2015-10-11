@@ -35,11 +35,11 @@ module Node {
 	string MobilityManagerName = default ("NoMobilityManager");	//the name of the implemented Mobility Module
 
  gates:
-	output toWirelessChannel @loose;
+	output toWirelessChannel;
 	output toPhysicalProcess[];
 	output toGlobalFilter; // M.T.
 	output toLogger; // M.T.
-	input fromWirelessChannel @loose;
+	input fromWirelessChannel;
 	input fromPhysicalProcess[];
 	input fromGlobalFilter; // M.T.
 
@@ -54,13 +54,22 @@ module Node {
 	Communication: node.communication.CommunicationModule;
 	Application: <ApplicationName> like node.application.iApplication;
 
- connections allowunconnected:
+ connections:
 	Communication.toNodeContainerModule --> toWirelessChannel;
 	fromWirelessChannel --> Communication.fromNodeContainerModule;
 	Application.toCommunicationModule --> Communication.fromApplicationModule;
-	Application.toSensorDeviceManager --> SensorManager.fromApplicationModule;
+	
 	Communication.toApplicationModule --> Application.fromCommunicationModule;
-	//SensorManager.toApplicationModule --> Application.fromSensorDeviceManager;
+	
+    //Application.toSensorDeviceManager --> SensorManager.fromApplicationModule;
+    //SensorManager.toApplicationModule --> Application.fromSensorDeviceManager;
+    
+    Application.toSensorDeviceManager --> Communication.fromApplicationToSensorDeviceManagerIn;
+    Communication.fromApplicationToSensorDeviceManagerOut --> SensorManager.fromApplicationModule;
+    
+    SensorManager.toApplicationModule --> Communication.fromSensorDeviceManagerToApplicationIn;
+    Communication.fromSensorDeviceManagerToApplicationOut --> Application.fromSensorDeviceManager;
+    
 
 	for i = 0..sizeof(toPhysicalProcess) - 1 {
 		fromPhysicalProcess[i] --> SensorManager.fromNodeContainerModule[i];
@@ -79,11 +88,6 @@ module Node {
 	
 	// <M.T.> Logger wiring with the node communication module
 	Communication.toLoggerModule --> toLogger;
-
-	// <F.R.> SensorDeviceModule wiring with the CommunicationModule (LocalFilterModule)
-	SensorManager.toApplicationModule --> Communication.fromSensorDeviceModuleToApplicationModule;
 	
-	// <F.R.> CommunicationModule (LocalFilterModule) wiring the ApplicationModule
-	Communication.toApplicationModuleFromSensorDeviceModule --> Application.fromSensorDeviceManager;
 }
 

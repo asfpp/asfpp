@@ -1,182 +1,194 @@
 #include "GlobalFilter.h"
 
+#include "Parser.h"
+#include "UnconditionalAttack.h"
+#include "PhysicalAttack.h"
+
 
 Define_Module(GlobalFilter);
 
-GlobalFilter::GlobalFilter() {
-  
-  /* Attack evaluation is disabled by default */
-  attacksEvaluation = false;
 
-}
-
-GlobalFilter::~GlobalFilter(){
-
-	applicationName.clear();
-	routingProtocolName.clear();
-	macProtocolName.clear();
-	unconditionalAttacks.clear();
-
-}
-
-void GlobalFilter::attackInit() {
-	
-	/* Retrieve the XML file name */
-	string configurationFile = ( getParentModule() -> par("configurationFile")).stringValue();
-
-	/* There is no attack configuration file */
-	if(configurationFile == "none")
+void GlobalFilter::scheduleUnconditionalAttacks()
+{	
+	// retrieve the name of the attack configuration file (xml)
+	string attackConfigurationFileName = (getParentModule()->par("configurationFile")).stringValue();
+    if (attackConfigurationFileName == "none") {
 		return;
+    }
 
-	Parser parser( static_cast<cModule*>(this), configurationFile, applicationName, routingProtocolName, macProtocolName );
+    cModule* callerNode = getParentModule();
 
-	/* Parse the attack configuration file, and fill the unconditionalAttacks vector */
-	parser.parse("Unconditional", unconditionalAttacks);
+    // instantiate the parser
+	Parser parser(callerNode, attackConfigurationFileName, applicationName, routingProtocolName, macProtocolName);
+	// parse the attack configuration file (looking for unconditional attacks)
+	parser.parse("Unconditional", unconditionalEntries);
+    
+    for (int i = 0; i < unconditionalEntries.size(); i++) {
+        UnconditionalFireMessage* fireMessage = new UnconditionalFireMessage("Fire Unconditional Attack", UNCONDITIONAL_ATTACK);
+        SimTime occurrenceTime = unconditionalEntries[i]->getTime();
+        fireMessage->setIndex(i);
+        scheduleAt(occurrenceTime, fireMessage);
+    }
+}
 
-	/* Schedule self messages in order to trigger the execution of uncondition attacks.
-	 * Each message name is the index of the attack in the unconditionalAttacks vector.
-	 */
-	for(int i = 0; i < unconditionalAttacks.size(); i++) {
 
-	  	string index = itos(i);
+void GlobalFilter::handleUnconditionalFireMessage(UnconditionalFireMessage* unconditionalFireMessage)
+{
+    // retrieve the unconditional attack
+    int entryIndex = unconditionalFireMessage->getIndex();
+    UnconditionalAttack* attack = (UnconditionalAttack*)(unconditionalEntries[entryIndex]->getAttack());
+    
+    // execute the unconditional attack
+    vector<cMessage*> generatedMessages;
+    attack->execute(generatedMessages);
+    
+    // deliver PutMsg that have been created
+    for (size_t i = 0; i < generatedMessages.size(); i++) {
+        handlePutMessage((PutMessage*) generatedMessages[i]);
+    }
+    
+    // retrieve the frequency of the unconditional attack just performed
+    double frequency = attack->getFrequency();
+    if (frequency == 0.0) {
+        return;
+    }
+    else {
+        // re-schedule the unconditional attack
+        double nextOccurrenceTime = simTime().dbl() + frequency;
+        UnconditionalFireMessage* nextUnconditionalFireMessage = new UnconditionalFireMessage("Fire Unconditional Attack", UNCONDITIONAL_ATTACK);
+        nextUnconditionalFireMessage->setIndex(entryIndex);
+        scheduleAt(nextOccurrenceTime, nextUnconditionalFireMessage);
+    }
+}
+
+
+void GlobalFilter::handleDestroyRequest(DestroyRequest* destroyRequest)
+{
+    // retrieve the entry
+    Entry* entry = (destroyRequest->getEntryWrapper()).getEntry();
+    
+    // retrieve the physical attack (made by a single destory action) and its occurrence time
+    PhysicalAttack* physicalAttack = (PhysicalAttack*) (entry->getAttack());
+    double occurrenceTime = (entry->getTime()).dbl();
+    
+    // build the wrapper for the physical attack
+    PhysicalAttackWrapper physicalAttackWrapper = PhysicalAttackWrapper(physicalAttack);
+    
+    // schedule the DestroyFireMessage
+    DestroyFireMessage* destroyFireMessage = new DestroyFireMessage("Fire Destroy Action");
+    destroyFireMessage->setPhysicalAttackWrapper(physicalAttackWrapper);
+    scheduleAt(occurrenceTime, destroyFireMessage);
+    
+    // now entry is useless
+    delete entry;
+}
+
+
+void GlobalFilter::handleDestroyFireMessage(DestroyFireMessage* destroyFireMessage)
+{
+    // retrieve and execute the physical attack (made by a single destroy action)
+    PhysicalAttack* physicalAttack = (destroyFireMessage->getPhysicalAttackWrapper()).getPhysicalAttack();
+    physicalAttack->execute();
+      
+    // now physicalAttack is useless
+    delete physicalAttack;
+}
+
+
+void GlobalFilter::handlePutMessage(PutMessage* putMessage)
+{
+    // get the message encapsulated in putMessage
+	cMessage* encapsulatedPacket = putMessage->getPacket();
+    // retrieve the recipient nodes
+    vector<int> nodes = putMessage->getNodeVector();
+	// retrieve parameters
+	string direction = putMessage->getDirection();
+	bool stats = putMessage->getStats();
+	double delay = putMessage->getDelay();
 		
-		cMessage* message = new cMessage(index.c_str(), UNCONDITIONAL_ATTACK);
-		scheduleAt(unconditionalAttacks[i]->getTime(), message);
+    // for each recipient node create a PutRequest and send it to him
+	for (size_t i = 0; i < nodes.size(); i++) {
+        PutRequest* putRequest = new PutRequest(encapsulatedPacket, direction, stats);
+        sendDelayed(putRequest, delay, "toNode", nodes[i]);
 	}
-
 }
 
-void GlobalFilter::initialize() {
-	
-	/* Retrieve protocol names and the application name */
-	macProtocolName = (par("macProtocolName")).stringValue();
-	routingProtocolName = (par("routingProtocolName")).stringValue();
-	applicationName = (par("applicationName")).stringValue();
 
-	/* Initialize data structures related to uncondition attacks */
-	attackInit();
+void GlobalFilter::initialize()
+{
+    // retrieves names of application, routing and mac protocols
+    applicationName = (par("applicationName")).stringValue();
+    routingProtocolName = (par("routingProtocolName")).stringValue();
+    macProtocolName = (par("macProtocolName")).stringValue();
 
+    // schedule (the first fire of) the unconditional attacks
+    scheduleUnconditionalAttacks();
 }
 
-void GlobalFilter::handleMessage(cMessage* msg) {
 
-	int msgKind;
+void GlobalFilter::handleMessage(cMessage* msg)
+{
+    string msgClassName = msg->getClassName();
 
-	msgKind = msg->getKind();
+    // handle self-messages
+    if (msg->isSelfMessage()) {
+        
+        // handle UnconditionalFireMessage (i.e. fire the correspondent unconditional attack)
+        if (msgClassName == "UnconditionalFireMessage") {
+            handleUnconditionalFireMessage((UnconditionalFireMessage*) msg);
+        }
+        
+        // handle DestroyFireMessage (i.e. fire the correspondent destroy action)
+        if (msgClassName == "DestroyFireMessage") {
+            handleDestroyFireMessage((DestroyFireMessage*) msg);
+        }
+        
+        // delete the self message (check the scheduled event list before)
+        cancelAndDelete(msg);
+        
+    }
+    // handle external messages
+    else {
 
-	/* This is a self (internal) message */
-	if (msg->isSelfMessage()) {
-	
-		switch( msgKind ) {
-
-			case UNCONDITIONAL_ATTACK : { // An unconditional attack timer is elapsed
-
-				int attack_index;
-				double new_time;  // Next time the attack will be performed (current time + attack frequency)
-
-				UnconditionalAttack* attack = NULL;
-				
-				/* List of messages created during the attack and aimed to be sent through a PUT action */
-				vector<cMessage*> new_messages;
-
-				/* Retrieve the attack index from the message */
-				attack_index = atoi( msg->getName() );
-
-				attack = (UnconditionalAttack *)( unconditionalAttacks[attack_index]->getAttack() );
-
-				/* Execute the unconditional attack. The function Uncoditional::execute()
-				 * fills the 'new_messages' vector with PUT_MSG messages to be sent afterwards
-				 */
-				attack->execute(new_messages);
-
-				/* Deliver PUT_MSG messages to the intended recipient nodes */
-				for(int i=0; i < new_messages.size(); i++)
-					handlePutMessage( new_messages[i] );
-				
-				/* if the frequency is 0 means that this attack can
-				   be executed just once time.
-				   Otherwise set the new time to re-schedule the attack.
-				*/
-				if( attack->getFrequency() == 0)
-					break;
-
-				/* Compute the next time the attack will be performed */
-				new_time = (attack->getFrequency()) + simTime().dbl();
-
-				/* Schedule next occurrance of the attack. Each message name is the index of the attack in the unconditionalAttacks vector. */
-				cMessage* message = new cMessage( msg->getName(), UNCONDITIONAL_ATTACK);
-				scheduleAt( new_time, message );
-
-				break; 
-			}
-		}
-
-	} 
-	
-	else { // It is a message from another network node
-
-		switch( msgKind ) {
-
-			/* PUT_MSG is the only possible external message type */
-			case PUT_MSG: {
-			  
-				handlePutMessage(msg);
-				break;
-			}
-
-		} /* END SWITCH */
-
-	} /* END ELSE STATEMENT */
-
-	/* Delete the internal message or the PUT_MSG message. 
-	In the latter case, the packet stored inside it will be deleted by the PutMessage destructor. */
-	delete msg;
-
+        // handle external PutMessage(s)
+        if (msgClassName == "PutMessage") {
+            handlePutMessage((PutMessage*) msg);
+        }
+        
+        // handle external DestroyRequest(s)
+        if (msgClassName == "DestroyRequest") {
+            handleDestroyRequest((DestroyRequest*) msg);
+        }
+        
+        
+        // delete the external message
+        delete msg;
+        
+    }
 }
 
-void GlobalFilter::finishSpecific() {
-	
-	cout<<"finishSpecific\n";
-  
+
+void GlobalFilter::finishSpecific() 
+{
 }
 
-/**
- * This message encapsulates a Put_MSG message, into different Put_REQ messages,
- * in order to deliver them to the recipient nodes specified in the Put_MSG message.
- *
- * @param msg , the Put_MSG to be encapsulated into a number of Put_REQ messages
- *
- */
-void GlobalFilter::handlePutMessage(const cMessage* msg){
 
-	cMessage* packet = NULL;
-	cMessage* enc_pkt = NULL;
-	PutMessage * putMsg = (PutMessage*)(msg);
-	vector<int> nodes;
-	string direction;
-	double delay;
-	bool stats;
+GlobalFilter::GlobalFilter()
+{
+    // attack evaluation is disabled by default
+    attacksEvaluation = false;
+}
 
-	/* Retrieve the list of recipient nodes */
-	nodes = putMsg->getNodeVector();
-	
-	/* Retrieve other PUT parameters */
-	direction = putMsg->getDirection();
-	stats = putMsg->getStats();	
-	delay = putMsg->getDelay();		
 
-	/* Create a copy of Put_MSG message to be sent */
-	enc_pkt = putMsg->getPacket();
-
-	/* For each recipient node, create a Put_REQ message, including the copy of the original Put_MSG message */
-	for(int i = 0; i < nodes.size(); i++ ){
-
-		/* This message as well as the encapsulated packet will be deleted by the LocalFilter of each recipient node */
-		PutRequest* request = new PutRequest(enc_pkt, direction, stats);
-
-		/* Send the Put_REQ message with the specified delivery delay*/
-		sendDelayed(request, delay,"toNode", nodes[i]);
-
-	}
-
+GlobalFilter::~GlobalFilter()
+{
+    // remove objects that are still helded by the global filter 
+	/*
+    for (size_t i = 0; i < unconditionalEntries.size(); i++) {
+        // retrieve and delete the attack
+        delete unconditionalEntries[i]->getAttack();
+        // retrieve and delete the related entry
+        delete unconditionalEntries[i];
+    }
+    */
 }

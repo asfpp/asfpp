@@ -1,5 +1,4 @@
 """
-
 Put class models the 'put' primitive. It puts a packet in the tx/rx buffer 
 of a certain layer of a list of nodes.
 
@@ -12,13 +11,9 @@ put(packetName, dstNodes, direction, updateStat, delay)
  + delay is the forwarding delay.
 
 Authors:
- + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca			<marco.tiloca84@gmail.com>
- + Francesco Racciatti	<racciatti.francesco@gmail.com>
-
-Maintainer:
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
+ + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 

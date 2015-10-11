@@ -44,13 +44,6 @@
 #include <map>
 #include <string>
 
-#include <iostream>
-#include <vector>
-
-
-// INTER PROCESS COMMUNICATION <F.R.>
-//#include <boost/interprocess/ipc/message_queue.hpp>
-
 
 using namespace std;
 
@@ -99,6 +92,7 @@ class ClusterAggregator:public VirtualApplication {
 	int bytesReceived ;	// Total number of received bytes
 	int packetsReceived;	// Number of packets received correctly
 	double simulationTime;  // Used to compute the throughput
+
 
 	/* Calculate averages every 'averageInterval' seconds and write them to output files */
 	void calculateAverages();

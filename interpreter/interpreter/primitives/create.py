@@ -1,5 +1,4 @@
 """
-
 Create class models the 'create' primitive. It creates new packets.
 
 The sintax of the primitive is: 
@@ -12,13 +11,9 @@ create(packetName, layer1.type, value1, layer2.type, value2, ...)
  + ...
 
 Authors:
- + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca			<marco.tiloca84@gmail.com>
- + Francesco Racciatti	<racciatti.francesco@gmail.com>
-
-Maintainer:
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
+ + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 

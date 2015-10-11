@@ -34,43 +34,11 @@ void ClusterAggregator::calculateAverages()
 		currSampleSN++;
 
 	}
-/*
-	// --------------------------------------------------------------------------------------
-	// INTER PROCESS COMMUNICATION TEST
-	// --------------------------------------------------------------------------------------
-	try{
-		size_t const max_msg_size = 0x100;
-		//Erase previous message queue
-		//boost::interprocess::message_queue::remove("message_queue");
 
-		//Create a message_queue (only create, name, max message number, message size)
-		boost::interprocess::message_queue mq(boost::interprocess::open_or_create, "message_queue", 100, max_msg_size);
-
-		string averageTime = to_string(floor((simTime()).dbl())); 	 
-		string averageValue = to_string(avgReport);
-		
-		string str = averageTime;
-		str.append(":");
-		str.append(averageValue);
-		str.append("|");
-		
-		mq.send(str.data(), str.size(), 0);
-		
-		//Send 100 numbers
-		for(int i = 0; i < 100; ++i){
-			mq.send(&i, sizeof(i), 0);
-		}
-		
-	}
-	catch(boost::interprocess::interprocess_exception &ex){
-	}
-	
-	// --------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------
-*/
 	/* Data cleaning */
 	clusterSamples = 0;
 	clusterSamplesCount = 0;
+
 
 }
 

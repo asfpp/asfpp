@@ -6,8 +6,8 @@
  * thanks to it is possible to perform Conditional and Physical attacks. 
  *
  *
- * Author : Alessandro Pischedda, Francesco Racciatti
- * E-mail : alessandro.pischedda@gmail.com, racciatti.francesco@gmail.com
+ * Author : Alessandro Pischedda
+ * E-mail : alessandro.pischedda@gmail.com
  */
 
 #ifndef _LOCAL_FILTER_H_
@@ -17,13 +17,9 @@
 #include <config.h>
 #endif
 
-#include <omnetpp.h>
-
 #include <libxml++/libxml++.h>
 #include <algorithm>
 #include <sstream>
-#include <stdio.h>
-#include <math.h>
 
 #include "utils.h"
 
@@ -43,9 +39,8 @@
 #include "ConditionalAttack.h"
 
 
-#include "parser.h"
+#include "Parser.h"
 #include "Fakeread.h"
-#include "ExMachina.h"
 
 
 enum attackTimer {
@@ -53,7 +48,13 @@ enum attackTimer {
 	LOGICAL_ATTACK = 11
 };
 
-class LocalFilter: public CastaliaModule{
+
+class LocalFilter : public CastaliaModule {
+    
+    // enabled fakeread actions
+    vector<Fakeread*> enabledFakereads;
+   
+   
    
   /* Evaluation of attacks is enabled if TRUE */
   bool attacksEvaluation;
@@ -98,25 +99,12 @@ class LocalFilter: public CastaliaModule{
   /* It is used to retrieve the energy consumed */
   ResourceManager* resourceModule;
 
-  /* It is used fot the fakeread attack */
-  SensorManager* sensorManager; // <F.R.>
-
   /* mac and net header size */
   int net_header, mac_header;  
 
   /* bytes received by injection */
   int injected_bytes;
-  
-	/* <F.R.>
-	data structures to perform the fakeread attack 	*/
-	
-	vector< vector<Noise> > noises;
-	vector< vector< vector<double> > > noisesParams;
-	vector< vector<double> > noisesValues;
-	vector< vector<double> > sensorsValues;
 
-	static const int numbSensorsValues = 7;
-	
 
   protected:
   

@@ -1,15 +1,10 @@
 """
-
 Global variables shared between interpreter's modules.
 
 Authors:
+ + Francesco Racciatti <racciatti.francesco@gmail.com>
  + Alessandro Pischedda <alessandro.pischedda@gmail.com>
- + Marco Tiloca         <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
- 
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 
@@ -29,8 +24,11 @@ symbol_table = {}
 # Dictionary of variables used within an attack; entry format is <name, XML string>
 variables = {}
 
-# Dictionary of the node lists; entry format is <list_name, list_of_nodes>
+# Dictionary of the nodes lists; entry format is <list_name, list_of_nodes>
 lists = {}
+
+# Dictionaty of the functions; entry format is <name, string>
+functions = {}
 
 
 # List of action composing an attack
@@ -56,17 +54,8 @@ disable_actions = {}
 # Dictionary of 'move' actions; entry format is <time, <position, list_nodes> >
 move_actions = {} 
 
-# Dictionary of 'fakeread' actions having 4 args
-fakeread_argc4_actions = {}
-
-# Dictionary of 'fakeread' actions having 5 args
-fakeread_argc5_actions = {}
-
-# Dictionary of 'fakeread' actions having 6 args
-fakeread_argc6_actions = {}
-
-# Dictionary of 'fakeread' actions having 7 args
-fakeread_argc7_actions = {}
+# Dictionary of 'fakeread' actions; entry format is <time, <sensor_id, list_nodes> >
+fakeread_actions = {} 
 
 
 # Packet filter boolean expression

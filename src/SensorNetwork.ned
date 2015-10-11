@@ -16,7 +16,6 @@ import node;
 import globalfilter; // <M.T.> Import the Global Filter module
 import adversary; // <M.T.> Import the Adversary module
 import logger;
-import exmachina; // <F.R.>
 
 network SN {
 	
@@ -56,7 +55,7 @@ network SN {
 		toPhysicalProcess[numPhysicalProcesses];
 		fromPhysicalProcess[numPhysicalProcesses];
 	}
-    
+	
 	// <M.T.> The Global Filter communicates with the Local Filter of every node
 	globalFilter:globalfilter.GlobalFilter {
 	 gates:
@@ -75,10 +74,7 @@ network SN {
 	// NOT USED AT THE MOMENT
 	adversary:adversary.Adversary;
 
-    // ExMachina module <F.R.>
-    exMachina:exmachina.ExMachina;
-
- connections allowunconnected:
+ connections:
 	for i = 0..numNodes - 1 {
 		node[i].toWirelessChannel --> wirelessChannel.fromNode[i];
 		node[i].fromWirelessChannel <-- wirelessChannel.toNode[i];

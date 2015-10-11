@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 
 """
-
 This file defines the grammar of the Attack Specification Language (aka ASL).
 
 Authors:
  + Alessandro Pischedda <alessandro.pischedda@gmail.com>
  + Marco Tiloca         <marco.tiloca84@gmail.com>
  + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
 """
 
 
@@ -95,35 +90,11 @@ tokens = (
     'TRUE',
     'FALSE',
     'ORIGINAL',
-    'SELF',   
-    # Other keywords
-    'EXP',  # TODO: check EXP
-	# User defined constant noises
-    'CON',
-	# Sensor dependent constant noises
-    'SEN',
-    'SAT',
-    'FIX',
-    'MIN',
-    'MAX',
-    'AVG',
-	# Piecewise constant noises
-    'INF',
-    'SUP',
-    'MED',
-    'SGN',
-	# Random noises
-    'RND',
-	# Divergent noises
-    'LIN',
-	# Bounding noises
-    'SYM',
-    'SHP',
-	# Periodic noises
-    'SIN',
-    'SQR',
-    'SAW',
-    'TRI',
+    'SELF',
+    # TODO: check EXP
+    'EXP',
+    # Function
+    'FUNCTION',
 )
 
 
@@ -161,32 +132,8 @@ reserved = {
     'create' : 'CREATE',
     'send' : 'SEND',
     'put' : 'PUT',
-    # User defined constant noises
-    'con':'CON',
-    # Sensor dependent constant noises
-    'sen':'SEN',
-    'sat':'SAT',
-    'fix':'FIX',
-    'min':'MIN',
-    'max':'MAX',
-    'avg':'AVG',
-    # Piecewise constant noises
-    'inf':'INF',
-    'sup':'SUP',
-    'med':'MED',
-    'sgn':'SGN',
-    # Random noises
-    'rnd':'RND',
-    # Divergent noises
-    'lin':'LIN',
-    # Bounding noises
-    'sym':'SYM',
-    'shp':'SHP',
-    # Periodic noises
-    'sin':'SIN',
-    'sqr':'SQR',
-    'saw':'SAW',
-    'tri':'TRI',
+    # Function
+    'function' : 'FUNCTION',
 }
 
 

@@ -1,5 +1,4 @@
 """
-
 Retrieve class models the 'retrieve' primitive. It retrieves the content
 of a field of a packet.
 
@@ -12,13 +11,9 @@ retrieve(packetName, field, variable)
  + variable is the name of the variable in which store the retrieved value.
 
 Authors:
- + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca			<marco.tiloca84@gmail.com>
- + Francesco Racciatti	<racciatti.francesco@gmail.com>
-
-Maintainer:
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
+ + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 

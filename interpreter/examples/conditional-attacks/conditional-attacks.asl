@@ -34,7 +34,7 @@ from 100 nodes in targetList do {
 
 	# packet filter, it filters all packets having the field 'sourcePort' of the layer 'NET' equals to 1000
 	filter("APP.snNumber" > 1000)
-		
+
 		# drop put the original intercepted packet
 		drop(original, 1)
  

@@ -53,7 +53,6 @@ class SensorManager: public CastaliaModule {
 	double getSensorDeviceBias(int index);
 	double getSensorDeviceSensitivity(int index); // <A.P.>
 	double getSensorDeviceSaturation(int index); // <A.P.>
-	int getNumSensingDevices(); // <F.R.>
 
 };
 

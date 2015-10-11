@@ -1,5 +1,4 @@
 """
-
 Change class models the 'change' primitive. It changes the content of a field
 of a packets.
 
@@ -12,13 +11,9 @@ change(packetName, field, value)
  + value is the new value of the field.
  
 Authors:
- + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca			<marco.tiloca84@gmail.com>
- + Francesco Racciatti	<racciatti.francesco@gmail.com>
-
-Maintainer:
  + Francesco Racciatti <racciatti.francesco@gmail.com>
-
+ + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 

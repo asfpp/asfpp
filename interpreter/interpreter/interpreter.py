@@ -1,18 +1,13 @@
 #!/usr/bin/env python
 
 """
-
 This python script takes one description file as input (aka ASL file), 
 and produces an XML Attack Configuration File as output.
 
-Author:
+Authors:
+ + Francesco Racciatti <racciatti.francesco@gmail.com> 
  + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca	        <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com> 
- 
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
 
 

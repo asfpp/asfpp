@@ -304,10 +304,3 @@ double SensorManager::getSensorDeviceSaturation(int index)
 	} else
 		return sensorSaturation[index];
 }
-
-/* <F.R.> */
-int SensorManager::getNumSensingDevices()
-{
-	Enter_Method("getNumSensingDevices()");
-	return totalSensors;
-}

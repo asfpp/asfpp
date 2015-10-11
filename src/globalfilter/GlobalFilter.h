@@ -1,67 +1,113 @@
-/* 
- * This class provides the Global Filter module, which is responsible for the execution of 
- * unconditional attacks, and the performance of the PUT action.
- *
- * Author : Alessandro Pischedda
- * e-mail : alessandro.pischedda@gmail.com
+/**
+ * @file GlobalFilter.h
+ * 
+ * @authors Francesco Racciatti <racciatti.francesco@gmail.com>
+ *          Alessandro Pischedda <alessandro.pischedda@gmail.com>
+ * 
+ * @brief The class GlobalFilter models the behavior of the module 
+ *        GlobalFilter which executes:
+ *         + unconditional attacks,
+ *         + put actions,
+ *         + destroy actions.
  */
+ 
 
-#ifndef _GLOBAL_FILTER_H_
-#define _GLOBAL_FILTER_H_
+#ifndef GLOBAL_FILTER_H
+#define GLOBAL_FILTER_H
+
 
 #include "CastaliaModule.h"
-#include "CastaliaMessages.h"
-#include "GlobalFilterMessage.h"
-#include "LoggerMessage.h"
-#include "PutMessages.h"
+#include <vector>
+#include <string>
 
-#include "UnconditionalAttack.h"
 #include "Entry.h"
 
-#include "utils.h"
-#include "parser.h"
+#include "UnconditionalFireMessage_m.h"
+#include "DestroyRequest_m.h"
+#include "DestroyFireMessage_m.h"
+#include "PutMessages.h"
 
-#include <map>
-#include <string>
-#include <sstream>
 
 using namespace std;
+
 
 enum attackTimer {
   UNCONDITIONAL_ATTACK = 12
 };
 
+
 class GlobalFilter: public CastaliaModule {
-   
-  /* It is TRUE when evaluation of attacks is enabled */
-  bool attacksEvaluation;
-  
-  /* List of unconditional attacks executed by the GlobalFilter */
-  vector<Entry*> unconditionalAttacks;
+private:
+    // list of entries wrapping the unconditional attacks handled by the global filter
+    vector<Entry*> unconditionalEntries;
+    // TODO to remove
+    // it is TRUE when evaluation of attacks is enabled
+    bool attacksEvaluation;
+    // name of the application
+    string applicationName;
+    // name of the routing protocol
+    string routingProtocolName;
+    // name of the mac protocol
+    string macProtocolName;
 
-  /* Application name */
-  string applicationName;
-  
-  /* Routing protocol name */
-  string routingProtocolName;
+private:
+    /**
+     * @brief Schedules (the first firing of) the unconditional attacks.
+     */
+    void scheduleUnconditionalAttacks();
+    
+    /**
+     * @brief Handles UnconditionalFireMessage(s) (self-messages), i.e. execute the relative 'unconditional' attack.
+     * @param unconditionalFireMessage Is the UnconditionalFireMessage to handle.
+     */
+    void handleUnconditionalFireMessage(UnconditionalFireMessage* unconditionalFireMessage);
 
-  /* MAC protocol name */
-  string macProtocolName;
+    /**
+     * @brief Handles DestroyRequest(s) received by the local-filter(s) and schedule the relative 'destroy' action.
+     * @param destroyRequest Is the DestroyRequest to handle.
+     */
+    void handleDestroyRequest(DestroyRequest* destroyRequest);
 
-  protected:
-   
-  virtual void initialize();
-  virtual void handleMessage(cMessage* msg);
-  virtual void finishSpecific();
-  void attackInit();
-  
-  void handlePutMessage(const cMessage* msg);
+    /**
+     * @brief Handles DestroyFireMessage(s) (self-message), i.e. executes the relative 'destroy' action.
+     * @param destroyFireMessage Is the DestroyFireMessage (self-message) to handle.
+     */
+    void handleDestroyFireMessage(DestroyFireMessage* destroyFireMessage);
 
-  public:
-  
-  GlobalFilter();
-  virtual ~GlobalFilter();
-  
+    /**
+     * @brief Handles put messages received by the local-filter(s) or creted by the global-filter.
+     * @param putMsg Is the put message to handle.
+     */
+    void handlePutMessage(PutMessage* putMessage);
+
+
+protected:
+    /**
+     * @brief Initializes the global-filter module.
+     */
+    virtual void initialize();
+
+    /**
+     * @brief Handles the received messages (both messages and self-messages).
+     * @param msg Is the received message to handle.
+     */
+    virtual void handleMessage(cMessage* msg);
+
+    /**
+     * @brief Record statistics.
+     */
+    virtual void finishSpecific();
+
+public:
+    /**
+     * @brief Constructor.
+     */
+    GlobalFilter();
+    
+    /**
+     * @brief Destructor.
+     */
+    virtual ~GlobalFilter();
 };
 
 #endif

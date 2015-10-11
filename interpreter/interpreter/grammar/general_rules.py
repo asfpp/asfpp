@@ -1,16 +1,12 @@
 """
-
 General grammar rules for ASL.
 
-Author:
+Authors:
+ + Francesco Racciatti <racciatti.francesco@gmail.com> 
  + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
- + Marco Tiloca	        <marco.tiloca84@gmail.com>
- + Francesco Racciatti  <racciatti.francesco@gmail.com> 
- 
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
+ + Marco Tiloca <marco.tiloca84@gmail.com>
 """
+
 
 # Import the lexer for ASL
 from lexer.asllexer import *
@@ -41,6 +37,7 @@ def p_global_entries(p):
     """
     global_entries  : attack
                     | list_statement
+                    | function_statement
                     | global_entries global_entries
     """
 
@@ -65,7 +62,7 @@ def p_list_member(p):
     
     p[0] = str(p[1])
     
-    
+
 # List definition
 def p_statement_list(p):
     "list_statement : LIST list_id EQUALS LCBRACKET list_members RCBRACKET"
@@ -78,7 +75,7 @@ def p_statement_list(p):
         # Add the list identifier to the global symbol table
         global_symbol_table[str(p[2])] = "LIST"
         lists[str(p[2])] = p[5]  
-    
+
 
 # Filter codeblock
 def p_filter_codeblock(p):
@@ -148,12 +145,7 @@ def p_init_string(p):
 
 # Real initialization
 def p_init_real(p):
-    """
-    init : REAL
-         | INTEGER
-         | SIGNED_REAL
-         | SIGNED_INTEGER
-    """
+    "init : signed_real"
     
     p[0] = "<value>" + str(p[1]) + "</value><type>NUMBER</type>"
 
@@ -214,4 +206,33 @@ def p_args_simple_boolean(p):
     """
     
     p[0] =  str(p[1]).lower()
+
+
+# Function id
+def p_function_id(p):
+    "function_id : ID"
+    
+    p[0] = str(p[1])
+
+
+# Function argument
+def p_function_argument(p):
+    "function_argument : STRING"
+    
+    p[0] = str(p[1]).replace("\"", "")
+
+
+# Function definition
+def p_function_statement(p):
+    "function_statement : FUNCTION function_id EQUALS function_argument"
+    
+    # Check if the function identifier is already declared
+    if (str(p[2]) in global_symbol_table.keys() or str(p[2]) in symbol_table.keys()):
+        print_error("Error: ID '" + str(p[2]) + "' is already declared ", str(p.lineno(2)))
+    
+    else:
+        # Add the function identifier to the global symbol table
+        global_symbol_table[str(p[2])] = "FUNCTION"
+        functions[str(p[2])] = p[4]  
+
 
