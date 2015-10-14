@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Physical>
+
+		<Attack>
+			<start_time>100</start_time>
+			<node>4</node>
+
+			<action>
+				<name>Move</name>
+				<parameters>155:170:0</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>100</start_time>
+			<node>5</node>
+
+			<action>
+				<name>Move</name>
+				<parameters>160:175:0</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>100</start_time>
+			<node>6</node>
+
+			<action>
+				<name>Move</name>
+				<parameters>165:180:0</parameters>
+			</action>
+		</Attack>
+
+	</Physical>
+
+</configuration>

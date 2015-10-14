@@ -29,13 +29,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i unconditional-attacks.asl -o unconditional-attacks.xml
+$ python ../../interpreter.py -i unconditional-attacks.adl -o unconditional-attacks.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i unconditional-attacks.asl
+$ python ../../interpreter.py -i unconditional-attacks.adl
 ```
 
 or you can use the pre-built bash script

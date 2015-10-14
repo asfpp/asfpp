@@ -77,7 +77,11 @@ class VirtualRouting: public CastaliaModule, public TimerService {
 	virtual void handleNetworkControlCommand(cMessage *) { }
 
  public:
-	// A.P.
+	/**
+     * @brief Gets the size of the header.
+     * @return Returns the size of the header.
+     * @author Alessandro Pischedda <alessandro.pischedda@gmail.com>
+     */
 	virtual int getHeaderSize() { return netDataFrameOverhead; }; 
 
 };

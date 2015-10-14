@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i change-simple.asl -o change-simple.xml
+../../interpreter/interpreter.py -i change-simple.adl -o change-simple.xml

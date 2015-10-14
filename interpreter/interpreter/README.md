@@ -1,8 +1,8 @@
 Description
 ============
-This tool is an interpreter for ASF++. The user can write attacks by using the Attack Specification Language (aka ASL).
-The interpreter parses the ASL file (containing the attacks) and produces the Attack Configuration
-File (aka ACF), i.e. an XML representation of the ASL file that is understandable by ASF++.
+This tool is an interpreter for ASF++. The user can write attacks by using the Attack Specification Language (aka ADL).
+The interpreter parses the ADL file (containing the attacks) and produces the Attack Configuration
+File (aka ACF), i.e. an XML representation of the ADL file that is understandable by ASF++.
 
 
 Source tree
@@ -20,7 +20,7 @@ Content of sub-dirs:
  + engine contains the parsing engine of the interpreter and other useful scripts;
  + grammar contains the grammar rules of the interpreter;
  + lexer contains the lexer of the interpreter;
- + primitives contains the classes which model primitives furnished by the ASL.
+ + primitives contains the classes which model primitives provided by the ADL.
 
 
 Requirements
@@ -40,7 +40,7 @@ $ python path/interpreter.py -i inputfile -o outputfile
 
 -o outputfile is optional
 
-The commands above produces the XML Attack Configuration File (aka ACF) for ASF++, according to the ASL description in the input file.
+The commands above produces the XML Attack Configuration File (aka ACF) for ASF++, according to the ADL description in the input file.
 Only the input file is mandatory. If the user does not specify the output filename, the interpreter will use the default filename 'file_input.xml'.
 
 
@@ -49,8 +49,3 @@ Authors
 + Alessandro Pischedda	<alessandro.pischedda@gmail.com>
 + Marco Tiloca			<marco.tiloca84@gmail.com>
 + Francesco Racciatti  	<racciatti.francesco@gmail.com>
-
-
-Maintainer
-==========
-+ Francesco Racciatti	<racciatti.francesco@gmail.com>

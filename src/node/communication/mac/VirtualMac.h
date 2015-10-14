@@ -69,7 +69,11 @@ class VirtualMac: public CastaliaModule, public TimerService {
 	cPacket *decapsulatePacket(cPacket *);
 
  public:	
-	// A.P.
+	/**
+     * @brief Gets the size of the header.
+     * @return Returns the size of the header.
+     * @author Alessandro Pischedda <alessandro.pischedda@gmail.com>
+     */ 
 	virtual int getHeaderSize() { return macFrameOverhead; }; 
 
 };

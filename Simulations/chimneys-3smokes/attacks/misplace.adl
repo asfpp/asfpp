@@ -1,0 +1,8 @@
+# brief: misplaces sensors of cluster 1
+# author: Francesco Racciatti <racciatti.francesco@gmail.com>
+# usage: python ../../../interpreter/interpreter/interpretr.py -i misplace.adl
+
+# move sensor nodes very close to cluter head ch1
+move(4, 100, 155, 170, 0)
+move(5, 100, 160, 175, 0)
+move(6, 100, 165, 180, 0)

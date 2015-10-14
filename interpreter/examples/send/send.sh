@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i send.asl -o send.xml
+../../interpreter/interpreter.py -i send.adl -o send.xml

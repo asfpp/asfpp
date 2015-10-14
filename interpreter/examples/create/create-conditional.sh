@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i create-conditional.asl -o create-conditional.xml
+../../interpreter/interpreter.py -i create-conditional.adl -o create-conditional.xml

@@ -31,13 +31,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i disable-one.asl -o disable-one.xml
+$ python ../../interpreter.py -i disable-one.adl -o disable-one.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i disable-one.asl
+$ python ../../interpreter.py -i disable-one.adl
 ```
 
 or you can use the pre-built bash script

@@ -17,6 +17,8 @@ cplusplus {{
 class ApplicationPacket;
 
 packet ClusterAggregatorDataPacket extends ApplicationPacket {
-	int sourceNodeID;	// ID of the source node
-	int digest;		// Digest field for packet authentication
+	// id of the source node
+    int sourceNodeID;
+	// digest field for packet authentication
+    int digest;
 }

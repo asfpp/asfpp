@@ -1,24 +1,44 @@
+/**
+ * @file Send.cc
+ * 
+ * @authors Francesco Racciatti <racciatti.francesco@gmail.com>
+ *          Alessandro Pischedda <alessandro.pischedda@gmail.com>
+ */
+
+
 #include "Send.h"
 
-void Send::execute(cMessage* msg) const {
 
-	int field_int;
-	cClassDescriptor* descriptor;
-	descriptor = cClassDescriptor::getDescriptorFor(msg);
-
-	field_int = descriptor->findField(msg, "sended");
-	
-	/* The 'sended' field cannot be found. This should never happen! */
-	if( field_int == -1){
-		string error_message = " ERROR in Retrieve Action : the object field 'sended' does not exist!!!";
-		opp_error(error_message.c_str());
-	}
-	
-	/* The packet will be sent to the next layer in the TX/RX flow */
-	descriptor->setFieldAsString(msg, field_int, 0, "1");
-		
+Send::Send(double delay) : Action(SEND)
+{
+    // set the delay
+    if (delay < 0.0) {
+        opp_error("[Send::Send(double)] Error, delay can't be a negative number");
+    }
+    this->delay = delay;
 }
 
-double Send::getDelay(){
-	return delay;
+
+Send::~Send()
+{
+}
+
+
+double Send::getDelay() const
+{
+    return delay;
+}
+
+// TODO rename 'sended' to 'tosend'
+void Send::execute(cMessage* packet) const
+{
+    // find the content of the field 'sended' (if exists)
+    cClassDescriptor* descriptor = cClassDescriptor::getDescriptorFor(packet);
+    int fieldIndex = descriptor->findField(packet, "sended");
+    // can't found the field 'sended'
+    if (fieldIndex == -1) {
+        opp_error("[void Send::execute(cMessage*)] Error, field 'sended' not found in the current packet");
+    }
+	// set the field 'sended', in this way the packet will be sent by the local-filter
+	descriptor->setFieldAsString(packet, fieldIndex, 0, "1");
 }

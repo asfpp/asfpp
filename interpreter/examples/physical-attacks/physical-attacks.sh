@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i physical-attacks.asl -o physical-attacks.xml
+../../interpreter/interpreter.py -i physical-attacks.adl -o physical-attacks.xml

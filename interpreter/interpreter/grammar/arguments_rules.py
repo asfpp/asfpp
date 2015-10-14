@@ -1,5 +1,5 @@
 """
-Grammar rules for (ASL) arguments of primitives.
+Grammar rules for (ADL) arguments of primitives.
 
 Author:
  + Francesco Racciatti <racciatti.francesco@gmail.com> 
@@ -8,8 +8,8 @@ Author:
 """
 
 
-# Import the lexer for ASL
-from lexer.asllexer import *
+# Import the lexer for ADL
+from lexer.adllexer import *
 
 # Import utilities
 from engine.utilities import print_error

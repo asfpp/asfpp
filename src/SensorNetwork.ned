@@ -14,7 +14,6 @@ import wirelessChannel;
 import physicalProcess;
 import node;
 import globalfilter; // <M.T.> Import the Global Filter module
-import adversary; // <M.T.> Import the Adversary module
 import logger;
 
 network SN {
@@ -69,10 +68,6 @@ network SN {
 		fromNode[numNodes];
 		fromGlobalFilter;
 	}
-	
-	// <M.T.> Additional Adversary module. It may be used to reproduce external attacks.
-	// NOT USED AT THE MOMENT
-	adversary:adversary.Adversary;
 
  connections:
 	for i = 0..numNodes - 1 {
@@ -88,9 +83,7 @@ network SN {
 		node[i].fromPhysicalProcess[j] <-- physicalProcess[j].toNode[i];
 	}
 	
-	// <M.T.> Global Filter wiring with the Wireless Channel, the Adversary, and the Logger
-	globalFilter.toAdversary --> adversary.fromGlobalFilter;
-	adversary.toGlobalFilter --> globalFilter.fromAdversary;
+	// <M.T.> Global Filter wiring with the Wireless Channel and the Logger
 	globalFilter.toWirelessChannel --> wirelessChannel.fromGlobalFilter;
 	wirelessChannel.toGlobalFilter --> globalFilter.fromWirelessChannel;
 	globalFilter.toLogger --> logger.fromGlobalFilter;

@@ -1,0 +1,48 @@
+# brief: intercept and drop original packet from cluster 1 and inject 
+#        in it fake packets.
+# author: Francesco Racciatti <racciatti.francesco@gmail.com>
+# usage: python ../../../interpreter/interpreter/interpretr.py -i injection.adl
+
+
+list target_list = {1}
+
+# drop original packets
+from 100 nodes in target_list do {
+# filter packets 
+filter ("MAC.source" == "4|5|6") 
+    # drop intercepted packets
+    drop(original,1)
+}
+
+# inject fake packets
+from 100 every 1 do {
+    # declare the fake packets
+    packet fakePacket4
+    packet fakePacket5
+    packet fakePacket6
+    # declare a seqNumb var
+    var seqNumb = 5000
+    
+    # create the fake packets and fill its fields
+    create(fakePacket4, "APP.type", 0)
+    change(fakePacket4, "APP.data", 40)
+    change(fakePacket4, "APP.sourceNodeID", 4)
+    change(fakePacket4, "APP.sequenceNumber", seqNumb)
+    
+    create(fakePacket5, "APP.type", 0)
+    change(fakePacket5, "APP.data", 40)
+    change(fakePacket5, "APP.sourceNodeID", 4)
+    change(fakePacket5, "APP.sequenceNumber", seqNumb)
+    
+    create(fakePacket6, "APP.type", 0)
+    change(fakePacket6, "APP.data", 40)
+    change(fakePacket6, "APP.sourceNodeID", 4)
+    change(fakePacket6, "APP.sequenceNumber", seqNumb)
+    
+    # send the fake packet to the target list
+    put(fakePacket4, target_list, RX, FALSE, 0.5)
+    put(fakePacket5, target_list, RX, FALSE, 0.5)
+    put(fakePacket6, target_list, RX, FALSE, 0.5)
+    
+    seqNumb += 1
+}

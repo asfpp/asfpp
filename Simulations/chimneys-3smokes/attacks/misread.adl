@@ -1,0 +1,9 @@
+# brief: tampers reading of sensors of cluster 1
+# author: Francesco Racciatti <racciatti.francesco@gmail.com>
+# usage: python ../../../interpreter/interpreter/interpretr.py -i misread.adl
+
+function f1 = "10*sin(2*pi*t) + 30"
+
+fakeread(4, 100, 0, f1)
+fakeread(5, 100, 0, f1)
+fakeread(6, 100, 0, f1)

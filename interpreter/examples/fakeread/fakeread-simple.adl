@@ -1,0 +1,21 @@
+# This is an example of ASL file that contains a set of fakeread actions.
+#
+# By using the keyword 'function' the user can describe a mathematical 
+# function. He can use the following independent variables:
+#  - t, simulation time retrieved at runtime when the function is solved by a node
+#  - s, sensor reading retrieved at runtime when the function is solved by a node
+#
+# usage: 
+#  python ../../interpreter/interpreter.py -i fakeread-simple.adl -o fakeread-simple.xlm
+# 
+# author: Francesco Racciatti <racciatti.francesco@gmail.com>
+
+# declare mathematical functions
+function f1 = "sin(2*pi*t) + s"
+function f2 = "cos(2*pi*t) + 0.5 * s"
+
+# tampers the sensor 0 of node 1 from time 50
+fakeread(1, 50, 0, f1)
+
+# tampers the sensor 0 of node 2 from time 100
+fakeread(2, 100, 0, f2)

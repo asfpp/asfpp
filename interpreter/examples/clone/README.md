@@ -32,13 +32,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i clone.asl -o clone.xml
+$ python ../../interpreter.py -i clone.adl -o clone.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i clone.asl
+$ python ../../interpreter.py -i clone.adl
 ```
 
 or you can use the pre-built bash script

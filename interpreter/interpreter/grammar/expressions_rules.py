@@ -1,5 +1,5 @@
 """
-Grammar rules for (ASL) expressions.
+Grammar rules for ADL expressions.
  
 Authors:
  + Francesco Racciatti <racciatti.francesco@gmail.com> 
@@ -8,8 +8,8 @@ Authors:
 """
 
 
-# Import the lexer for ASL
-from lexer.asllexer import *
+# Import the lexer for ADL
+from lexer.adllexer import *
 
 # Impot class to model expressions
 from primitives.expression import Expression

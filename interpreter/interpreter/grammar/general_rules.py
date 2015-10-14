@@ -1,5 +1,5 @@
 """
-General grammar rules for ASL.
+General grammar rules for ADL.
 
 Authors:
  + Francesco Racciatti <racciatti.francesco@gmail.com> 
@@ -8,8 +8,8 @@ Authors:
 """
 
 
-# Import the lexer for ASL
-from lexer.asllexer import *
+# Import the lexer for ADL
+from lexer.adllexer import *
 
 # Import utilities
 from engine.utilities import print_error

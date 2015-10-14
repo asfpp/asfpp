@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i disable-lots.asl -o disable-lots.xml
+../../interpreter/interpreter.py -i disable-lots.adl -o disable-lots.xml

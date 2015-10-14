@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i create-unconditional.asl -o create-unconditional.xml
+../../interpreter/interpreter.py -i create-unconditional.adl -o create-unconditional.xml

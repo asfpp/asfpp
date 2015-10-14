@@ -21,13 +21,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i physical-attacks.asl -o physical-attacks.xml
+$ python ../../interpreter.py -i physical-attacks.adl -o physical-attacks.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i physical-attacks.asl
+$ python ../../interpreter.py -i physical-attacks.adl
 ```
 
 or you can use the pre-built bash script

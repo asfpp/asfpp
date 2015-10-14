@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i conditional-attacks.asl -o conditional-attacks.xml
+../../interpreter/interpreter.py -i conditional-attacks.adl -o conditional-attacks.xml

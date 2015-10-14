@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i drop-always.asl -o drop-always.xml
+../../interpreter/interpreter.py -i drop-always.adl -o drop-always.xml

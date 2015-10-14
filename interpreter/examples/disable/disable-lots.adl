@@ -1,0 +1,14 @@
+# This is an example of ASL file that contains a set of disable actions.
+#
+# usage: 
+#  python ../../interpreter/interpreter.py -i disable-lots.adl -o disable-lots.xml
+# 
+# author: Francesco Racciatti <racciatti.francesco@gmail.com>
+
+# disable the nodes 1,2,3 at time 50 and the nodes 4,5,6 at time 200, 300, 400 respectively
+disable(1, 50)
+disable(2, 50)
+disable(3, 50)
+disable(4, 200)
+disable(5, 300)
+disable(6, 400)

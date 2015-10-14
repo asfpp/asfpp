@@ -34,13 +34,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i put-conditional.asl -o put-conditional.xml
+$ python ../../interpreter.py -i put-conditional.adl -o put-conditional.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i put-conditional.asl
+$ python ../../interpreter.py -i put-conditional.adl
 ```
 
 or you can use the pre-built bash script

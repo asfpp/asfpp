@@ -1,0 +1,16 @@
+
+0               SN.node[7].Application                   -> setTimerDrift(0.999969)
+0               SN.node[7].Application                   -> STARTUP at 0.0004
+0.0004          SN.node[7].Application                   AverageInterval 10
+0               SN.node[7].Application                   -> setTimerDrift(0.999973)
+0               SN.node[7].Application                   -> STARTUP at 0.0004
+0.0004          SN.node[7].Application                   AverageInterval 10
+0               SN.node[7].Application                   -> setTimerDrift(1.00005)
+0               SN.node[7].Application                   -> STARTUP at 0.0004
+0.0004          SN.node[7].Application                   AverageInterval 10
+0               SN.node[7].Application                   -> setTimerDrift(0.999988)
+0               SN.node[7].Application                   -> STARTUP at 0.0004
+0.0004          SN.node[7].Application                   AverageInterval 10
+0               SN.node[7].Application                   -> setTimerDrift(1)
+0               SN.node[7].Application                   -> STARTUP at 0.0004
+0.0004          SN.node[7].Application                   AverageInterval 10

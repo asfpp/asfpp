@@ -38,7 +38,7 @@
 
 			<action>
 				<name>Fakeread</name>
-				<parameters>0:rnd:0:2:25</parameters>
+				<parameters>sensor_id:0:function:cos(5*pi*t) + s/2</parameters>
 			</action>
 		</Attack>
 

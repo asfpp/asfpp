@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Conditional>
+
+		<Attack>
+			<start_time>100</start_time>
+			<node>1</node>
+			<filter>[:MAC.source:==:4|5|6:]</filter>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+		</Attack>
+
+	</Conditional>
+
+	<Unconditional>
+
+		<Attack>
+			<start_time>100</start_time>
+			<frequency>1</frequency>
+			<var><name>seqNumb</name><value>5000</value><type>NUMBER</type></var>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>4</name><value>4</value><type>NUMBER</type></var>
+			<var><name>40</name><value>40</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket4:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket4:field_name:APP.data:value:40</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket4:field_name:APP.sourceNodeID:value:4</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket4:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket5:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket5:field_name:APP.data:value:40</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket5:field_name:APP.sourceNodeID:value:4</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket5:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakePacket6:APP.type:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket6:field_name:APP.data:value:40</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket6:field_name:APP.sourceNodeID:value:4</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakePacket6:field_name:APP.sequenceNumber:value:seqNumb</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket4:nodes:1:direction:RX:throughWC:false:delay:0.5</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket5:nodes:1:direction:RX:throughWC:false:delay:0.5</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakePacket6:nodes:1:direction:RX:throughWC:false:delay:0.5</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>seqNumb</item>
+			</action>
+		</Attack>
+
+	</Unconditional>
+
+</configuration>

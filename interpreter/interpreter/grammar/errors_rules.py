@@ -1,5 +1,5 @@
 """
-Grammar rules for (ASL) error handlers.
+Grammar rules for ADL error handlers.
  
 Author:
  + Francesco Racciatti <racciatti.francesco@gmail.com> 
@@ -8,8 +8,8 @@ Author:
 
 """
 
-# Import lexer for ASL
-from lexer.asllexer import *
+# Import lexer for ADL
+from lexer.adllexer import *
 
 
 # Error in attack declaration

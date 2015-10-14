@@ -13,16 +13,11 @@ simple GlobalFilter {
         // to network nodes
         output toNode[];
         
-        // TODO to remove
-        //to external adversary
-        output toAdversary;
-        
         // to wireless channel module
         output toWirelessChannel;
         
         output toLogger; // to Logger module
         input fromNode[]; // from network nodes 
-        input fromAdversary; // from the external adversary
         input fromWirelessChannel; // from wireless channel
     
 }

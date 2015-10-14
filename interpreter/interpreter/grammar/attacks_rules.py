@@ -1,5 +1,5 @@
 """
-Grammar rules for (ASL) attacks.
+Grammar rules for (ADL) attacks.
 
 An attack is either:
  + a single node primitive
@@ -13,8 +13,8 @@ Authors:
 """
 
 
-# Import the lexer for ASL
-from lexer.asllexer import *
+# Import the lexer for ADL
+from lexer.adllexer import *
 
 # Import utilities
 from engine.utilities import print_error

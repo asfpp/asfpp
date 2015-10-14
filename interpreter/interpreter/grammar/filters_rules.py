@@ -1,5 +1,5 @@
 """
-Grammar rules for (ASL) packet filter (conditional attack).
+Grammar rules for (ADL) packet filter (conditional attack).
  
 Authors:
  + Francesco Racciatti <racciatti.francesco@gmail.com> 
@@ -8,8 +8,8 @@ Authors:
 """
 
 
-# Import the lexer for ASL
-from lexer.asllexer import *
+# Import the lexer for ADL
+from lexer.adllexer import *
 
 # Import print error utility
 from engine.utilities import print_error

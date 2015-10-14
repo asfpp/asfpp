@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i drop-original.asl -o drop-original.xml
+../../interpreter/interpreter.py -i drop-original.adl -o drop-original.xml

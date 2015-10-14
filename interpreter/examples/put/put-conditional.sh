@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i put-conditional.asl -o put-conditional.xml
+../../interpreter/interpreter.py -i put-conditional.adl -o put-conditional.xml

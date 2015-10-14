@@ -116,11 +116,13 @@ void GlobalFilter::handlePutMessage(PutMessage* putMessage)
 
 void GlobalFilter::initialize()
 {
+    // attack evaluation is disabled by default
+    attacksEvaluation = false;
     // retrieves names of application, routing and mac protocols
     applicationName = (par("applicationName")).stringValue();
     routingProtocolName = (par("routingProtocolName")).stringValue();
     macProtocolName = (par("macProtocolName")).stringValue();
-
+    
     // schedule (the first fire of) the unconditional attacks
     scheduleUnconditionalAttacks();
 }
@@ -175,8 +177,6 @@ void GlobalFilter::finishSpecific()
 
 GlobalFilter::GlobalFilter()
 {
-    // attack evaluation is disabled by default
-    attacksEvaluation = false;
 }
 
 

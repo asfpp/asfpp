@@ -1,5 +1,4 @@
 """
-
 The class PhysicalAttack models an XML block that supports the execution
 of a physical attack.
 
@@ -7,10 +6,6 @@ Authors:
  + Alessandro Pischedda <alessandro.pischedda@gmail.com>
  + Marco Tiloca         <marco.tiloca84@gmail.com>
  + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
-Maintainer:
- + Francesco Racciatti  <racciatti.francesco@gmail.com>
-
 """
 
 

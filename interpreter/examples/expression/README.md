@@ -1,6 +1,6 @@
 Description
 ============
-Example of use of the 'expressions' in ASL.
+Example of use of the 'expressions' in ADL.
 
 
 Usage of the interpreter
@@ -18,13 +18,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i expression.asl -o expression.xml
+$ python ../../interpreter.py -i expression.adl -o expression.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i expression.asl
+$ python ../../interpreter.py -i expression.adl
 ```
 
 or you can use the pre-built bash script

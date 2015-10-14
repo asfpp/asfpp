@@ -95,13 +95,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i advanced-packet-filter-1.asl -o advanced-packet-filter-1.xml
+$ python ../../interpreter.py -i advanced-packet-filter-1.adl -o advanced-packet-filter-1.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i advanced-packet-filter-1.asl
+$ python ../../interpreter.py -i advanced-packet-filter-1.adl
 ```
 
 or you can use the pre-built bash script

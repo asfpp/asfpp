@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i retrieve-simple.asl -o retrieve-simple.xml
+../../interpreter/interpreter.py -i retrieve-simple.adl -o retrieve-simple.xml

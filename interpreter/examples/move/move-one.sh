@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i move-one.asl -o move-one.xml
+../../interpreter/interpreter.py -i move-one.adl -o move-one.xml

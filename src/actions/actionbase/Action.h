@@ -35,7 +35,8 @@ enum ActionName {
     CREATE = 7,
     SEND = 8,
     EXPRESSION = 9,
-    FAKEREAD = 10
+    FAKEREAD = 10,
+    DISABLE = 11
 };
 
 

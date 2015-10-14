@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i destroy-one.asl -o destroy-one.xml
+../../interpreter/interpreter.py -i destroy-one.adl -o destroy-one.xml

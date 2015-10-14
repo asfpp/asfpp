@@ -32,7 +32,7 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i retrieve.asl -o retrieve.xml
+$ python ../../interpreter.py -i retrieve.adl -o retrieve.xml
 ```
 
 or

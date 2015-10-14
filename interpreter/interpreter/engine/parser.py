@@ -31,7 +31,7 @@ def parse_options():
     parser.add_argument("-i", "--input",
                         metavar = "\"INPUT\"",
                         default = "",
-                        help = "Name of the ASL file to be processed")
+                        help = "Name of the ADL file to be processed")
     parser.add_argument("-o", "--output",
                         default = "",
                         metavar = "\"OUTPUT\"",
@@ -47,7 +47,7 @@ def parse_options():
 
     # If not specified, the default output name is the input name
     if options["output"] == "":
-        #optionss["output"] = options["input"].replace(".asl", "")
+        #optionss["output"] = options["input"].replace(".adl", "")
         options["output"] = os.path.splitext(options["input"])[0]
         options["output"] += ".xml"
         print "Using default output filename '" + options['output'] + "'"

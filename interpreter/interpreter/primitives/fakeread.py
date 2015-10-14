@@ -7,7 +7,7 @@ fakeread(nodeId, time, sensorId, function)
  + node Id is the Id of the target node
  + time is the occurrence time
  + sensorId is the target sensor of the target node
- + function is a mathematical function
+ + function is the reference to a mathematical function previously defined 
  
 NB: nodeId and occurrence time are not stored in this object.
 

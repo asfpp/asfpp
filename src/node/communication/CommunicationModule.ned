@@ -13,77 +13,61 @@
 package node.communication;
 
 module CommunicationModule {
- parameters:
- 	string MACProtocolName = default ("BypassMAC");
-	string RoutingProtocolName = default ("BypassRouting");
+    parameters:
+        string MACProtocolName = default ("BypassMAC");
+        string RoutingProtocolName = default ("BypassRouting");
 
- gates:
- 	output toApplicationModule;
-	output toNodeContainerModule;
-	output toGlobalFilterModule; // <M.T.>
-	output toLoggerModule; // <M.T.>
-	input fromApplicationModule;
-	input fromNodeContainerModule;
-	input fromResourceManager2Net;
-	input fromResourceManager2Mac;
-	input fromResourceManager2Radio;
-	input fromGlobalFilterModule; // <M.T.>
-    
-    input fromApplicationToSensorDeviceManagerIn;
-    output fromApplicationToSensorDeviceManagerOut;
-    input fromSensorDeviceManagerToApplicationIn;
-    output fromSensorDeviceManagerToApplicationOut;
+    gates:
+        output toApplicationModule;
+        input fromApplicationModule;
+        
+        inout routing_inf;
+        inout mac_sup;
+        inout mac_inf;
+        inout radio_sup;
+        
+        output toNodeContainerModule;
+        input fromNodeContainerModule;
+        
+        input fromResourceManager2Net;
+        input fromResourceManager2Mac;
+        input fromResourceManager2Radio;
 
- submodules:
- 	Radio: node.communication.radio.Radio;
-	MAC: <MACProtocolName> like node.communication.mac.iMac;
-	Routing: <RoutingProtocolName> like node.communication.routing.iRouting;
-	LocalFilter: node.communication.localfilter.LocalFilter; // <M.T.>
+    submodules:
+        Radio: node.communication.radio.Radio;
+        MAC: <MACProtocolName> like node.communication.mac.iMac;
+        Routing: <RoutingProtocolName> like node.communication.routing.iRouting;
 
- connections:
-	
-    fromApplicationToSensorDeviceManagerIn --> LocalFilter.fromApplicationToSensorDeviceManagerIn;
-    LocalFilter.fromApplicationToSensorDeviceManagerOut --> fromApplicationToSensorDeviceManagerOut;
-    
-    fromSensorDeviceManagerToApplicationIn --> LocalFilter.fromSensorDeviceManagerToApplicationIn;
-    LocalFilter.fromSensorDeviceManagerToApplicationOut --> fromSensorDeviceManagerToApplicationOut;
-    
-	fromResourceManager2Net --> Routing.fromCommModuleResourceMgr;
-	fromResourceManager2Mac --> MAC.fromCommModuleResourceMgr;
-	fromResourceManager2Radio --> Radio.fromCommModuleResourceMgr;
-	
-	// <M.T.> Local Filter wiring with the application
-	fromApplicationModule --> LocalFilter.fromCommunicationToRouting;
-	LocalFilter.toCommunicationFromRouting --> toApplicationModule;
-	
-	// <M.T.> Local Filter wiring with the Routing layer
-	Routing.toCommunicationModule --> LocalFilter.fromRoutingToCommunication;
-	LocalFilter.toRoutingFromCommunication --> Routing.fromCommunicationModule;
-	Routing.toMacModule --> LocalFilter.fromRoutingToMac;
-	LocalFilter.toRoutingFromMac --> Routing.fromMacModule;
+    connections allowunconnected:
+        // LocalFilter between Application (inf) and Communication.Routing (sup)
+        fromApplicationModule --> Routing.fromCommunicationModule;
+        Routing.toCommunicationModule --> toApplicationModule;
+        
+        // LocalFilter between Communication.Routing (inf) and Communication.MAC (sup)
+        Routing.toMacModule --> routing_inf$o;
+        routing_inf$i --> Routing.fromMacModule;
+        MAC.toNetworkModule --> mac_sup$o;
+        mac_sup$i --> MAC.fromNetworkModule;
+        
+        // LocalFilter between Communication.MAC (inf) and Communication.Radio (sup)
+        MAC.toRadioModule --> mac_inf$o;
+        mac_inf$i --> MAC.fromRadioModule;
+        Radio.toMacModule --> radio_sup$o;
+        radio_sup$i --> Radio.fromMacModule;
+        
+        // LocalFilter between Communication.Radio (inf) and WirelessChannel (sup)
+        Radio.toCommunicationModule --> toNodeContainerModule;
+        fromNodeContainerModule --> Radio.fromCommunicationModule;
 
-	// <M.T.> Local Filter wiring with the MAC layer
-	MAC.toNetworkModule --> LocalFilter.fromMacToRouting;
-	LocalFilter.toMacFromRouting --> MAC.fromNetworkModule;
-	LocalFilter.toMacFromRadio --> MAC.fromRadioModule;
-	MAC.toRadioModule --> LocalFilter.fromMacToRadio;
-
-	// <M.T.> Local Filter wiring with the Radio module
-	LocalFilter.toRadioFromMac --> Radio.fromMacModule;
-	Radio.toMacModule --> LocalFilter.fromRadioToMac;
-	LocalFilter.toRadioFromCommunication --> Radio.fromCommunicationModule;
-	Radio.toCommunicationModule --> LocalFilter.fromRadioToCommunication;
-
-	// <M.T.> Local Filter wiring with the Communication module (to/from the Wireless Channel)
-	LocalFilter.toCommunicationFromRadio --> toNodeContainerModule;
-	fromNodeContainerModule --> LocalFilter.fromCommunicationToRadio;
-	
-	// <M.T.> Local Filter wiring with the Communication module (to/from the Global filter)
-	LocalFilter.toGlobalFilter --> toGlobalFilterModule;
-	fromGlobalFilterModule --> LocalFilter.fromGlobalFilter;
-	
-	// <M.T.> Local Filter wiring with the Communication module (to the Logger)
-	LocalFilter.toLogger --> toLoggerModule;
+        
+        // LocalFilter between ResourceManager and Communication.Routing
+        fromResourceManager2Net --> Routing.fromCommModuleResourceMgr;
+        
+        // LocalFilter between ResourceManager and Communication.MAC
+        fromResourceManager2Mac --> MAC.fromCommModuleResourceMgr;
+        
+        // LocalFilter between ResourceManager and Communication.Radio
+        fromResourceManager2Radio --> Radio.fromCommModuleResourceMgr;
 	
 }
 

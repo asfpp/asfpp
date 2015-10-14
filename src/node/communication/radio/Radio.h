@@ -246,16 +246,69 @@ class Radio: public CastaliaModule {
 	list<SleepLevel_type>::iterator parseSleepLevel(string);
 
 	void ReceivedSignalDebug(const char *);
-	void forceUpdateStats();			// <A.P.>
-	void getRxInfo(double &delta_time, double &datarate, double &rxPower);	// <A.P.>
+	
+    /**
+     * @brief Forces the updating of the Radio statistics
+     * @author Alessandro Pischedda <alessandro.pischedda@gmail.com>
+     */
+    void forceUpdateStats();
+    
+    /**
+     * @brief Gets delta_time.
+     * @return Returns delta_time.
+     * @author Francesco Racciatti <racciatti.francesco@gmail.com>
+     */
+    double getDeltaTime();
+    
+    /**
+     * @brief Gets datarate.
+     * @return Returns datarate.
+     * @author Francesco Racciatti <racciatti.francesco@gmail.com>
+     */
+    double getDataRate();
+    
+    /**
+     * @brief Gets rxPower.
+     * @return Returns rxPower.
+     * @author Francesco Racciatti <racciatti.francesco@gmail.com>
+     */
+    double getRxPower();
 
  public:
 	double readRSSI();
 	CCA_result isChannelClear();
 	
-	void forceUpdateStatsWrapper();	// <A.P.>
-	void getRxInfoWrapper(double &delta_time, double &datarate, double &rxPower); // <A.P.>
-
+    /**
+     * @brief Public wrapper for the protected method 
+     *        'forceUpdateStats()', that forces the updating of the
+     *        Radio statistics.
+     * @author Alessandro Pischedda <alessandro.pischedda@gmail.com>
+     */
+	void forceUpdateStatsWrapper();
+    
+    /**
+     * @brief Wrapper for the protected method 'getDeltaTime()', 
+     *        that gets the deltaTime.
+     * @return Returns deltaTime.
+     * @author Francesco Racciatti <racciatti.francesco@gmail.com>
+     */
+	double getDeltaTimeWrapper();
+    
+    /**
+     * @brief Wrapper for the protected method 'getDataRate()', that 
+     *        gets the dataRate.
+     * @return Returns dataRate.
+     * @author Francesco Racciatti <racciatti.francesco@gmail.com>
+     */
+    double getDataRateWrapper();
+    
+    /**
+     * @brief Wrapper for the protected method 'rxPower()', that 
+     *        gets the rxPower.
+     * @return Returns rxPower.
+     * @author Francesco Racciatti <racciatti.francesco@gmail.com>
+     */
+    double getRxPowerWrapper();
 };
 
 #endif				//_RADIOMODULE_H_

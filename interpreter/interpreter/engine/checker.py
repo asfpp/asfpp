@@ -28,8 +28,8 @@ def check_input_filename(filename):
         print "Error: '" + str(filename) + "' is a directory."
         sys.exit(-1)
         
-    if os.path.splitext(filename)[1] != ".asl":
-        print "The input file extension is not '.asl', I go ahead anyway"
+    if os.path.splitext(filename)[1] != ".adl":
+        print "The input file extension is not '.adl', it will be processed anyway"
             
 
 def check_output_filename(filename):

@@ -1,6 +1,6 @@
 """
 
-Interprets all example .asl files in sub-dirs.
+Interprets all example .adl files in sub-dirs.
 
 Usage:
  $ python interpret-all-examples.py
@@ -33,10 +33,10 @@ if __name__ == "__main__":
                 call(shell_cmd, shell=True)
     
     
-    # Interpret .asl files in sub-dirs
+    # Interpret .adl files in sub-dirs
     for path, subdirs, files in os.walk(abspath):
         for file_name in files:
-            if file_name.endswith(".asl"):
+            if file_name.endswith(".adl"):
                 file_abspath = os.path.join(path, file_name)
                 shell_cmd = "python ../interpreter/interpreter.py -i " + file_abspath
                 call(shell_cmd, shell=True)

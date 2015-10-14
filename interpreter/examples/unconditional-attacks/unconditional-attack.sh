@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i unconditional-attacks.asl -o unconditional-attacks.xml
+../../interpreter/interpreter.py -i unconditional-attacks.adl -o unconditional-attacks.xml

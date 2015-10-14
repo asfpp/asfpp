@@ -32,13 +32,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i fakeread-simple.asl -o fakeread-simple.xml
+$ python ../../interpreter.py -i fakeread-simple.adl -o fakeread-simple.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i fakeread-simple.asl
+$ python ../../interpreter.py -i fakeread-simple.adl
 ```
 
 or you can use the pre-built bash script

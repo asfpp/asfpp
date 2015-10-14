@@ -32,13 +32,13 @@ $ ./bash_script.sh
 Example
 =======
 ``` sh
-$ python ../../interpreter.py -i create-conditional.asl -o create-conditional.xml
+$ python ../../interpreter.py -i create-conditional.adl -o create-conditional.xml
 ```
 
 or
 
 ``` sh
-$ python ../../interpreter.py -i create-conditional.asl
+$ python ../../interpreter.py -i create-conditional.adl
 ```
 
 or you can use the pre-built bash script

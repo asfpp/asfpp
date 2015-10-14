@@ -13,6 +13,7 @@
 package node;
 
 import node.mobilityManager;
+import node.localfilter;
 
 // The sensor node module. Connects to the wireless channel in order to communicate 
 // with other nodes. Connects to psysical processes so it can sample them.
@@ -34,60 +35,94 @@ module Node {
 	string ApplicationName;										//the name of the implemented Application Module
 	string MobilityManagerName = default ("NoMobilityManager");	//the name of the implemented Mobility Module
 
- gates:
-	output toWirelessChannel;
-	output toPhysicalProcess[];
-	output toGlobalFilter; // M.T.
-	output toLogger; // M.T.
-	input fromWirelessChannel;
-	input fromPhysicalProcess[];
-	input fromGlobalFilter; // M.T.
+    gates:
+        input fromWirelessChannel;
+        output toWirelessChannel;
+        
+        input fromPhysicalProcess[];
+        output toPhysicalProcess[];
+        
+        input fromGlobalFilter;
+        output toGlobalFilter;
+        
+        output toLogger;
 
- submodules:
- 	MobilityManager: <MobilityManagerName> like node.mobilityManager.iMobilityManager;
-	ResourceManager: node.resourceManager.ResourceManager;
-	SensorManager: node.sensorManager.SensorManager {
-	 gates:
-		fromNodeContainerModule[sizeof(toPhysicalProcess)];
-		toNodeContainerModule[sizeof(toPhysicalProcess)];
-	} 
-	Communication: node.communication.CommunicationModule;
-	Application: <ApplicationName> like node.application.iApplication;
+    submodules:
+        MobilityManager: <MobilityManagerName> like node.mobilityManager.iMobilityManager;
+        ResourceManager: node.resourceManager.ResourceManager;
+        SensorManager: node.sensorManager.SensorManager {
+         gates:
+            fromNodeContainerModule[sizeof(toPhysicalProcess)];
+            toNodeContainerModule[sizeof(toPhysicalProcess)];
+        } 
+        Communication: node.communication.CommunicationModule;
+        Application: <ApplicationName> like node.application.iApplication;
+        LocalFilter: node.localfilter.LocalFilter;
 
- connections:
-	Communication.toNodeContainerModule --> toWirelessChannel;
-	fromWirelessChannel --> Communication.fromNodeContainerModule;
-	Application.toCommunicationModule --> Communication.fromApplicationModule;
-	
-	Communication.toApplicationModule --> Application.fromCommunicationModule;
-	
-    //Application.toSensorDeviceManager --> SensorManager.fromApplicationModule;
-    //SensorManager.toApplicationModule --> Application.fromSensorDeviceManager;
-    
-    Application.toSensorDeviceManager --> Communication.fromApplicationToSensorDeviceManagerIn;
-    Communication.fromApplicationToSensorDeviceManagerOut --> SensorManager.fromApplicationModule;
-    
-    SensorManager.toApplicationModule --> Communication.fromSensorDeviceManagerToApplicationIn;
-    Communication.fromSensorDeviceManagerToApplicationOut --> Application.fromSensorDeviceManager;
-    
+    connections allowunconnected:
+        // LocalFilter between SensorManager and Application
+        SensorManager.toApplicationModule --> LocalFilter.sensormanager_application_sup$i;
+        LocalFilter.sensormanager_application_inf$o --> Application.fromSensorDeviceManager;
+        Application.toSensorDeviceManager --> LocalFilter.sensormanager_application_inf$i;
+        LocalFilter.sensormanager_application_sup$o --> SensorManager.fromApplicationModule;
 
-	for i = 0..sizeof(toPhysicalProcess) - 1 {
-		fromPhysicalProcess[i] --> SensorManager.fromNodeContainerModule[i];
-		SensorManager.toNodeContainerModule[i] --> toPhysicalProcess[i];
-	}
+        // LocalFilter between Application and Communication.Routing
+        Application.toCommunicationModule --> LocalFilter.application_routing_sup$i;
+        LocalFilter.application_routing_inf$o --> Communication.fromApplicationModule;
+        Communication.toApplicationModule --> LocalFilter.application_routing_inf$i;
+        LocalFilter.application_routing_sup$o --> Application.fromCommunicationModule;
 
-	ResourceManager.toSensorDevManager --> SensorManager.fromResourceManager;
-	ResourceManager.toApplication --> Application.fromResourceManager;
-	ResourceManager.toNetwork --> Communication.fromResourceManager2Net;
-	ResourceManager.toMac --> Communication.fromResourceManager2Mac;
-	ResourceManager.toRadio --> Communication.fromResourceManager2Radio;
-	
-	// <M.T.> Global Filter wiring with the node communication module
-	Communication.toGlobalFilterModule --> toGlobalFilter;
-	fromGlobalFilter --> Communication.fromGlobalFilterModule;
-	
-	// <M.T.> Logger wiring with the node communication module
-	Communication.toLoggerModule --> toLogger;
+        // LocalFilter between Communication.Routing and Communication.MAC
+        Communication.routing_inf$o --> LocalFilter.routing_mac_sup$i;
+        LocalFilter.routing_mac_inf$o --> Communication.mac_sup$i;
+        Communication.mac_sup$o --> LocalFilter.routing_mac_inf$i;
+        LocalFilter.routing_mac_sup$o --> Communication.routing_inf$i;
+
+        // LocalFilter between Communication.MAC and Communication.Radio
+        Communication.mac_inf$o --> LocalFilter.mac_radio_sup$i;
+        LocalFilter.mac_radio_inf$o --> Communication.radio_sup$i;
+        Communication.radio_sup$o --> LocalFilter.mac_radio_inf$i;
+        LocalFilter.mac_radio_sup$o --> Communication.mac_inf$i;
+
+        // LocalFilter between Communication.Radio and WirelessChannel
+        Communication.toNodeContainerModule --> LocalFilter.radio_wirelesschannel_sup$i;
+        LocalFilter.radio_wirelesschannel_inf$o --> toWirelessChannel;
+        fromWirelessChannel --> LocalFilter.radio_wirelesschannel_inf$i;
+        LocalFilter.radio_wirelesschannel_sup$o --> Communication.fromNodeContainerModule;
+
+
+        // LocalFilter between ResourceManager and SensorManager
+        ResourceManager.toSensorDevManager --> LocalFilter.resourcemanager_sensormanager$i;
+        LocalFilter.resourcemanager_sensormanager$o --> SensorManager.fromResourceManager;
+
+        // LocalFilter between ResourceManager and Application
+        ResourceManager.toApplication --> LocalFilter.resourcemanager_application$i;
+        LocalFilter.resourcemanager_application$o --> Application.fromResourceManager;
+
+        // LocalFilter between ResourceManager and Communication.Routing
+        ResourceManager.toNetwork --> LocalFilter.resourcemanager_routing$i;
+        LocalFilter.resourcemanager_routing$o --> Communication.fromResourceManager2Net;
+
+        // LocalFilter between ResourceManager and Communication.MAC
+        ResourceManager.toMac --> LocalFilter.resourcemanager_mac$i;
+        LocalFilter.resourcemanager_mac$o --> Communication.fromResourceManager2Mac;
+
+        // LocalFilter between ResourceManager and Communication.Radio
+        ResourceManager.toRadio --> LocalFilter.resourcemanager_radio$i;
+        LocalFilter.resourcemanager_radio$o --> Communication.fromResourceManager2Radio;
+
+        // wire physical processes with sensormanager
+        for i = 0..sizeof(toPhysicalProcess) - 1 {
+            fromPhysicalProcess[i] --> SensorManager.fromNodeContainerModule[i];
+            SensorManager.toNodeContainerModule[i] --> toPhysicalProcess[i];
+        }
+
+        // LocalFilter and GlobalFilter
+        LocalFilter.toGlobalFilter --> toGlobalFilter;
+        fromGlobalFilter --> LocalFilter.fromGlobalFilter;
+
+        // LocalFilter and Logger
+        LocalFilter.toLogger --> toLogger;
 	
 }
 

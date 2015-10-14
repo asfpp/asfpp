@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This python script takes one description file as input (aka ASL file), 
+This python script takes one description file as input (aka ADL file), 
 and produces an XML Attack Configuration File as output.
 
 Authors:
@@ -17,7 +17,7 @@ import os
 # Import ply.yacc
 import ply.yacc as yacc
 
-# Import grammar rules of ASL
+# Import ADL's grammar rules
 from grammar.attacks_rules import *
 from grammar.general_rules import *
 from grammar.errors_rules import *
@@ -50,12 +50,12 @@ if __name__ == "__main__":
     # Check if the output argument is consistent (if not correct it)
     options["output"] = check_output_filename(options["output"])
 
-    # Retrieve the content of the ASL file
+    # Retrieve the content of the ADL file
     input_file = open(options["input"], "r")
     input_file_content = input_file.read()
     input_file.close()
         
-    # Parse the content of the ASL file
+    # Parse the content of the ADL file
     yacc.parse(input_file_content)
 
     # Produce the output XML file

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i clone.asl -o clone.xml
+../../interpreter/interpreter.py -i clone.adl -o clone.xml

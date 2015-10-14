@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../interpreter/interpreter.py -i drop-never.asl -o drop-never.xml
+../../interpreter/interpreter.py -i drop-never.adl -o drop-never.xml

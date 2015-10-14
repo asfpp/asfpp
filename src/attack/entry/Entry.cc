@@ -8,36 +8,32 @@
 #include "Entry.h"
 
 
-Entry::Entry (Attack* attack, const SimTime occurrenceTime) {
-    
+Entry::Entry (Attack* attack, const SimTime occurrenceTime)
+{    
     this->attack = attack;
     this->occurrenceTime = occurrenceTime;
-    
 }
 
 
-Entry::~Entry () {
-    
+Entry::~Entry ()
+{
 }
 
 
-SimTime Entry::getOccurrenceTime () const {
-    
+SimTime Entry::getOccurrenceTime () const
+{
     return occurrenceTime;
-
 }
 
 
 // TODO remove
-SimTime Entry::getTime () const {
-    
+SimTime Entry::getTime () const
+{    
     return occurrenceTime;
-    
 }
 
 
-Attack* Entry::getAttack () const {
-    
+Attack* Entry::getAttack () const
+{    
     return attack;
-    
 }

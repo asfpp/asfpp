@@ -1455,36 +1455,56 @@ void Radio::ReceivedSignalDebug(const char *description)
 	}
 }
 
-/* Force the update of the Radio statistics */
-void Radio::forceUpdateStats(){ 
-		stats.RxReachedNoInterference++; 
+
+void Radio::forceUpdateStats()
+{
+    stats.RxReachedNoInterference++;
 }
 
-/* <A.P.> This function allows for invoking the protected function forceUpdateStats().
- * Since it is supposed to be invoked by other node modules, invoking Enter_Method() is necessary.
- */
-void Radio::forceUpdateStatsWrapper(){
 
-	    Enter_Method("forceUpdateStatsWrapper() invoked by an external module");
-	    forceUpdateStats();
-
+double Radio::getDeltaTime()
+{
+    double timeRxData = bytesRXed/(RXmode->datarate);
+    double deltaTime = timeRX.dbl()-timeRxData;
+    return deltaTime;
 }
 
-void Radio::getRxInfo(double &delta_time, double &datarate, double &rxPower){
-	double timeRxData = bytesRXed / RXmode->datarate;
-	trace()<<"Bytes Received "<<bytesRXed;
-	delta_time = timeRX.dbl() - timeRxData;
-	datarate = rxDatarate;
-	rxPower = rxPowerConsumption;
+
+double Radio::getDataRate()
+{
+    return rxDatarate;
 }
 
-/* This function is used to use by the LocalFilter and return the data information about
-   RX to compute energy consuption. When you  call a module function from another one 
-   you must use the method Enter_Method().
-   <A.P.>
-*/
-void Radio::getRxInfoWrapper(double &delta_time, double &datarate, double &rxPower){
 
-	Enter_Method("getRxInfoWrapper() invoked by an external module");
-	getRxInfo(delta_time, datarate, rxPower);
+double Radio::getRxPower()
+{
+    return rxPowerConsumption;
+}
+
+
+void Radio::forceUpdateStatsWrapper()
+{
+    Enter_Method("forceUpdateStatsWrapper() invoked by an external module");
+    forceUpdateStats();
+}
+
+
+double Radio::getDeltaTimeWrapper()
+{
+    Enter_Method("getDeltaTimeWrapper() invoked by an external module");
+    return getDeltaTime();
+}
+
+
+double Radio::getDataRateWrapper()
+{
+    Enter_Method("getDataRateWrapper() invoked by an external module");
+    return getDataRate();
+}
+    
+
+double Radio::getRxPowerWrapper()
+{
+    Enter_Method("getRxPowerWrapper() invoked by an external module");
+    return getRxPower();
 }

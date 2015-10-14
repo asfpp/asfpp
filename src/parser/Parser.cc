@@ -11,9 +11,12 @@
 #include "Parser.h"
 
 
-#include "Fakeread.h"
-#include "Move.h"
 #include "Destroy.h"
+#include "Disable.h"
+#include "Move.h"
+#include "Fakeread.h"
+
+
 
 
 /* Return either the content of an XML Text node (<tag>value</tag>), or an empty string if it is not a Text node 
@@ -36,8 +39,8 @@ string Parser::get_node_value(const xmlpp::Node* node) {
  * In such a case, pointers to the SensorManager and MobilityManager remain set to NULL.
  * This is not an issue, since the GlobalFilter does not perform physical attacks and does not require to access such modules.
  */
-Parser::Parser(cModule* targetNode, const string xmlFilename, const string appName, const string netProtocol, const string macProtocol, int node, SensorManager* sensor, VirtualMobilityManager* mobility ){
-
+Parser::Parser(cModule* targetNode, const string xmlFilename, const string appName, const string netProtocol, const string macProtocol, int node, SensorManager* sensor, VirtualMobilityManager* mobility )
+{
     this->targetNode = targetNode;
 
 	xmlFile = xmlFilename;
@@ -200,6 +203,12 @@ bool Parser::attackInit(const xmlpp::Node* xml_attack, Attack* attack, SimTime& 
 			if(action_name == "Destroy") {
 				Destroy* destroy = new Destroy(targetNode);
 				attack->addAction(destroy);
+			}
+            
+            // action 'disable' found
+			if(action_name == "Disable") {
+				Disable* disable = new Disable(targetNode);
+				attack->addAction(disable);
 			}
 		
 			// action 'move' found
