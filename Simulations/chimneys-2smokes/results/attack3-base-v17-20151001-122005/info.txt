@@ -1,0 +1,6 @@
+Auto-generated file
+-------------------
+
+Configuration: attack3-base-v17
+Time: 2015-10-01 12:20:05
+Command: ../../bin/Castalia -i omnetpp.ini -c attack3-base-v17 -r 50

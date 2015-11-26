@@ -1,0 +1,6 @@
+Auto-generated file
+-------------------
+
+Configuration: General-digest-16
+Time: 2015-09-30 21:25:54
+Command: ../../bin/Castalia -i omnetpp.ini -c General-digest-16 -r 50

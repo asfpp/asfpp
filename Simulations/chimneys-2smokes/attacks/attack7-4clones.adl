@@ -1,0 +1,138 @@
+# file: attack7-4clones.adl
+#
+# technique: attack based on wormhole.
+#
+# brief: Exchange cluster-1's data with cluster-2's data.
+#
+# detail: Node 3 and node 4 (compromised) establish a wormhole
+#         between them.
+#         Packets received by node 4 from node 6 are tampered and are  
+#         sent through the wormhole to node 3. The latter sends the 
+#         packets to the sink.
+#         In the same way, packets received by node 3 from node 5 are
+#         tampered and sent through the wormhole to node 4.
+
+
+list node_2 = {2}
+list node_3 = {3}
+list node_4 = {4}
+list node_5 = {5}
+list node_6 = {6}
+
+
+# send cluster-2's packets to cluster-1
+from 185 nodes in node_4 do{
+	
+    filter("MAC.source" == 6 and "APP.sourceNodeID" == 6)
+       
+        packet worm
+
+        var macSeqNum = 10000
+        var netSeqNum = 10000
+        var appSeqNum = 300
+        
+        clone(original, worm)
+        
+        change(worm, "MAC.destination", 3)
+        change(worm, "MAC.sequenceNumber", macSeqNum)
+        
+        change(worm, "NET.sequenceNumber", netSeqNum)
+        change(worm, "NET.destination", 3)
+        
+        change(worm, "APP.sequenceNumber", appSeqNum)
+        change(worm, "APP.sourceNodeID", 5)
+       
+        # drop the original packet
+        drop(original, 1)
+        
+        put(worm, node_3, RX, FALSE, 0.1)
+        
+        macSeqNum +=1
+        netSeqNum +=1
+        appSeqNum +=1
+ 
+}
+
+
+# send worm packets to node 1
+from 185 nodes in node_3 do{
+	
+    filter("MAC.source" == 6)
+       
+        packet dolly
+        
+        clone(original, dolly)
+       
+        change(dolly, "MAC.destination", 1)
+        change(dolly, "NET.destination", 1)
+        
+        drop(original,1)
+        send(dolly,0)
+        
+ 
+}
+
+
+# send cluster-1's packets to cluster-2
+from 185 nodes in node_3 do{
+	
+    filter("MAC.source" == 5 and "APP.sourceNodeID" == 5)
+       
+        packet worm
+
+        var macSeqNum = 10000
+        var netSeqNum = 10000
+        var appSeqNum = 300
+        var data = 0
+        
+        clone(original, worm)
+        
+        change(worm, "MAC.destination", 4)
+        change(worm, "MAC.sequenceNumber", macSeqNum)
+        
+        change(worm, "NET.sequenceNumber", netSeqNum)
+        change(worm, "NET.destination", 4)
+        
+        change(worm, "APP.sequenceNumber", appSeqNum)
+        change(worm, "APP.sourceNodeID", 6)
+       
+        retrieve(original, "APP.data", data)
+        data += 17
+        change(worm, "APP.data", data)
+       
+        # drop the original packet
+        drop(original, 1)
+        
+        put(worm, node_4, RX, FALSE, 0.1)
+        
+        macSeqNum +=1
+        netSeqNum +=1
+        appSeqNum +=1
+    
+}
+
+# tamper and send worm packets to node 2
+from 185 nodes in node_4 do{
+	
+    filter("MAC.source" == 5)
+       
+        packet dolly1
+        packet dolly2
+        packet dolly3
+        packet dolly4
+        
+        change(original, "MAC.destination", 2)
+        change(original, "NET.destination", 2)
+        
+        clone(original, dolly1)
+        clone(original, dolly2)
+        clone(original, dolly3)
+        clone(original, dolly4)
+        
+        drop(original, 1)
+        send(dolly1, 0)
+        send(dolly2, 0)
+        send(dolly3, 0)
+        send(dolly4, 0)
+ 
+}

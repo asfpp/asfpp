@@ -1,0 +1,6 @@
+Auto-generated file
+-------------------
+
+Configuration: attack7-base
+Time: 2015-11-26 21:59:33
+Command: ../../bin/Castalia -i omnetpp.ini -c attack7-base -r 1

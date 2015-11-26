@@ -1,0 +1,154 @@
+# file: attack1-100ms.adl
+#
+# technique: attack against routing by using injections.
+#
+# brief: The objective is to tamper data regarding pollutant emissions 
+#        of cluster-1 and cluster-2.
+#
+# detail: By using the injection technique, a fake RREP and HELLOs are 
+#         sent to node 5 periodically. The fake RREP and HELLOs seem
+#         to come from node 4.
+#         In this way node 5 (cluster-1 head) sets (and keeps) node 4 
+#         as its next-hop and tries to send to him data packets, but 
+#         node 5 can't reach node 4.
+#         To alter the data regarding cluster-1's emissions, fake data 
+#         packets are sent to the sink. The fake data packet seem to 
+#         come from node 5.
+#         To alter the data regarding cluster-2's emissions, fake data 
+#         packets are sent to node 6 by using the injection tecnique with
+#         injection rate 100ms.
+#         
+# authors: 
+#  + Alessandro Pischedda <alessandro.pischedda@gmail.com>
+#  + Francesco Racciatti <racciatti.francesco@gmail.com>
+
+
+list node_5 = {5}
+list node_6 = {6}
+list node_0 = {0}
+
+
+# cluster-1 section
+
+# send a fake RREP to node 5
+from 175 every 0 do{
+
+    # declare the fake RREP packet
+    packet fakeRREP
+
+    # create the fake RREP packet
+    create(fakeRREP, "NET.type", 2)
+
+    # fill its fields
+    change(fakeRREP, "NET.hopCount", 1)
+    change(fakeRREP, "NET.destination", 5)
+    change(fakeRREP, "NET.source", 4)
+    change(fakeRREP, "NET.destinationAodv", 0)
+    change(fakeRREP, "NET.destinationSeqNum", 10)
+    change(fakeRREP, "NET.originator", 5)
+    change(fakeRREP, "NET.lifetime", 120)
+    
+    # send the fake RREP to node 5
+    put(fakeRREP, node_5, RX, TRUE, 1.5)
+
+}
+
+
+# send fake HELLOs to node 5 periodically
+from 180 every 25 do{
+
+    # declare the fake HELLO packet
+    packet fakeHello
+
+    # create the fake HELLO packet
+    create(fakeHello, "NET.type", 5)
+
+    # fill its fields
+    change(fakeHello, "NET.destinationSeqNum", 10)
+    change(fakeHello, "NET.source", 4)
+
+    # send fake HELLO to node 5
+    put(fakeHello, node_5, RX, TRUE, 1.5)
+
+}
+
+
+# send fake data packets to sink (fake data packets seem to come from node 5)
+from 180 every 5 do{
+
+    # declare and initialize variables
+    var appSeqNum = 60
+    var macSeqNum = 100
+    # RANDOM values are based on MIN and MAX    
+    var MAX = 42
+    var MIN = 38
+    
+    # declare the fake data packet
+    packet fakeDATA
+
+    # create the fake data packet
+    create(fakeDATA, "APP.type", 0, "NET.type", 6, "MAC.type", 6)
+
+    # fill MAC fields
+    change(fakeDATA, "MAC.source", 1)
+    change(fakeDATA, "MAC.destination", 0)
+    change(fakeDATA, "MAC.sequenceNumber", macSeqNum)
+
+    # fill NET fields
+    change(fakeDATA, "NET.source", 5)
+    change(fakeDATA, "NET.destination", 0)
+    change(fakeDATA, "NET.destinationAodv", 0)
+
+    # fill APP fields
+    change(fakeDATA, "APP.data", RANDOM)
+    change(fakeDATA, "APP.sourceNodeID", 5)
+    change(fakeDATA, "APP.sequenceNumber", appSeqNum)
+
+    # send the fake packet to sink
+    put(fakeDATA, node_0, RX, TRUE, 1)
+
+    # update the sequence numbers
+    appSeqNum += 1
+    macSeqNum += 1
+
+}
+
+
+# cluster-2 section
+
+# send fake data packets to node 6
+from 180 every 0.1 do{
+
+    # declare and initialize variables
+    var appSeqNum = 80000
+    var macSeqNum = 100000
+    var DATA = 15
+
+    # declare the fake data packet
+    packet fakeDATA
+
+    # create the fake data packet
+    create(fakeDATA, "APP.type", 0, "NET.type", 6, "MAC.type", 6)
+
+    # fill MAC fields
+    change(fakeDATA, "MAC.source", 15)
+    change(fakeDATA, "MAC.destination", 6)
+    change(fakeDATA, "MAC.sequenceNumber", macSeqNum)
+
+    # fill NET fields
+    change(fakeDATA, "NET.source", 15)
+    change(fakeDATA, "NET.destination", 6)
+    change(fakeDATA, "NET.destinationAodv", 6)
+
+    # fill APP fields
+    change(fakeDATA, "APP.data", DATA)
+    change(fakeDATA, "APP.sequenceNumber", appSeqNum)
+    change(fakeDATA, "APP.sourceNodeID", 15)
+
+    # send the fake data packet to node 6
+    put(fakeDATA, node_6, RX, TRUE, 0.1)
+
+    # increment appSeqNum and macSeqNum
+    appSeqNum += 1
+    macSeqNum += 1
+}

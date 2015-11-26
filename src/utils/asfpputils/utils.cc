@@ -35,35 +35,38 @@ vector<string> tokenize(const string str, const char delim) {
 
 
 string itos(const int i) { 
-  
- 	stringstream s; 
- 	s << i; 
- 	return s.str(); 
-
+    stringstream s; 
+    s << i; 
+    return s.str(); 
 }
 
-string dtos(const double number){
 
-	std::ostringstream strs;
-	strs << number;
-	return strs.str();
-
+string dtos(const double number) {
+    std::ostringstream strs;
+    strs << number;
+    return strs.str();
 }
+
 
 int layertoi(const string layer) {
 
-	if(layer == "MAC")
-		return MAC_LAYER_PACKET;
-	if(layer == "NET")
-		return NETWORK_LAYER_PACKET;
-	if(layer == "APP")
-		return APPLICATION_PACKET;
-
-	string message = "ERROR : in the XML file -> the layer "+layer+" doesn't exist\n";
-	opp_error(message.c_str());
-
+    if(layer == "MAC") {
+        return MAC_LAYER_PACKET;
+    }
+    
+    if(layer == "NET") {
+        return NETWORK_LAYER_PACKET;
+    }
+    
+    if(layer == "APP") {
+        return APPLICATION_PACKET;
+    }
+    
+    string errorMessage = "Layer name '" + layer + "' not recognized, the packet-filter supports only 'MAC', 'NET' and 'APP'";
+	opp_error(errorMessage.c_str());
 
 }
+
 
 void setFilteredRecursively(cMessage* packet, const int value) {
 

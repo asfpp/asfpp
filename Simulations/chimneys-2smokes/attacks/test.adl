@@ -1,0 +1,26 @@
+# file: attack2-250ms.adl
+#
+# technique: attack based on wormhole.
+#
+# brief: Exchange cluster-1's data with cluster-2's data.
+#
+# detail: Node 3 and node 4 (compromised) establish a wormhole
+#         between them.
+#         Packets received by node 4 from node 6 are tampered and are  
+#         sent through the wormhole to node 3. The latter sends the 
+#         packets to the sink.
+#         In the same way, packets received by node 3 from node 5 are
+#         tampered and sent through the wormhole to node 4.
+
+list node_1 = {1}
+list node_2 = {2}
+list node_3 = {3}
+list node_4 = {4}
+list node_5 = {5}
+list node_6 = {6}
+
+from 200 nodes in node_3 do {
+
+ filter("MAC.source" == 5 and "NET.source" == 5 and "APP.sourceNodeID" == 5)
+    drop(original, 1)
+}

@@ -1,0 +1,6 @@
+Auto-generated file
+-------------------
+
+Configuration: attack3-clone1-v17
+Time: 2015-10-01 14:23:50
+Command: ../../bin/Castalia -i omnetpp.ini -c attack3-clone1-v17 -r 50

@@ -82,16 +82,35 @@ PacketFilter::PacketFilter(string monolithicPacketFilter)
 void PacketFilter::setPacketFilterLayer()
 {
     // find the minimum layer among the blocks
-    int packetFilterMinimumLayer = APPLICATION_PACKET;
+    packetFilterMinimumLayer = APPLICATION_PACKET;
+    
+    block_t blockType;
+    int blockLayer;
     for (size_t i = 0; i < filterBlocks.size(); i++) {
-        int blockLayer = filterBlocks[i]->getLayer();
+        
+        blockType = filterBlocks[i]->getType();
+        // solve the block
+        switch (blockType) {
+            case block_t::ELEMENTARY: {
+                blockLayer = ((ElementaryBlock*)filterBlocks[i])->getLayer();
+                break;   
+            }
+            case block_t::COMPOUND: {
+                blockLayer = ((CompoundBlock*)filterBlocks[i])->getLayer();
+                break;
+            }
+            default: {
+                opp_error("[PacketFilter::setPacketFilterLayer()] Can't recognize the type of the filter block");
+            }
+        }
+        
         if (blockLayer < packetFilterMinimumLayer) {
             packetFilterMinimumLayer = blockLayer;
         }
+        
     }
     
 }
-
 
 
 PacketFilter::~PacketFilter()
@@ -115,7 +134,7 @@ bool PacketFilter::passPreMatchChecks(cMessage* msg) const
 	// packet filter supports only APPLICATION_PACKETs, NETWORK_LAYER_PACKETs and MAC_LAYER_PACKETs
 	int msgKind = msg->getKind();
     if (msgKind != APPLICATION_PACKET && msgKind != NETWORK_LAYER_PACKET && msgKind != MAC_LAYER_PACKET) {
-		return false;
+        return false;
     }
     
     // check if the packet has been already filtered before
@@ -125,7 +144,7 @@ bool PacketFilter::passPreMatchChecks(cMessage* msg) const
 	if (filtered == 1) {
 		return false;
     }
-    
+   
     // check if the packet'layer is less or equal than the packet-filter's layer
     if (msgKind > packetFilterMinimumLayer) {
         return false;
@@ -137,6 +156,7 @@ bool PacketFilter::passPreMatchChecks(cMessage* msg) const
 
 bool PacketFilter::matchPacketFilter(cMessage* msg) const
 {    
+
     // check if the packet can be filtered
     if (passPreMatchChecks(msg) == false) {
         return false;
@@ -149,12 +169,12 @@ bool PacketFilter::matchPacketFilter(cMessage* msg) const
         block_t blockType = filterBlocks[i]->getType();
         // solve the block
         switch (blockType) {
-            case (block_t::ELEMENTARY): {
+            case block_t::ELEMENTARY: {
                 ElementaryBlock* block = (ElementaryBlock*)filterBlocks[i];
                 solved.push_back(block->solveFilterBlock(msg));
                 break;   
             }
-            case (block_t::COMPOUND): {
+            case block_t::COMPOUND: {
                 CompoundBlock* block = (CompoundBlock*)filterBlocks[i];
                 solved.push_back(block->solveFilterBlock(msg));
                 break;
