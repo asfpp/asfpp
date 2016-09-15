@@ -1,0 +1,20 @@
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+\usepackage{tikz}
+\usepackage{xcolor}
+
+% tikz set
+\tikzset{
+	>=latex,
+	inner sep=0pt,%
+	outer sep=2pt,%
+	mark coordinate/.style={inner sep=0pt,outer sep=0pt,minimum size=3pt, fill=black,circle}%
+	declare function={
+		sign(\x)= (\x<=0.5) * (1)   +
+		and(\x>0.5, \x<=1) * (-1) +
+		and(\x>1, \x<=1.5) * (1) +
+		and(\x>1.5, \x<=2.1) * (-1);
+	}
+}

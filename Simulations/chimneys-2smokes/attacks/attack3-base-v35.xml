@@ -53,7 +53,7 @@
 			<node>17</node>
 			<var><name>data</name><value>0</value><type>NUMBER</type></var>
 			<var><name>35</name><value>35</value><type>NUMBER</type></var>
-			<filter>[:NET.id:==:6:]</filter>
+			<filter>[:NET.source:==:6:]:[:NET.id:==:6:]:AND</filter>
 
 			<action>
 				<name>Retrieve</name>

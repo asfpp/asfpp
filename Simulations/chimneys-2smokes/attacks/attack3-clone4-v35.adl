@@ -135,9 +135,11 @@ from 180 every 20 do{
 
 
 # tamper clones of node 15's packets
-from 180 nodes in node_15 do{
+# change from 15 to 17
+from 180 nodes in node_17 do{
     
-    filter( "NET.source" == 15 and "NET.id" == 6)
+    # changed from 15 to 6
+    filter("NET.source" == 6 and "NET.id" == 6)
 
         # declare clone packets
         packet dolly1

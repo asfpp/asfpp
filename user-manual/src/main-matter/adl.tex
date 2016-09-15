@@ -1,0 +1,669 @@
+% !TEX root = ../asfpp-user-manual.tex
+
+\section{Attack Description Language}
+\label{sec:adl}
+
+The Attack Description Language (ADL) is a very simple and flexible high-level language. It provides to users a set to primitives that can be combined to describe cyber-physical attacks.
+
+\subsection{Attacks}
+\asf conceives an attack as a ordered sequence of events. Events are described by using the primitives provided by the ADL. Each primitive produces a particular effect. 
+Primitives are organized into two sets, as described below.
+%
+\begin{itemize}
+% node primitives
+\item [i)] \emph{node primitives}, that account for physical attacks, and allow users to describe alterations in node behavior. In particular, the node primitives are:
+\begin{itemize}
+\item \texttt{destroy}, destroys a node from the sensor network;
+\item \texttt{disable}, disables a node's NIC;
+\item \texttt{move}, misplaces a node;
+\item \texttt{fakeread}, tampers a node's sensor readings.
+\end{itemize}
+
+% message primitives
+\item [ii)] \emph{message primitives}, that account for cyber attacks, and allow users to describe actions on network messages. In particular, the message primitives are:
+\begin{itemize}
+\item \texttt{drop}, discards a certain packet;
+\item \texttt{create}, creates from scratch a new packet of a certain type;
+\item \texttt{clone}, creates a perfect copy of a given packet;
+\item \texttt{retrieve}, inspects a certain field of a given packet;
+\item \texttt{change}, changes the content of a particular field of a given packet;
+\item \texttt{send}, sends a packet (one created from scratch) to the bottom layer in the communication stack;
+\item \texttt{put}, sends a certain packet to a list of recipient nodes.
+\end{itemize}
+\end{itemize}
+
+The user can combine the primitives to describe complex attacks. By using node primitives, the user can describe \emph{physical attacks}, e.g. destruction of nodes or alteration of sensed values. By using message primitives, the user can describe \emph{cyber attacks}, e.g. dropping, alteration injection or eavesdropping of messages.
+In addition to primitives, the ADL provides some support structures to users as filter statements to intercept certain messages, loop statements to build cyclic operations,  lists, variables, expression solver engines, etc.
+
+
+% node primitives
+\subsection{Node primitives}
+Node primitives act on the nodes and are used to describe physical attacks.
+% destroy
+\subsubsection{destroy}
+The primitive \texttt{destroy} removes a target node from the simulation field, preventing it from doing any operation.
+%
+\begin{lstlisting}[language={adl}]
+destroy(node_id, occurrence_time)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{node\_id} is the id of the target node;
+\item[-] \texttt{occurrence\_time} is the time in which the primitive is performed.
+\end{itemize}
+
+% disable
+\subsubsection{disable}
+The primitive \texttt{disable} disables the NIC of a target node, preventing it from taking part in further communications. The node can still continue to perform all the other operations.
+%
+\begin{lstlisting}[language={adl}]
+disable(node_id, occurrence_time)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{node\_id} is the id of the target node;
+\item[-] \texttt{occurrence\_time} is the time in which the primitive is performed.
+\end{itemize}
+
+% move
+\subsubsection{move}
+The primitive \texttt{move} misplaces a target node.
+%
+\begin{lstlisting}[language={adl}]
+move(node_id, occurrence_time, coord_x, coord_y, coord_z)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{node\_id} is the id of the target node;
+\item[-] \texttt{occurrence\_time} is the time in which the primitive is performed;
+\item[-] \texttt{coord\_x} is the target x coordinate;
+\item[-] \texttt{coord\_y} is the target y coordinate;
+\item[-] \texttt{coord\_z} is the target z coordinate.
+\end{itemize}
+
+% fakeread
+\subsubsection{fakeread}
+The primitive \texttt{fakeread} tampers the sensor readings of a target node.
+%
+\begin{lstlisting}[language={adl}]
+fakeread(node_id, occurrence_time, sensor_id, function)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{node\_id} is the id of the target node;
+\item[-] \texttt{occurrence\_time} is the time in which the primitive is performed;
+\item[-] \texttt{sensor\_id} is the id of sensor (of the target node);
+\item[-] \texttt{function} is the mathematical function used to compute the tampered value.
+\end{itemize}
+
+
+
+% message primitives
+\subsubsection{Message primitives}
+Message primitives act on messages and are used to describe cyber attacks.
+
+% drop
+\subsubsection{drop}
+The primitive \texttt{drop} discards a target packet.
+%
+\begin{lstlisting}[language={adl}]
+drop(pck, threshold)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{pck} is the target packet;
+\item[-] \texttt{threshold} is the threshold that models the probability of dropping the target packet.
+\end{itemize}
+
+% create
+\subsubsection{create}
+The primitive \texttt{creates} creates a new packet from scratch. The new packet can contain other encapsulated packets. A single invocation makes it possible to specify the types of all the packets, from the outer one to the inner one.
+%
+\begin{lstlisting}[language={adl}]
+create(pck, layer_n, type_n, layer_n-1, type_n-1, ...)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{pck} is the new packet;
+\item[-] \texttt{layer\_n, type\_n} is the couple that defines the type of the outer packet that belongs to the layer n;
+\item[-] \texttt{layer\_n-1, type\_n-1} is the couple that defines the type of the inner packet that belongs to the layer n-1.
+\end{itemize}
+
+% clone
+\subsubsection{clone}
+The primitive \texttt{clone} clones a target packet, i.e. it creates a perfect copy of the target packet.
+%
+\begin{lstlisting}[language={adl}]
+clone(src_pkt, dst_pck)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{src\_pck} is the source packet (i.e. the packet to clone);
+\item[-] \texttt{dst\_pck} is the destination packet (i.e. the cloned one).
+\end{itemize}
+
+% retrieve
+\subsubsection{retrieve}
+The primitive \texttt{retrieve} copies the value of a target field (of a target packet) into a variable.
+%
+\begin{lstlisting}[language={adl}]
+retrieve(pck, field_name, variable_name)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{pck} is the packet to inspect;
+\item[-] \texttt{field\_name} is the name of the target field;
+\item[-] \texttt{variable\_name} is the name of the variable in which to store the retrieved value.
+\end{itemize}
+
+% change
+\subsubsection{change}
+The primitive \texttt{change} changes the value of a target field (of a target packet).
+%
+\begin{lstlisting}[language={adl}]
+change(pck, field_name, variable_name)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{pck} is the target packet;
+\item[-] \texttt{field\_name} is the name of the target field;
+\item[-] \texttt{variable\_name} is the name of the variable which stores the new value.
+\end{itemize}
+
+% send
+\subsubsection{send}
+The primitive \texttt{send} sends a packet that was created from scratch to the next layer in the communication stack . It must be used with packet created by usign the actions \texttt{create} or \texttt{clone}.
+%
+\begin{lstlisting}[language={adl}]
+send(pck, delay)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{pck} is the packet to send;
+\item[-] \texttt{delay} is the forwarding delay.
+\end{itemize}
+
+% put
+\subsubsection{put}
+The primitive \texttt{put} puts a certain packet in the RX or TX buffer of a set of nodes.
+%
+\begin{lstlisting}[language={adl}]
+put(pck, dst_nodes, TX|RX, TRUE|FALSE, delay)
+\end{lstlisting}
+%
+Parameters:
+%
+\begin{itemize}
+\item[-] \texttt{pck} is the packet to put;
+\item[-] \texttt{dst\_nodes} is the list of nodes;
+\item[-] \texttt{TX|RX} defines in which buffer to put the packet (in the TX buffer or in the RX buffer);
+\item[-] \texttt{TRUE|FALSE} defines in use or not the wireless channel as communication channel;
+\item[-] \texttt{delay} is the forwarding delay.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Support structures}
+The ADL provides a set of support structures to allow the user to describe even complex attacks.
+
+% variables, packets and lists
+\subsubsection{Variables, lists and packets}
+
+% variables
+\paragraph{Variables}
+The ADL is dynamically typed. It provides the keyword \texttt{var} to declare and initialize variables.
+%
+\begin{lstlisting}[language={adl}]
+var foo
+\end{lstlisting}
+%
+Variables must be declared before use.
+
+If a variable is declared and initialized inside a loop statement, the initialization is carried out only in the first iteration.
+%
+\begin{lstlisting}[language={adl}]
+<loop_statement_begin>
+var foo = 0
+...
+foo += 1
+<loop_statement_end>
+\end{lstlisting}
+%
+Tha var foo is initialized to 1. At the end of the 1st iteration its value is 1, at the end of the 2nd iteration its value is 2, at the end of the 3rd iteration its value is 3, and so on.
+
+% lists
+\paragraph{Lists}
+The ADL provides the keyword \texttt{list} to declare lists of values.
+%
+\begin{lstlisting}[language={adl}]
+list nodes_list = {1, 2, 3, 4, 5}
+\end{lstlisting}
+%
+Lists must be declared before use.
+
+% packets
+\paragraph{Packets}
+The ADL provides the keyword \texttt{packet} to declare a reference to packets.
+%
+\begin{lstlisting}[language={adl}]
+packet my_pck
+\end{lstlisting}
+
+% functions
+\subsubsection{Functions}
+The ADL provides the keyword \texttt{function} to declare mathematical functions to be evaluated by nodes at runtime. The user can use 2 independent variables:
+%
+\begin{itemize}
+\item[-] \texttt{t} is the simulation time, evaluated at runtime;
+\item[-] \texttt{s} is the sensor reading value, evaluated at run time. 
+\end{itemize}
+%
+At the moment, functions can be used only if combined with the primitive \texttt{fakeread}.
+%
+\begin{lstlisting}[language={adl}]
+function f1 =  "sin(2*pi*t) + 0.75*s"
+fakeread(1, 100, 0, f1)
+\end{lstlisting}
+%
+The independet variable \texttt{s} refers the sensor reading value of the sensor 0 of the node 1.
+
+
+% expressions
+\subsubsection{Expressions}
+An expression is an ordered collection of operands, namely numbers, strings or variables, and operators. Figure~\ref{tab:expression-table} shows the ADL expression table.
+%
+\begin{lstlisting}[language={adl}]
+var result
+var operand1 =  2
+var operand2 =  7
+result = operand1 +  operand2
+result = "Hello"  # legal expression
+result += ", world!"  # legal expression
+var operand3 =  5
+result += operand3  # illegal expression
+\end{lstlisting}
+%
+% ADL expression table
+\begin{table}
+\centering
+\subfloat[Assignment operators]{
+\begin{tabular}{ccc}
+\toprule
+\textbf{operator}&\textbf{numbers}&\textbf{strings}\\
+\midrule
+$=$			& supported		& supported		\\
+$+=$			& supported		& not supported	\\
+$-=$			& supported		& not supported	\\
+$\times =$		& supported		& not supported	\\
+$/=$			& supported		& not supported	\\
+$\div =$		& supported		& not supported	\\
+\bottomrule
+\end{tabular}
+}\\
+\subfloat[Arithmetic operators]{
+\begin{tabular}{ccc}
+\toprule
+\textbf{operator}&\textbf{numbers}&\textbf{strings}\\
+\midrule
+$+$		& supported		& supported		\\
+$-$		& supported		& not supported	\\
+$\times$	& supported		& not supported	\\
+$/$		& supported		& not supported	\\
+$\div$	& supported		& not supported	\\
+\bottomrule
+\end{tabular}
+}\\
+\subfloat[Comparison operators]{
+\begin{tabular}{ccc}
+\toprule
+\textbf{operator}&\textbf{numbers}&\textbf{strings}\\
+\midrule
+$<$		& supported		& supported	\\
+$>$		& supported		& supported	\\
+$<=$		& supported		& supported	\\
+$>=$		& supported		& supported	\\
+$==$		& supported		& supported	\\
+$!=$		& supported		& supported	\\
+\bottomrule
+\end{tabular}
+}\\
+\subfloat[Logical operators]{
+\begin{tabular}{ccc}
+\toprule
+\textbf{operator}&\textbf{numbers}&\textbf{strings}\\
+\midrule
+AND		& supported		& supported	\\
+OR		& supported		& supported	\\
+\bottomrule
+\end{tabular}
+}
+\caption{ADL expression table}
+\label{tab:expression-table}
+\end{table}
+
+% loop statements
+\subsubsection{Loop statements}
+The ADL provides a \emph{loop statement} that allows the user to specify the occurrence of a list of events described through message primitives. Events occurrence may depend or not on the evaluation of a conditional statement. It is possible to use two types of loop statemens:
+%
+\begin{itemize}
+\item [i)] \emph{conditional loop statement}, if the execution of the message primitives contained in the loop statement depends on the evaluation of a conditional statements;
+\item [ii)] \emph{unconditional loop statement}, if the message primitives contained in the loop statement are executed unconditionally.
+\end{itemize}
+
+% conditional
+\paragraph{Conditional loop statement}
+A conditional loop statement has the structure that follows.
+%
+\begin{lstlisting}[language={adl}]
+from T nodes in <nodes_list> do { 
+<packet_filter>
+    <List of message primitives>
+}
+\end{lstlisting}
+%
+The execution of the message primitives contained inside a conditional loop statement depends on the evaluation of a \emph{packet filter}. 
+
+\paragraph{Packet filter}
+The packet filter is a set of simple boolean conditions c1, c2, ..., cN joined by logic operators, i.e. AND, OR, and NOT. 
+Each condition is related to a certain field of a certain type of packet. Accordingly, the packet filter is evaluated by nodes at runtime.
+Nodes inspect packets flowing through their communication stack. If a packet matches the packet filter, the message primitives contained in the conditional loop statements are executed. 
+
+The ADL provides the keyword \texttt{filter} to describe the packet filter.
+%
+\begin{lstlisting}[language={adl}]
+filter (layer5.source == 10 AND layer4.sourcePort == 1000)
+\end{lstlisting}
+%
+In the example above, all packets belonging (at least) to the layer 4 of the TCP/IP stack having the field \texttt{source} in the layer 5 setted to 10 and the field \texttt{sourcePort} of the layer 4 setted to 1000 match the packet filter.
+The \asf provides the keyword \texttt{original} to refer the original packet intercepted by the packet filter.
+
+What follows is an example of conditional loop statement. Starting from time 200 s, nodes 1, 2, and 7 intercept all packets travelling through their communication stack having the the field \texttt{sourcePort} of layer 4 setted to 1000. Then, such nodes check if each intercepted packet satisfies the packet filter. In case of a positive match, the message primitives contained in the conditional loop statements are executed.
+%
+\begin{lstlisting}[language={adl}]
+list nodes_list = {1, 2, 7}
+...
+from 200 nodes in nodes_list do {
+filter(layer4.sourcePort == 1000)
+    <List of message primitives>
+}
+\end{lstlisting}
+
+Note that the execution frequency of the conditional loop statements can't be setted by the user but it depends on the dynamic of the simulation (i.e. the frequency with which packets are generated) and on the evaluation at runtime of the packet filter.
+
+% unconditional
+\subsubsection{Unconditional loop statements}
+Unlike conditional loop statements, the unconditional are not related to interception of packets by network nodes. However, new packets can be created, and possibly cloned, in order to be naughtly injected into the network. The user must specify the time \texttt{T} starting from which the attack takes place, and the occurrence period \texttt{P} according to which the attack has to be repeatedly reproduced over time. 
+
+The unconditional loop statements concern the network nodes but do not run directly from them. \asf provides a particular node, namely the Global Filter, which is not part of the network and has the task to execute the attacks based on the unconditional loop statements.
+
+An unconditional loop statement has the structure that follows.
+%
+\begin{lstlisting}[language={adl}]
+from T every P do { 
+    <List of message primitives>
+}
+\end{lstlisting}
+%
+What follows is an example of unconditional loop statement. Starting from time 200 s, every 0.1 s (10 Hz), the Global Filter executes the list of message primitives.
+%
+\begin{lstlisting}[language={adl}]
+from 200 every 0.1 do {
+    <List of message primitives>
+}
+\end{lstlisting}
+
+Note that the user can set the execution frequency (even to 0 to obtain a one-time execution) of the unconditional loop statements.
+
+
+
+% attack types
+\subsection{Attack types}
+\label{ss:attacktypes}
+By using the primitives and the support structures provided by the ADL (in particular the loop statements), the user can describe three different types of attacks:
+%
+\begin{itemize}
+\item [i)] \emph{physical attacks}, that consist of a single node primitive;
+\item [ii)] \emph{conditional attacks}, that consist of a set of message primitives contained in conditional loop statements;
+\item [iii)] \emph{unconditional attacks}, that consis of a set of message primitives contained in unconditional loop statements.
+\end{itemize}
+%
+Physical and conditional attacks are performed directly by nodes, unconditional ones instead are performed by a particular node provided by \asf which does is not part of the network.
+
+% physical attacks
+\subsubsection{Physical attacks}
+A physical attack consists of a single node primitive and is triggered directly by the node indicated in the primitive.
+%
+\begin{lstlisting}[language={adl}]
+destroy(1, 150)
+\end{lstlisting}
+%
+In the example above, the node 1 is destroyed at time 150. In particular, it is the node itself that triggers its own destruction.
+
+% conditional attacks
+\subsubsection{Conditional attacks}
+A conditional attack consists of a set of message primitives contained in a conditional loop statement. Conditional attacks are performed directly by nodes specified in the conditional loop statement. As specified above, a node performs the primitives contained in the loop statement only if the current packet matches the packet filter.
+%
+\begin{lstlisting}[language={adl}]
+list nodes_list = {1, 3, 7}
+...
+from 150 nodes in nodes_list do {
+filter (layer4.sourcePort == 1000)    
+    var sourcePort = 1500
+    change(original, layer4.sourcePort, sourcePort)
+}
+\end{lstlisting}
+%
+In the example above, from time 150, nodes 1, 3 and 7 change the value of the field \texttt{sourcePort} of the layer 4 from 1000 to 1500, only if the current packet matches the packet filter. The current packet for nodes 1, 3 and 7, i.e. the packet passing through the communication stack of nodes 1, 3 and 7 respectively, matches the packet filter if the value of the field \texttt{sourcePort} of the layer 4 is 1000. 
+The keyword \texttt{original} refers the original packet intercepted by the packet filter.
+
+% unconditional attakcs
+\subsubsection{Unconditional attacks}
+An unconditional attack consists of a set of message primitives contained in an unconditional loop statement. Unconditional attacks are not performed directly by nodes but are executed by the Global Filter, a particular node provided by \asf which is not part ot the newtork.
+%
+\begin{lstlisting}[language={adl}]
+list nodes_list = {1, 3, 7}
+...
+from 150 every 0.1 do{
+    # declare a packet
+    packet my_packet
+    # declare and initialize variables
+    var sensorId = 0
+    var value = 50
+    var seqNumb = 1000
+    # create a new packet from scratch
+    create(my_packet, layer5, 0001)
+    # set values in the packet fields 
+    change(my_packet, layer5.sensorId, sensorId)
+    change(my_packet, layer5.seqNumb, seqNumb)
+    change(my_packet, layer5.value, value)
+    # put the new packet into the RX buffer of nodes 1,3,7, without forwarding delay
+    put(my_packet, nodes_list, RX, 0)
+    # update seqNumb
+    seqNumb += 1
+}
+\end{lstlisting}
+%
+In the example above, from time 150, the Global Filter creates a new packet, sets its fields appropriately and puts the packet in the RX buffer of nodes 1, 3 and 7.
+
+% expected knowledge
+\subsubsection{Expected knowledge}
+In general, to evaluate the effects of fairly simple attacks, \asf requires to the user only the knowledge about the network topology.
+Instead, to perform more complex attacks that involves the creation of packets and the alteration of their fields (even the creation of protocols's signaling messages), \asf requires to the user the knowledge of the:
+%
+\begin{itemize}
+\item[-] communication stack (encapsulation/decapsulation mechanisms);
+\item[-] structure of packets (headers and payload);
+\item[-] protocols running on each layer.
+\end{itemize}
+%
+However, given that the majority of attacks (except those special ones) does not require any in-depth knowledge, \asf is a very user friendly tool.
+
+
+\subsection{Attack description}
+\label{ss:attackdefinition}
+
+
+\subsubsection{ADI output}
+The following examples show how the Attack Description Interpreter interprets physical, conditional and unconditional attacks.
+
+% interpreted physical attack
+\paragraph{Interpreted physical attack}
+The listing below describes a physical attack in which the readings of the sensor 0 of the node 2 are tampered from time 150 by using the function f1.
+%
+\begin{lstlisting}[language={adl}]
+function f1 = "sin(2*pi*t) + 0.75*s"
+fakeread(2, 150, 0, f1)
+\end{lstlisting}
+%
+The physical attack above is interpreted by the ADI as follows:
+%
+\begin{lstlisting}[language={xml}]
+<configuration>
+    <Physical>
+        <Attack>
+            <start_time>150</start_time>
+            <node>2</node>
+            <action>
+                <name>Fakeread</name>
+                <parameters>sensor_id:0:function:sin(2*pi*t) + 0.75*s</parameters>
+            </action>
+        </Attack>
+    </Physical>
+</configuration>
+\end{lstlisting}
+
+
+% interpreted conditional attack
+\paragraph{Interpreted conditional attack}
+The listing below describes a conditional attack in which, from time 150, nodes 1, 3 and 7 change the value of the field \texttt{sourcePort} of the layer 4 from 1000 to 1500, only if the current packet matches the packet filter.
+%
+\begin{lstlisting}[language={adl}]
+list nodes_list = {1, 3, 7}
+from 150 nodes in nodes_list do {
+filter (layer4.sourcePort == 1000)    
+    var sourcePort = 1500
+    change(original, layer4.sourcePort, sourcePort)
+}
+\end{lstlisting}
+%
+The conditional attack above is interpreted by the ADI as follows:
+%
+\begin{lstlisting}[language={xml}]
+<configuration>
+    <Conditional>
+        <Attack>
+            <start_time>150</start_time>
+            <node>1:3:7</node>
+            <var><name>sourcePort</name><value>1500</value><type>NUMBER</type></var>
+            <filter>[:layer4.sourcePort:==:1000:]</filter>
+            <action>
+                <name>Change</name>
+                <parameters>packetName:original:field_name:layer4.sourcePort:value:sourcePort</parameters>
+            </action>
+        </Attack>
+    </Conditional>
+</configuration>
+\end{lstlisting}
+
+
+% interpreted unconditional attack
+\paragraph{Interpreted unconditional attack}
+The listing below describes an unconditional attack in which, from time 150, the Global Filter creates a new packet, sets its fields appropriately and puts the packet in the RX buffer of nodes 1, 3 and 7.
+%
+\begin{lstlisting}[language={adl}]
+list nodes_list = {1, 3, 7}
+from 150 every 0.1 do{
+    # declare a packet
+    packet my_packet
+    # declare and initialize variables
+    var sensorId = 0
+    var value = 50
+    var seqNumb = 1000
+    # create a new packet from scratch
+    create(my_packet, layer5, 0001)
+    # set values in the packet fields 
+    change(my_packet, layer5.sensorId, sensorId)
+    change(my_packet, layer5.seqNumb, seqNumb)
+    change(my_packet, layer5.value, value)
+    # put the new packet into the RX buffer of nodes 1,3,7, without forwarding delay
+    put(my_packet, nodes_list, RX, 0)
+    # update seqNumb
+    seqNumb += 1
+}
+\end{lstlisting}
+%
+The conditional attack above is interpreted by the ADI as follows:
+%
+\begin{lstlisting}[language={xml}]
+<configuration>
+    <Unconditional>
+        <Attack>
+            <start_time>150</start_time>
+            <frequency>0.1</frequency>
+            <var><name>seqNumb</name><value>1000</value><type>NUMBER</type></var>
+            <var><name>sensorId</name><value>0</value><type>NUMBER</type></var>
+            <var><name>1</name><value>1</value><type>NUMBER</type></var>
+            <var><name>value</name><value>50</value><type>NUMBER</type></var>
+            <action>
+                <name>Create</name>
+                <parameters>packetName:my_packet:layer5..type:1</parameters>
+            </action>
+            <action>
+                <name>Change</name>
+                <parameters>packetName:my_packet:field_name:layer5.sensorId:value:sensorId</parameters>
+            </action>
+            <action>
+                <name>Change</name>
+                <parameters>packetName:my_packet:field_name:layer5.seqNumb:value:seqNumb</parameters>
+            </action>
+            <action>
+                <name>Change</name>
+                <parameters>packetName:my_packet:field_name:layer5..value:value:value</parameters>
+            </action>
+            <action>
+                <name>Put</name>
+                <parameters>packetName:my_packet:nodes:1|3|7:direction:RX:false:delay:0</parameters>
+            </action>
+            <action>
+                <name>Expression</name>
+                <item>1</item>
+                <item>+=</item>
+                <item>seqNumb</item>
+            </action>
+        </Attack>
+    </Unconditional>
+</configuration>
+\end{lstlisting}
+
+Note that expressions are handled by \asf as additional events.

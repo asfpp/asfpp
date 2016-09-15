@@ -1,0 +1,48 @@
+Name
+----
+attack2-100ms.adl
+attack2-250ms.adl
+
+
+Techinque
+---------
+Cyber-physical attack carried out by removing a node and by injecting 
+fake packets into the network.
+
+
+Brief
+-----
+The objective of the attack is to tamper data regarding pollutant emissions
+of cluster-1 and cluster-2.
+
+
+Detail
+------
++ Attacking cluster-1
+The attacker removes the node-3 from the network with the aim of isolating 
+the cluster-1.
+Then he periodically injects fake HELLO messages. The fake HELLO messages 
+are sent to the node-5 and appear to come from the node-3.
+In this way the node-5, which is the cluster head of the cluster-1, keeps 
+the path alive. By doing so the node-5 sends the data packets throught 
+a dead path, so all the original data packets are definitively lost.
+
+Once the cluster-1 is isolated, the attacker injects fake data packets  
+into the network in order to tamper data about cluster-1's emissions.
+The fake data packets appear to come from the node-5.
+
++ Attacking cluster-2
+To alter the data concerning the emissions of pollutant from cluster-2, 
+the attacker injects into the network fake data packets with a certain
+rate. The fake data packets seem to come from node-6, which is the 
+cluster head of the cluster-2.
+To compute the emission of pollutant from cluster-2, the sink node uses 
+both original and fake data.
+The attack becomes more effective as the injection rate increases.
+
+
+Related adl files
+-----------------
+attack2-100ms.adl - injection rate 100 ms
+attack2-250ms.adl - injection rate 250 ms
+

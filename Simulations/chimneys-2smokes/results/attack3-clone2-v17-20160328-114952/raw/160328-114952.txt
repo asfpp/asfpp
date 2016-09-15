@@ -1,0 +1,570 @@
+Castalia| what:attack3-clone2-v17 (1)
+Castalia| when:2016-03-28 11:49
+Castalia| label:attack3-clone2-v17
+Castalia|	module:SN.node[0].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			20.7815 
+Castalia|	module:SN.node[0].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			58.2261 Duty cycle
+Castalia|			336.325 RX Time
+Castalia|			252.735 SLEEP Time
+Castalia|			15.9461 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			9 Failed, non RX state
+Castalia|			1193 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			598 TX pkts
+Castalia|	module:SN.node[0].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			240 ACK
+Castalia|			240 CTS
+Castalia|			25 DATA
+Castalia|			93 SYNC
+Castalia|	module:SN.node[0].Application
+Castalia|		simple output name:Average Delay
+Castalia|			0.335569 sec
+Castalia|		 index:5 simple output name:Report reception
+Castalia|			0 Fail
+Castalia|			120 Success
+Castalia|		 index:6 simple output name:Report reception
+Castalia|			20489 Fail
+Castalia|			120 Success
+Castalia|		simple output name:Throughput
+Castalia|			1.58678 bytes/s
+Castalia|	module:SN.node[0].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			20.7815 mJ
+Castalia|	module:SN.node[1].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			20.9027 
+Castalia|	module:SN.node[1].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			56.4318 Duty cycle
+Castalia|			334.447 RX Time
+Castalia|			263.59 SLEEP Time
+Castalia|			6.96882 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			129 Failed, below sensitivity
+Castalia|			4 Failed, non RX state
+Castalia|			1207 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			607 TX pkts
+Castalia|	module:SN.node[1].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			121 ACK
+Castalia|			121 CTS
+Castalia|			146 DATA
+Castalia|			122 RTS
+Castalia|			97 SYNC
+Castalia|	module:SN.node[1].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			20.9027 mJ
+Castalia|	module:SN.node[2].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			20.732 
+Castalia|	module:SN.node[2].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			58.1747 Duty cycle
+Castalia|			337.024 RX Time
+Castalia|			253.046 SLEEP Time
+Castalia|			14.9367 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			499 Failed, below sensitivity
+Castalia|			10 Failed, non RX state
+Castalia|			1192 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			595 TX pkts
+Castalia|	module:SN.node[2].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			121 ACK
+Castalia|			121 CTS
+Castalia|			146 DATA
+Castalia|			121 RTS
+Castalia|			86 SYNC
+Castalia|	module:SN.node[2].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			20.732 mJ
+Castalia|	module:SN.node[3].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5472 
+Castalia|	module:SN.node[3].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			35.4783 Duty cycle
+Castalia|			208.26 RX Time
+Castalia|			390.36 SLEEP Time
+Castalia|			6.38574 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			19931 Failed, below sensitivity
+Castalia|			182 Failed, non RX state
+Castalia|			13065 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			612 TX pkts
+Castalia|	module:SN.node[3].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			122 ACK
+Castalia|			122 CTS
+Castalia|			148 DATA
+Castalia|			122 RTS
+Castalia|			98 SYNC
+Castalia|	module:SN.node[3].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5472 mJ
+Castalia|	module:SN.node[4].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			31.9238 
+Castalia|	module:SN.node[4].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			27.9025 Duty cycle
+Castalia|			153.095 RX Time
+Castalia|			436.195 SLEEP Time
+Castalia|			15.7171 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			6892 Failed, below sensitivity
+Castalia|			101 Failed, non RX state
+Castalia|			13723 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			603 TX pkts
+Castalia|	module:SN.node[4].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			123 ACK
+Castalia|			123 CTS
+Castalia|			149 DATA
+Castalia|			123 RTS
+Castalia|			84 SYNC
+Castalia|	module:SN.node[4].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			31.9238 mJ
+Castalia|	module:SN.node[5].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.539 
+Castalia|	module:SN.node[5].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			45.6522 Duty cycle
+Castalia|			214.889 RX Time
+Castalia|			328.808 SLEEP Time
+Castalia|			61.3091 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			11754 Failed, below sensitivity
+Castalia|			1428 Failed, non RX state
+Castalia|			20070 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			12513 TX pkts
+Castalia|	module:SN.node[5].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			6058 ACK
+Castalia|			6068 CTS
+Castalia|			157 DATA
+Castalia|			131 RTS
+Castalia|			99 SYNC
+Castalia|	module:SN.node[5].Application
+Castalia|		simple output name:Average Delay
+Castalia|			0.316834 sec
+Castalia|		 index:7 simple output name:Report reception
+Castalia|			1 Fail
+Castalia|			1208 Success
+Castalia|		 index:8 simple output name:Report reception
+Castalia|			0 Fail
+Castalia|			1209 Success
+Castalia|		 index:9 simple output name:Report reception
+Castalia|			1 Fail
+Castalia|			1208 Success
+Castalia|		 index:10 simple output name:Report reception
+Castalia|			0 Fail
+Castalia|			1209 Success
+Castalia|		 index:11 simple output name:Report reception
+Castalia|			0 Fail
+Castalia|			1209 Success
+Castalia|		simple output name:Throughput
+Castalia|			39.9537 bytes/s
+Castalia|	module:SN.node[5].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.539 mJ
+Castalia|	module:SN.node[6].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			31.8818 
+Castalia|	module:SN.node[6].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			43.4367 Duty cycle
+Castalia|			160.249 RX Time
+Castalia|			342.211 SLEEP Time
+Castalia|			102.546 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			2999 Failed, below sensitivity
+Castalia|			413 Failed, non RX state
+Castalia|			17476 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			12703 TX pkts
+Castalia|	module:SN.node[6].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			6055 ACK
+Castalia|			6080 CTS
+Castalia|			221 DATA
+Castalia|			245 RTS
+Castalia|			101 SYNC
+Castalia|	module:SN.node[6].Application
+Castalia|		simple output name:Average Delay
+Castalia|			0.30875 sec
+Castalia|		 index:12 simple output name:Report reception
+Castalia|			0 Fail
+Castalia|			1209 Success
+Castalia|		 index:13 simple output name:Report reception
+Castalia|			0 Fail
+Castalia|			1209 Success
+Castalia|		 index:14 simple output name:Report reception
+Castalia|			0 Fail
+Castalia|			1209 Success
+Castalia|		 index:15 simple output name:Report reception
+Castalia|			3 Fail
+Castalia|			1206 Success
+Castalia|		 index:16 simple output name:Report reception
+Castalia|			0 Fail
+Castalia|			1209 Success
+Castalia|		simple output name:Throughput
+Castalia|			39.9471 bytes/s
+Castalia|	module:SN.node[6].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			-nan mJ
+Castalia|	module:SN.node[7].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.523 
+Castalia|	module:SN.node[7].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			42.4973 Duty cycle
+Castalia|			214.209 RX Time
+Castalia|			347.895 SLEEP Time
+Castalia|			42.9017 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			9819 Failed, below sensitivity
+Castalia|			1204 Failed, non RX state
+Castalia|			26948 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			7531 TX pkts
+Castalia|	module:SN.node[7].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			1231 ACK
+Castalia|			1231 CTS
+Castalia|			2475 DATA
+Castalia|			2495 RTS
+Castalia|			99 SYNC
+Castalia|	module:SN.node[7].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.523 mJ
+Castalia|	module:SN.node[8].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5097 
+Castalia|	module:SN.node[8].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			44.9048 Duty cycle
+Castalia|			217.889 RX Time
+Castalia|			333.329 SLEEP Time
+Castalia|			53.7875 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			5496 Failed, below sensitivity
+Castalia|			1216 Failed, non RX state
+Castalia|			26789 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			12264 TX pkts
+Castalia|	module:SN.node[8].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			2417 ACK
+Castalia|			2418 CTS
+Castalia|			3661 DATA
+Castalia|			3669 RTS
+Castalia|			99 SYNC
+Castalia|	module:SN.node[8].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5097 mJ
+Castalia|	module:SN.node[9].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5257 
+Castalia|	module:SN.node[9].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			39.013 Duty cycle
+Castalia|			210.577 RX Time
+Castalia|			368.975 SLEEP Time
+Castalia|			25.4541 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			24521 Failed, below sensitivity
+Castalia|			362 Failed, non RX state
+Castalia|			17378 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			2629 TX pkts
+Castalia|	module:SN.node[9].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			18 ACK
+Castalia|			18 CTS
+Castalia|			1257 DATA
+Castalia|			1237 RTS
+Castalia|			99 SYNC
+Castalia|	module:SN.node[9].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5257 mJ
+Castalia|	module:SN.node[10].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5174 
+Castalia|	module:SN.node[10].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			41.738 Duty cycle
+Castalia|			214.179 RX Time
+Castalia|			352.489 SLEEP Time
+Castalia|			38.3381 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			19377 Failed, below sensitivity
+Castalia|			1110 Failed, non RX state
+Castalia|			17156 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			7380 TX pkts
+Castalia|	module:SN.node[10].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			1202 ACK
+Castalia|			1202 CTS
+Castalia|			2442 DATA
+Castalia|			2435 RTS
+Castalia|			99 SYNC
+Castalia|	module:SN.node[10].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5174 mJ
+Castalia|	module:SN.node[11].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5308 
+Castalia|	module:SN.node[11].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			37.2257 Duty cycle
+Castalia|			210.479 RX Time
+Castalia|			379.789 SLEEP Time
+Castalia|			14.7385 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			31410 Failed, below sensitivity
+Castalia|			911 Failed, non RX state
+Castalia|			9996 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			2573 TX pkts
+Castalia|	module:SN.node[11].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			3 ACK
+Castalia|			3 CTS
+Castalia|			1244 DATA
+Castalia|			1224 RTS
+Castalia|			99 SYNC
+Castalia|	module:SN.node[11].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5308 mJ
+Castalia|	module:SN.node[12].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.528 
+Castalia|	module:SN.node[12].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			39.0363 Duty cycle
+Castalia|			211 RX Time
+Castalia|			368.834 SLEEP Time
+Castalia|			25.1721 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			811 Failed, below sensitivity
+Castalia|			421 Failed, non RX state
+Castalia|			29666 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			2671 TX pkts
+Castalia|	module:SN.node[12].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			25 ACK
+Castalia|			25 CTS
+Castalia|			1265 DATA
+Castalia|			1255 RTS
+Castalia|			101 SYNC
+Castalia|	module:SN.node[12].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.528 mJ
+Castalia|	module:SN.node[13].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5103 
+Castalia|	module:SN.node[13].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			42.0847 Duty cycle
+Castalia|			214.939 RX Time
+Castalia|			350.391 SLEEP Time
+Castalia|			39.6755 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			413 Failed, non RX state
+Castalia|			24418 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			7635 TX pkts
+Castalia|	module:SN.node[13].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			1264 ACK
+Castalia|			1264 CTS
+Castalia|			2503 DATA
+Castalia|			2503 RTS
+Castalia|			101 SYNC
+Castalia|	module:SN.node[13].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5103 mJ
+Castalia|	module:SN.node[14].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5302 
+Castalia|	module:SN.node[14].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			38.5219 Duty cycle
+Castalia|			210.91 RX Time
+Castalia|			371.947 SLEEP Time
+Castalia|			22.1499 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			14194 Failed, below sensitivity
+Castalia|			210 Failed, non RX state
+Castalia|			15468 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			2594 TX pkts
+Castalia|	module:SN.node[14].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			8 ACK
+Castalia|			8 CTS
+Castalia|			1248 DATA
+Castalia|			1229 RTS
+Castalia|			101 SYNC
+Castalia|	module:SN.node[14].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5302 mJ
+Castalia|	module:SN.node[15].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5148 
+Castalia|	module:SN.node[15].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			39.5831 Duty cycle
+Castalia|			211.165 RX Time
+Castalia|			365.526 SLEEP Time
+Castalia|			28.3152 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			2046 Failed, below sensitivity
+Castalia|			406 Failed, non RX state
+Castalia|			27992 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			2625 TX pkts
+Castalia|	module:SN.node[15].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			11 ACK
+Castalia|			11 CTS
+Castalia|			1252 DATA
+Castalia|			1250 RTS
+Castalia|			101 SYNC
+Castalia|	module:SN.node[15].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5148 mJ
+Castalia|	module:SN.node[16].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5331 
+Castalia|	module:SN.node[16].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			38.9236 Duty cycle
+Castalia|			210.904 RX Time
+Castalia|			369.516 SLEEP Time
+Castalia|			24.5857 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			1600 Failed, below sensitivity
+Castalia|			113 Failed, non RX state
+Castalia|			28137 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			2616 TX pkts
+Castalia|	module:SN.node[16].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			11 ACK
+Castalia|			11 CTS
+Castalia|			1252 DATA
+Castalia|			1241 RTS
+Castalia|			101 SYNC
+Castalia|	module:SN.node[16].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5331 mJ
+Castalia|	module:SN.node[17].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			31.8853 
+Castalia|	module:SN.node[17].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			29.8717 Duty cycle
+Castalia|			154.661 RX Time
+Castalia|			424.281 SLEEP Time
+Castalia|			26.0639 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			8271 Failed, below sensitivity
+Castalia|			350 Failed, non RX state
+Castalia|			23348 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			1622 TX pkts
+Castalia|	module:SN.node[17].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			279 ACK
+Castalia|			330 CTS
+Castalia|			263 DATA
+Castalia|			238 RTS
+Castalia|			101 SYNC
+Castalia|	module:SN.node[17].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			-nan mJ
+Castalia|	module:SN.node[18].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			23.5561 
+Castalia|	module:SN.node[18].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			50.2749 Duty cycle
+Castalia|			290.438 RX Time
+Castalia|			300.84 SLEEP Time
+Castalia|			13.7286 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			15919 Failed, below sensitivity
+Castalia|			60 Failed, non RX state
+Castalia|			2237 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			500 TX pkts
+Castalia|	module:SN.node[18].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			107 ACK
+Castalia|			108 CTS
+Castalia|			114 DATA
+Castalia|			87 RTS
+Castalia|			83 SYNC
+Castalia|	module:SN.node[18].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			-nan mJ
+Castalia|	module:SN.node[19].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			28.5583 
+Castalia|	module:SN.node[19].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			34.8821 Duty cycle
+Castalia|			207.734 RX Time
+Castalia|			393.967 SLEEP Time
+Castalia|			3.30519 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			20486 Failed, below sensitivity
+Castalia|			23 Failed, non RX state
+Castalia|			12390 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			133 TX pkts
+Castalia|	module:SN.node[19].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			32 DATA
+Castalia|			101 SYNC
+Castalia|	module:SN.node[19].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			28.5583 mJ
+Castalia|	module:SN.node[20].ResourceManager
+Castalia|		simple output name:Consumed Energy
+Castalia|			18.2358 
+Castalia|	module:SN.node[20].Communication.Radio
+Castalia|		simple output name:Duty cycle
+Castalia|			62.878 Duty cycle
+Castalia|			377.907 RX Time
+Castalia|			224.59 SLEEP Time
+Castalia|			2.50915 TX Time
+Castalia|		simple output name:RX pkt breakdown
+Castalia|			25920 Failed, below sensitivity
+Castalia|			76 Failed, non RX state
+Castalia|			133 Received with NO interference
+Castalia|		simple output name:TXed pkts
+Castalia|			130 TX pkts
+Castalia|	module:SN.node[20].Communication.MAC
+Castalia|		simple output name:Sent packets breakdown
+Castalia|			29 DATA
+Castalia|			101 SYNC
+Castalia|	module:SN.node[20].LocalFilter
+Castalia|		simple output name:Energy consumption
+Castalia|			18.2358 mJ

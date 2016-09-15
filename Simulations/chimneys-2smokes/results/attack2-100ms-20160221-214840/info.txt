@@ -1,0 +1,6 @@
+Auto-generated file
+-------------------
+
+Configuration: attack2-100ms
+Time: 2016-02-21 21:48:40
+Command: ../../bin/Castalia -i omnetpp.ini -c attack2-100ms -r 50

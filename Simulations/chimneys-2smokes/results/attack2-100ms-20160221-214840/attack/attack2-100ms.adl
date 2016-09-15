@@ -1,0 +1,129 @@
+# file: attack2-100ms.adl
+#
+# technique: attack against routing by using destroy and injections.
+#
+# brief: The objective is to tamper data regarding pollutant emissions 
+#        of cluster-1 and cluster-2.
+#
+# detail: Node 3 is destroyed. By using the injection tecnique, 
+#         fake HELLO messages are sent to node 5. 
+#         The fake HELLO messages seem to come from node 3.
+#         In this way node 5 continues to use node 3 as next hop but
+#         actually he has not a next hop anymore, i.e. packets sent to 
+#         node 3 from node 5 are lost.
+#         To alter cluster's data, fake data packets are injected with 
+#         injection rate 100ms.
+#         
+# authors: 
+#  + Alessandro Pischedda <alessandro.pischedda@gmail.com>
+#  + Francesco Racciatti <racciatti.francesco@gmail.com>
+
+
+list node_0 = {0}
+list node_5 = {5}
+list node_6 = {6}
+
+# cluster-1 section
+
+# destroy node 3 (relay node)
+destroy(3, 175)
+
+# send fake HELLO messages to node 5
+from 180 every 25 do{
+
+    # declare the fake HELLO message
+	packet fakeHello
+
+    # create the fake HELLO message
+	create(fakeHello, "NET.type", 5)
+
+    # fill its fields
+	change(fakeHello, "NET.source", 3)
+	change(fakeHello, "NET.destinationSeqNum", 100)
+	
+    # send the fake HELLO message to node 5
+    put(fakeHello, node_5, RX, TRUE, 1.5)
+
+}
+
+
+# send fake data packets to sink
+from 180 every 5 do{
+
+    # declare and initialize variables
+    var appSeqNum = 60
+	var macSeqNum = 100
+	# RANDOM values are based on MIN and MAX    
+	var MAX = 42
+	var MIN = 38
+	
+    # declare the fake data packet
+	packet fakeDATA
+
+    # create the fake data packet
+	create(fakeDATA, "APP.type", 0, "NET.type", 6, "MAC.type", 6)
+
+	# fill MAC fields
+	change(fakeDATA, "MAC.source", 1)
+	change(fakeDATA, "MAC.destination", 0)
+	change(fakeDATA, "MAC.sequenceNumber", macSeqNum)
+
+	# fill NET fields
+	change(fakeDATA, "NET.source", 5)
+	change(fakeDATA, "NET.destination", 0)
+	change(fakeDATA, "NET.destinationAodv", 0)
+
+	# fill APP fields
+	change(fakeDATA, "APP.data", RANDOM)
+	change(fakeDATA, "APP.sourceNodeID", 5)
+	change(fakeDATA, "APP.sequenceNumber", appSeqNum)
+
+	# send the fake data packet to sink
+	put(fakeDATA, node_0, RX, TRUE, 1)
+
+	# update variables
+	appSeqNum += 1
+	macSeqNum += 1
+
+}
+
+
+# cluster-2 section
+
+# send fake data packet to node 6
+from 180 every 0.1 do{
+
+    # declare and initialize variables
+	var appSeqNum = 80000
+	var macSeqNum = 100000
+	var DATA = 15	
+
+    # declare the fake data packet
+	packet fakeDATA
+
+    # create the fake data packet
+	create(fakeDATA, "APP.type", 0, "NET.type", 6, "MAC.type", 6)
+
+	# fill MAC fields
+	change(fakeDATA, "MAC.source", 15)
+	change(fakeDATA, "MAC.destination", 6)
+	change(fakeDATA, "MAC.sequenceNumber", macSeqNum)
+
+    # fill NET fields
+	change(fakeDATA, "NET.source", 15)
+	change(fakeDATA, "NET.destination", 6)
+	change(fakeDATA, "NET.destinationAodv", 6)
+
+    # fill APP fields
+	change(fakeDATA, "APP.data", DATA)
+	change(fakeDATA, "APP.sequenceNumber", appSeqNum)
+	change(fakeDATA, "APP.sourceNodeID", 15)
+
+    # send the fake data packet to node 6
+	put(fakeDATA, node_6, RX, TRUE, 0.1)
+
+    # increment variables
+	appSeqNum += 1
+	macSeqNum += 1
+}
+

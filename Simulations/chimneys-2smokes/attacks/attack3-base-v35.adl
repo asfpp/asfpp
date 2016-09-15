@@ -136,7 +136,7 @@ from 180 every 20 do{
 # tamper data packets that came from node 6
 from 180 nodes in node_17 do{
 
-    filter("NET.id" == 6)
+    filter("NET.source" == 6 and "NET.id" == 6)
 	
         # declare and initialize the data variable
         var data = 0

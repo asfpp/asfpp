@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+
+<configuration>
+
+	<Conditional>
+
+		<Attack>
+			<start_time>185</start_time>
+			<node>4</node>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>3</name><value>3</value><type>NUMBER</type></var>
+			<var><name>5</name><value>5</value><type>NUMBER</type></var>
+			<var><name>appSeqNum</name><value>300</value><type>NUMBER</type></var>
+			<var><name>netSeqNum</name><value>10000</value><type>NUMBER</type></var>
+			<var><name>macSeqNum</name><value>10000</value><type>NUMBER</type></var>
+			<filter>[:MAC.source:==:6:]:[:APP.sourceNodeID:==:6:]:AND</filter>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:worm</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:MAC.destination:value:3</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:MAC.sequenceNumber:value:macSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:NET.sequenceNumber:value:netSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:NET.destination:value:3</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:APP.sourceNodeID:value:5</parameters>
+			</action>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:worm:nodes:3:direction:RX:throughWC:false:delay:0.1</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>macSeqNum</item>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>netSeqNum</item>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>185</start_time>
+			<node>3</node>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<filter>[:MAC.source:==:6:]</filter>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:dolly:field_name:MAC.destination:value:1</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:dolly:field_name:NET.destination:value:1</parameters>
+			</action>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly:delay:0</parameters>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>185</start_time>
+			<node>3</node>
+			<var><name>17</name><value>17</value><type>NUMBER</type></var>
+			<var><name>appSeqNum</name><value>300</value><type>NUMBER</type></var>
+			<var><name>6</name><value>6</value><type>NUMBER</type></var>
+			<var><name>1</name><value>1</value><type>NUMBER</type></var>
+			<var><name>4</name><value>4</value><type>NUMBER</type></var>
+			<var><name>netSeqNum</name><value>10000</value><type>NUMBER</type></var>
+			<var><name>data</name><value>0</value><type>NUMBER</type></var>
+			<var><name>macSeqNum</name><value>10000</value><type>NUMBER</type></var>
+			<filter>[:MAC.source:==:5:]:[:APP.sourceNodeID:==:5:]:AND</filter>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:worm</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:MAC.destination:value:4</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:MAC.sequenceNumber:value:macSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:NET.sequenceNumber:value:netSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:NET.destination:value:4</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:APP.sequenceNumber:value:appSeqNum</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:APP.sourceNodeID:value:6</parameters>
+			</action>
+
+			<action>
+				<name>Retrieve</name>
+				<parameters>packetName:original:field_name:APP.data:varName:data</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>17</item>
+				<item>+=</item>
+				<item>data</item>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:worm:field_name:APP.data:value:data</parameters>
+			</action>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+
+			<action>
+				<name>Put</name>
+				<parameters>packetName:worm:nodes:4:direction:RX:throughWC:false:delay:0.1</parameters>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>macSeqNum</item>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>netSeqNum</item>
+			</action>
+
+			<action>
+				<name>Expression</name>
+				<item>1</item>
+				<item>+=</item>
+				<item>appSeqNum</item>
+			</action>
+		</Attack>
+
+		<Attack>
+			<start_time>185</start_time>
+			<node>4</node>
+			<var><name>2</name><value>2</value><type>NUMBER</type></var>
+			<filter>[:MAC.source:==:5:]</filter>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:original:field_name:MAC.destination:value:2</parameters>
+			</action>
+
+			<action>
+				<name>Change</name>
+				<parameters>packetName:original:field_name:NET.destination:value:2</parameters>
+			</action>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly1</parameters>
+			</action>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly2</parameters>
+			</action>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly3</parameters>
+			</action>
+
+			<action>
+				<name>Clone</name>
+				<parameters>packetName:original:newPacketName:dolly4</parameters>
+			</action>
+
+			<action>
+				<name>Drop</name>
+				<parameters>packetName:original:threshold:1</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly1:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly2:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly3:delay:0</parameters>
+			</action>
+
+			<action>
+				<name>Send</name>
+				<parameters>packetName:dolly4:delay:0</parameters>
+			</action>
+		</Attack>
+
+	</Conditional>
+
+</configuration>

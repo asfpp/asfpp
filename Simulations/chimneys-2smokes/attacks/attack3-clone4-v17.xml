@@ -50,12 +50,12 @@
 
 		<Attack>
 			<start_time>180</start_time>
-			<node>15</node>
+			<node>17</node>
 			<var><name>1</name><value>1</value><type>NUMBER</type></var>
 			<var><name>data</name><value>0</value><type>NUMBER</type></var>
 			<var><name>17</name><value>17</value><type>NUMBER</type></var>
 			<var><name>appSeqNum</name><value>20000</value><type>NUMBER</type></var>
-			<filter>[:NET.source:==:15:]:[:NET.id:==:6:]:AND</filter>
+			<filter>[:NET.source:==:6:]:[:NET.id:==:6:]:AND</filter>
 
 			<action>
 				<name>Retrieve</name>

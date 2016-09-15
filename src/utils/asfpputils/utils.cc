@@ -14,8 +14,8 @@ void tokenize(vector<string>& tokens, const string str, const char delim) {
 
 
 
-vector<string> tokenize(const string str, const char delim) {
-    
+vector<string> tokenize(const string str, const char delim)
+{    
     vector<string> tokens;
     string word;
     stringstream stream(str);
@@ -25,7 +25,6 @@ vector<string> tokenize(const string str, const char delim) {
     }
 
     return tokens;
-
 }
 
 

@@ -12,10 +12,11 @@
 #         a convenient 'hop-count' to node 6.
 
 
-list node_17 = {17}
 list node_4 = {4}
-list node_18 = {18}
 list node_6 = {6}
+list node_17 = {17}
+list node_18 = {18}
+
 
 
 # break the path 17 <-> 18 in pre-existing routes
@@ -23,6 +24,15 @@ list node_6 = {6}
 from 175 nodes in node_17 do{
 
     filter("NET.source" == 18 and "NET.id" == 1)
+        drop(original, 1)
+
+}
+
+
+# node 17 drops RREP from node 18
+from 175 nodes in node_17 do{
+
+    filter("NET.source" == 18 and "NET.id" == 2)
         drop(original, 1)
 
 }
@@ -43,15 +53,6 @@ from 175 nodes in node_4 do{
 from 175 nodes in node_4 do{
 
     filter("NET.source" == 6 and "NET.id" == 1)
-        drop(original, 1)
-
-}
-
-
-# node 17 drops RREP from node 18
-from 175 nodes in node_17 do{
-
-    filter("NET.source" == 18 and "NET.id" == 2)
         drop(original, 1)
 
 }
@@ -136,7 +137,8 @@ from 180 every 20 do{
 # tamper data packets that came from node 6
 from 180 nodes in node_17 do{
 
-    filter("NET.id" == 6)
+    # changed 15 in 6
+    filter("NET.source" == 6 and "NET.id" == 6)
 	
         # declare and initialize the data variable
         var data = 0

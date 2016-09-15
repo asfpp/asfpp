@@ -1,0 +1,1236 @@
+% !TEX root = ../asfpp-manual.tex
+
+\chapter{Developing ASF\texttt{++}}
+\label{chap:developing-asfpp}
+This chapter describes the ASF\texttt{++} architecture and how to define new actions and new protocols.
+
+\section{New architecture}
+To implement ASF\texttt{++} it was necessary to enhance Castalia so as to make them able to understand the xml configuration files, which are produced by the ASL interpreter.
+
+In particular, the node architecture has been changed by adding two new modules: the \emph{Local Filter} and the \emph{Global Filter}. Each node in the network has its own local filter. The network has a single global filter, which is connected with all local filters. In general, the two new modules make the node capable:
+%
+\begin{itemize}
+\item to access all communication stack layers;
+\item to intercept incoming and outcoming packets;
+\item to modify, drop or create a packet;
+\item to change its position;
+\item to destroy himself;
+\item to send packets to other nodes bypasing the wireless channel.
+\end{itemize}
+%
+The new node architecture (in particular the new communication module) is shown in figure~\ref{fig:node-architecture}. The solid arrows represent the connections between the gates of the modules, instead the dashed arrows represent the logical connections.
+%
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth]{new-node.pdf}
+\caption{New communication module}
+\label{fig:node-architecture}
+\end{figure}
+
+\paragraph{Local filter}
+Each node has its own local filter which allows the node to: 
+%
+\begin{itemize}
+\item change its position and destroy himself;
+\item create, alter and send packets.
+\end{itemize}
+
+In particular the local filter is able to intercept all the packets which are passing through the communication stack. To do this, the local filter acts like a bridge  between layers, in fact the latter communicate through the local filter and not directly to each other (see figure~\ref{fig:node-architecture}).
+
+\paragraph{Global filter}
+Unlike the local filter, the network has one global filter that is an new module in the network architecture. Each local filter is connected to the global filter, as shown in figure~\ref{fig:local-global}. In this way the nodes can communicate to each other without passing through the wireless channel. This feature is used to perform \emph{wormhole} attacks. \footnote{In the wormhole attack, the attacker intercepts and recors packets which transit in a point of the network and inject them in another point of the network.}
+ %
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth]{global-filter.pdf}
+\caption{Global filter and local filters}
+\label{fig:local-global}
+\end{figure} 
+
+The local filters and the global filter are the modules which have the task to perform the attacks. In particular, the local filter performs the physical and conditional attacks; the global filter performs the unconditional attacks.
+
+To do this, the filters scan the xml file. The local filter builds a list of physical attacks and a list of conditional attacks (them are handled in different ways). The global filter builds a list of unconditional attacks. The lists are sorted according to the occurrence time of the stored attacks. Physical and unconditional attacks start when the simulation reaches them occurrence time.  Conditional attacks also require that the \emph{packet filter} is satisfied.
+
+Every attack has a timer-alarm. The attacks remain silent until its timer-alarm do not reach the attack occurrence time. When the timer-alarm reachs an attack occurrence time, the local filter or the global filter executes the attack.
+
+
+
+\section{Variables}
+Value and type informations are memorized in a C\texttt{++} string object, which is contained in a class called \texttt{Variable}. ASL handles only two types: \emph{numbers} and \emph{strings}. The meaning of the value and the allowed operations depend on the type fo the value. 
+
+In the class \texttt{Variable} arithmetic, comparison and logical operators have been redefined. 
+
+The purpose of the \texttt{Variable} class is to support the ASL actions, as shown in the chapter~\ref{chap:asl}. 
+
+
+
+\section{Action}
+The class \texttt{Action} is the basic class used to describe and implement the ASL primitives. This class has two variable members, one to store the name of the primitive and the other one to store the name of the packet to process, if necessary. Each ASL primitive is a sub-class of \texttt{Action} and has an \texttt{execute()} method to perform the attack.
+
+
+\subsection{Destroy}
+This class \texttt{destroy} emulates the physical destruction of the node by set the boolean variable \texttt{destroyed}, which is stored in the local filter. If \texttt{destroyed} is setted, the local filter drops all the packets that are created or received by the node.
+%
+\begin{lstlisting}[language={cpp}]
+void Destroy::execute(bool &destroyed) const {
+	destroyed = true;
+}
+\end{lstlisting}
+
+
+\subsection{Move}
+This class \texttt{Move} uses the node's mobility module to change its position.
+%
+\begin{lstlisting}[language={cpp}]
+void Move::execute() const {
+	mobility-> setLocationWrapper(nodeLocation);
+}
+\end{lstlisting}
+
+The \texttt{setLocationWrapper()} is a new method that has been added to the class \texttt{VirtualMobilityManager}, in order to set the new coordinates.
+
+
+
+
+
+
+
+
+\subsection{Fakeread}
+The class \texttt{Fakered} forges the sensor readings. To do this, the Local Filter module is equipped with the data structures shown below. The data structures are instantiated in the \texttt{LocalFilter::initialization()}.
+%
+\begin{lstlisting}[columns=flexible, firstnumber=110, label=list:lf, caption=\texttt{LocalFilter.h}]
+	vector< vector<Noise> > noises;
+	vector< vector< vector<double> > > noisesParams;
+	vector< vector<double> > noisesValues;
+	vector< vector<double> > sensorsValues;
+\end{lstlisting}
+
+The size of the \texttt{noises} vector is equal to the number of sensors of the node. Each entry of \texttt{noises} corresponds exactly to a sensor, i.e. the index $i$ of \texttt{noises} corresponds to the sensor $i$ of the node. \texttt{noises[i]}refers a \texttt{Noise} type vector that contains many elements as there are the noises defined on the corresponding sensor $i$. The \texttt{Noise} type is an \emph{enum} type that enumerates all the noises provided by ASF. 
+
+The \texttt{noisesParams} vector contains the parameters of the noises. The \texttt{noisesValues} vector contains the values assumed by the noises. 
+
+The correspondence between vectors is guaranteed by the vector structures themselves, as shown in figure~\ref{img:noises}. The first and the second layers of \texttt{noisesParams} and \texttt{noisesValues} are identical to the first and second layers of the \texttt{noises} vector. The first layer of \texttt{sensorsValues} is identical to the first layer of the other vectors.
+
+The \texttt{sensorsValues} vector contains the significant values of the sensors. For each sensor it keeps:
+%
+\begin{enumerate}
+\item [0.] the last sensed value;
+\item the counter;
+\item the sensitivity;
+\item the saturation;
+\item the minimum sensed value;
+\item the maximum sensed value;
+\item the average of the sensed values.
+\end{enumerate}
+%
+
+The figure~\ref{img:noises} shows the data structures at time $t$ of a node equipped with 5 sensors on which are defined or not some noises. The first-layer index is marked in red, i.e. the sensor that has the index 0. The second-layer index is marked in blue, i.e. the data relative to the \texttt{sin} noise defined on the sensor that has the index 0.
+%
+\begin{figure}
+\centering
+\includegraphics[width=.7\columnwidth]{noises.pdf}
+\caption{Data structures example}
+\label{img:noises}
+\end{figure}
+
+
+\paragraph{sensorsValues vector updates}
+The Local Filter updates the data stored in \texttt{sensorsValues} each time it receives any sensor reading message. To make the update it uses the sensed value stored in the received message.
+
+\paragraph{noises and noisesParams vector updates}
+\texttt{noises} is updated by the\\ \texttt{Fakeread::execute()} method. The \texttt{Fakeread} objects store the index of the victim sensor (i.e. the \texttt{sensorID}), the noise that must be applied on the victim sensor and a vector that contains the noise parameters. When a fakeread attack is fired, the \texttt{Fakeread::execute()} method pushes back the noise in the \texttt{noises[sensorID]} and the vector that contains the noise parameters in the \texttt{noisesParams[sensorID]}.
+
+\paragraph{noisesValues vector updates}
+The Local Filter computes the value of a noise (stored in \texttt{noisesValues}) each time it receives a sensor reading message from a victim sensor (i.e. a sensor on which are applied one or more noises). The \texttt{noisesValues} update is performed during the execution of the fakeread attack.
+
+
+\paragraph{Dynamic of the attack}
+To perform the fakeread attack, the following values are required:
+%
+\begin{enumerate}
+\item the sensed value;
+\item the sensor index;
+\item the name of the noise function (that define the relative mathematical function);
+\item the noise parameters;
+\item the noise value;
+\item eventually the sensor significant values, according to the noise function.
+\end{enumerate}
+
+The fakeread attack is executed as follows. Each time the Local Filter receives a sensor reading message, it gets the sensed value and the the sensor index (marked in red in the figure~\ref{img:noises}). By using the sensor index, the Local Filter selects the right \texttt{sensorsValues} entry that refers the vector to update. Then it looks for noises stored in the vector refered by the \texttt{noises[sensorID]}. If not empty, the Local Filter scans it, element by element. For each element it:
+%
+\begin{enumerate}
+\item gets the name of the noise function and its index (marked in blue in the figure~\ref{img:noises});
+\item by using the sensor index and the noise index, it gets the noise parameters from \texttt{noisesParams};
+\item by using the sensor index and the noise index, it gets the noise value from \texttt{noisesValues};
+\item eventually, by using the sensor index, it gets the sensor significant value from \texttt{sensorsValues}, according the noise;
+\end{enumerate}
+
+By using the obtained values, the Local Filter computes the fakeread output. Then, it overwrites the sensed value stored in the sensor reading message. Finally, it sends the tampered message to the Application module.
+
+
+
+
+\subsection{Change and Retrieve}
+The classes \texttt{Change} and \texttt{Retrieve} are used, respectively, to change and retrieve the value of a packet field. 
+
+In Castalia, each packet type (routing, MAC, application, etc) and subtype (TCP, UDP, etc) has its format and its fields (that can be different from packet to packet).
+
+It is necessary a mechanism that knows all the paket details. This mechanism is represented by the class \texttt{cClassDescriptor}. For each message, or packet, OMNeT\texttt{++} creates automatically its descriptor. The \texttt{cClassDescriptor} offers a set of public methods to inspect packets. In ASF\texttt{++} are used the following methods.
+
+\paragraph{findField() method}
+The \texttt{findField()} sintax is shown below:
+%
+\begin{lstlisting}[language={cpp}]
+int findField (void* object, const char* fieldName);
+\end{lstlisting}
+%
+The \texttt{findField()} method returns the index of the field that has a given name of a given object, or -1 if it is not found. The index returned by this method is used by the other two functions to set or retrieve a field value. 
+
+
+\paragraph{setFieldAsString() method}
+The \texttt{setfieldAsString()} sintax is shown below:
+%
+\begin{lstlisting}[language={cpp}]
+bool setFieldAsString (void* object, int field, int i, const char* value);
+\end{lstlisting}
+%
+This method is used to set the value of field of a given object to \texttt{value}. 
+
+\paragraph{getFieldAsString() method}
+The \texttt{getfieldAsString()} sintax is shown below:
+%
+\begin{lstlisting}[language={cpp}]
+bool getFieldAsString (void* object, int field, int i, char* buf, int bufsize);
+\end{lstlisting}
+%
+This method returns the value of the field of a given object as a string.
+
+Due to encapsulation, the same field name may be used by more different protocols, i.e. conflicts may arise on the field name. For example, a routing packet and a MAC packet can identify the field \emph{source} by using the same name. To avoid conflicts, it is necessary to specify the layer of the target field.
+
+% parte rimossa
+\iffalse
+So when we work on a MAC packet and we have to change or retrieve a routing field, our method search the correct packet identified by the \texttt{layer} and than use his class descriptor to change or retrieve the field's value.
+\fi
+
+
+\subsubsection{Retrieve}
+%
+\begin{lstlisting}[language={cpp}]
+Variable* Retrieve::execute(cMessage* msg) const {
+
+	int msgKind;
+	cClassDescriptor* descriptor;
+	/* index of the field to be retrieved (the function 
+	setFieldAsString requires the field as an integer) */
+	int field_int; 
+
+	string value;
+
+	msgKind = msg->getKind();
+
+	/* Retrieve the nested packet until the right layer is 
+	reached */
+	if(msgKind < layer)
+		return execute(((cPacket*)msg)->getEncapsulatedPacket());
+
+	descriptor = cClassDescriptor::getDescriptorFor(msg);
+
+	field_int = descriptor->findField(msg, field.c_str());
+	
+	/* Requested field does not exist */
+	if(field_int == -1) {
+		string error_message = "The packet hasn't a field called "+field;
+		opp_error(error_message.c_str());
+	}
+	
+	/* The field value is returned as a string */
+	value = descriptor->getFieldAsString(msg, field_int, 0);
+
+	return new Variable(value, getFormat(value) );
+}
+\end{lstlisting}
+%
+The retrieved value, that is always a string, is stored in a \texttt{Variable} object. To know the correct type of the retrieved value (number or string), it is used the function \texttt{getFormat()}. 
+
+
+\subsubsection{Change}
+\label{sec:CopyPackets}
+%
+% parte rimossa
+\iffalse
+To understand his implementation is necessary explain how OMNeT++ encapsulates the packets and how makes a copy of them.
+\fi
+%
+The class \texttt{cPacket} contains \texttt{encapmsg} that is a \texttt{cPacket} pointer. It refers the encapsulated packet. OMNeT\texttt{++} uses the reference counter mechanism, i.e. OMNeT\texttt{++} does not make an hard copy to duplicate packets. Figure~\ref{fig:encapsulated} is a graphical representation of the memory of an encapsulated packet.
+%
+\begin{figure}
+\centering
+\subfloat[Graphical representation of an encapsulated packet\label{fig:encapsulated}]{
+\includegraphics[width=.8\textwidth]{encapsulate-packet.pdf}
+}\\
+\subfloat[Graphical representation of a copy\label{fig:copy}]{
+\includegraphics[width=.8\textwidth]{copyPacket.pdf}
+}\\
+\subfloat[Change action that use the \texttt{hardcopy()} method\label{fig:changeSharedCopy}]{
+\includegraphics[width=.8\textwidth]{2nodePacketHardCopy.pdf}
+}
+\end{figure} 
+
+% parte rimossa
+\iffalse
+ a packet that contains encapsulated packets,  this one is not duplicated but it increments his reference count. Duplication of the encapsulated packet is deferred until \texttt{decapsulate()} is performed by a node. If the outer packet is deleted then the reference count of the encapsulated packet is simply decremented. The encapsulated packet is deleted when its reference count reaches zero.
+
+Reference counter mechanism is used to improve performances. For example, in the simulation of a broadcast communication, the IP, TCP and higher layers packets won't be duplicated. This means that it uses less memory and doesn't waste time to make an hard copy of all the packets.  Figure \ref{fig: encapsulatedPacket} is a graphical representation of the memory of an encapsulated packet, the \texttt{routingPacket} is the inner packet instead the \texttt{macPacket} is the outer. In the Figure \ref{fig: copyPacket} is showed the result of an hypotetical copy of the macPacket, as you see there is 2 outer packets (macPacket and copyPacket) and one routingPacket and the \texttt{reference\_counter} is updated to 2.
+\fi
+
+The use of the reference counter mechanism implies that if a packet encapsulates another packet, any changes in the encapsulated packets are reflected on all the copies of the encapsulator packet, see figure~\ref{fig:copy}.
+%
+%parte rimossa
+\iffalse
+The figure \ref{fig: appShared} shows a node (\texttt{1}) who sent a packet to other 2 nodes (\texttt{2} and \texttt{3}). The application packet is shared in memory (to the address 0xA532BB3C ) so the nodes see the same packet with data value equal to 5. 
+
+
+The node 2 must change the value of the data and do that before the other node decapsulate the inner packet, then each node have a modified packet (Figure \ref{fig: changeShared}). 
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\textwidth]{2nodePacketChange.pdf}
+\caption{Node 2 change the data field of the shared packet}
+\label{fig: changeShared}
+\end{figure} 
+\fi
+%
+The function \texttt{hardCopy()} was implemented to avoid these situations. This function makes a hard copy both of the outer than the inner packets. 
+%
+% parte rimossa
+\iffalse
+Thus when we want to perform any method who change in some way a packet we perform an hard copy and then apply the changes.
+Using the \texttt{hardCopy()} in our change action the nodes 2 and 3 have a different application packet, one modified and one not (Figure \ref{fig: changeSharedCopy}).
+\fi
+Unlike the \texttt{retrieve}, the \texttt{execute()} begin making an hard copy of the packet.
+%
+\begin{lstlisting}[language={cpp}]
+void Change::execute(cMessage** msg, string new_value) {
+
+	cClassDescriptor* descriptor; 
+	cMessage* substitute_pkt = NULL; 
+	cMessage* temp_pkt =NULL ;
+
+	int msgKind;
+
+	// the function setFieldAsString want the field as a integer
+	int field_int; 
+
+	msgKind = (*msg)->getKind();
+
+	/* copy the original packet */
+	substitute_pkt = (cMessage* )hardCopy( (cPacket*)(*msg) );
+
+	temp_pkt = substitute_pkt;
+
+	/* Retrieve the encapsulated packet until the right layer is
+	reached /
+	while( msgKind < layer ) {
+		temp_pkt =((cPacket*)temp_pkt)->getEncapsulatedPacket();
+		msgKind = temp_pkt->getKind();
+	}
+
+	// Use the classDescriptor to access the field
+	descriptor = cClassDescriptor::getDescriptorFor(temp_pkt);
+
+	field_int = descriptor->findField(temp_pkt,field.c_str());
+	
+	// You haven't find it? Damn!!!
+	if(field_int == -1){
+		string err_msg = "The packet hasn't a field called "+field;
+		opp_error(ert_msg.c_str());
+	}
+
+	descriptor->setFieldAsString(temp_packet, field_int, 0, new_value.c_str());
+
+	// delete the original packet and substitute it with the copy
+	delete *msg;
+	*msg = substitute_pkt;	
+}
+\end{lstlisting}
+
+\subsection{Clone}
+The class \texttt{Clone} makes an hard copy of a packet, by using the function \texttt{hardCopy()} explained above.
+%
+\begin{lstlisting}[language={cpp}]
+void Clone::execute(cMessage** dstPkt, const cMessage* srcPkt) const {
+	// Make a copy of the original packet
+	*dstPkt = (cMessage*)hardCopy((cPacket*)srcPkt);
+}
+\end{lstlisting}
+
+
+\subsection{Create}
+The class \texttt{Create} creates a new packets defined by the user. 
+% parte rimossa
+\iffalse
+This complex code but it is the cause that makes the tool dependent by the changing. As you'll see further there is a section that speaks about how to update the tool. The code responsible of this is in the \texttt{buildNewPacket()}, in fact that function is the one that creates the packet and will be explained in the \ref{sec:updateCastalia}. 
+\fi
+%
+\begin{lstlisting}[language={cpp}]
+void Create::execute(cPacket** packet){
+
+	cPacket* auxPacket;
+	int layer, type, subtype;
+
+	list<layerSpec>::iterator it = layerList.begin();
+
+	for( it ; it != layerList.end(); it++) {
+
+		layer = it->packetLayer;
+		type = it->packetLayerType;
+		subtype = it->packetLayerSubtype;
+
+		buildNewPacket(&auxPacket, layer, type);
+
+		/* No encapsulation is needed at the (top) application layer */
+		if(it != layerList.begin() ){
+			int enc_packet_size = (*packet)->getByteLength();
+			int packet_size = auxPacket->getByteLength();
+			auxPacket->encapsulate(*packet);
+			auxPacket->setByteLength( enc_packet_size + packet_size );
+		}  
+
+	*packet = auxPacket;
+	}
+
+	/* Hereafter, this packet will not be involved in 
+	another attack on the same node */
+	setFilteredRecursively( *packet, true);
+}
+\end{lstlisting}
+%
+\texttt{layerList} is a list which contains the name of the layers that the user wants to create. The function \texttt{buildNewPacket()} creates a new packet that belongs to the layer \texttt{layer} and to the type \texttt{type}. %\texttt{SetFilteredRecursively()} is used to set the packet as already subject of an attack.
+%The \texttt{buildNewPacket()} will be explained in \ref{sec:updateCastalia}.
+
+
+\subsection{Put}
+The class \texttt{Put} sends a packet from a node to another one bypassing the wireless channel. The packet is encapsulated in the message \texttt{PutMessage} that contains the following fields:
+%
+\begin{itemize}
+\item the packet to send,
+\item a list of recipient nodes,
+\item direction of the packet,
+\item delay,
+\item statistics.
+\end{itemize}
+%
+The delay field is used to emulate the delivery time and the statistic field is used to update the node statistics. \texttt{PutMessage} is sended to the global filter that is responsible to deliver it to the destinations. 
+%
+\begin{lstlisting}[language={cpp}]
+class PutMessage : public ::cMessage {
+	// The packet to be delivered (a copy of the original one)
+	cMessage* packet; 
+	// The list of recipient nodes
+	vector<int> nodeVector;
+	// The packet direction, i.e. either RX or TX
+	string direction;
+	/* Enable/disable statistics update on the recipient nodes 
+	(RX mode only)*/
+	bool statistics;		
+	/* Delay after which the packet is actually delivered to 
+	recipient nodes(ms) */
+	double delay;
+    
+     	...
+}
+\end{lstlisting}
+%
+The function \texttt{execute()} creates the message \texttt{PutMessage}:
+%
+\begin{lstlisting}[language={cpp}]
+cMessage* Put::execute(cMessage *packet) const {
+	PutMessage* msg = NULL;
+
+	/* A PutMessage is prepared for the Global Filter. 
+	It includes the packet to be delivered */
+	msg = new PutMessage(packet, direction, statics);
+	msg->setDelay(this->delay);
+
+	for(int i = 0; i < nodeVector.size(); i++)
+	msg->addNode(nodeVector[i]);
+
+	/* The PutMessage is returned to the caller function, 
+	in order to be sent to the Global Filter */
+	return (cMessage*)(msg);	
+}
+\end{lstlisting}
+%
+For more details read the section~\ref{sec:filters}.
+
+\subsection{Send}
+The class \texttt{Send} sends a paket (created by \texttt{clone()} or \texttt{create()}). More precisely, it sets the boolean \texttt{sended} to force the local filter to send the packet.
+
+% parte rimossa
+\iffalse
+It's necessary set the field sended to specify that this packet must be sent. Only modules, like \texttt{LocalFilter} and \texttt{GlobalFilter}, derivated by the class \texttt{cSimpleModule} can send messages and packets. The actions aren't derivated by the cSimpleModule.
+\fi
+
+
+
+\subsection{Expression}
+An ASL expression is an arithmetic expression or a boolean expression. The class \texttt{ASFExpression} resolves the ASL expressions by using the Reverse Polish Notation (RPN), also called postfix notation. \footnote{In OMNeT++ already exist a class called Expression, so to avoid conflicts we've called ASFExpression.} 
+
+RPN has the advantage that the operators appear in the order required for computation and it is possible to express an arbitrarily complex calculation without using brackets at all. Below you can see a simple expression in prefix and postfix notation:
+%
+\begin{lstlisting}[language={cpp}]
+	(1 + 2) * 3		prefix notation
+	1 2 + 3 *		postfix notation
+\end{lstlisting}
+
+To solve an RPN expression it is used a stack. The steps are:
+%
+\begin{enumerate}
+\item read a token from the expression, if there isn't any token end;
+\item if the token is a number store it in the stack and return to 1, else (is an operator) go to 3;
+\item in the stack retrieve the operands needed to compute the operation;
+\item put the result in the stack and return to 1.
+\end{enumerate}
+%
+Figure~\ref{fig:RPNSolve} shows the resolution process of a RPN expression.
+%
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth]{RPNSolve.pdf}
+\caption{Graphical representation of RPN solving}
+\label{fig:RPNSolve}
+\end{figure} 
+
+The RPN notation is not designed to support the concept of the variables or, in general, to solve an equation. Thus, RPN was enhanced to support this task by preceding the assignment operators with respect to the associated operands. Thanks to this change, each assignment operator is followed by a token that must not be pushed in the stack. The token is the variable that must store the result of the expression.
+
+In our implementation, the expression is stored in a vector (of strings). Each token corresponds to a \texttt{Variable} object and it is stored as a string. The literals are stored in the \texttt{VariableTable} (see the next section). Thus, the stack elements are \texttt{Variable} objects.
+
+\section{Attack}
+In general, to perform an attack it is needed to know its occurrence time and the set of actions that compose the attack. \texttt{Attack} is the base class from which the others attacks (\texttt{Conditional}, \texttt{Unconditional} and \texttt{Physical}) derive. This class is described below.
+%
+\begin{lstlisting}[language={cpp}]
+class Attack {
+
+	vector<Action*> actions;
+	/* Variable-Table is used to store the variables used by 
+	the attack*/
+	map<string, Variable*> varTable;
+	/* The stack is used as support for the Expression evaluation.
+	It's here and not in the class Expression because its data 
+	can be used in other action or to store the value returned 
+	from a function defined by user (this feature isn't available).
+	*/
+	stack<Variable> varStack;
+
+	public:
+	  
+	Attack() {}
+   	virtual ~Attack();
+
+	cMessage* execute() {};
+	virtual void addAction(Action* action);
+	void addVarTable(const map<string, Variable*> varTable);		
+}
+\end{lstlisting}
+
+The vector \texttt{actions} contains the actions that compose the attack. \texttt{varTable} is an hash table used to store the variables. \texttt{varStack} is used by  \texttt{ASFExpression} to evaluate an expression. The class provides three usefull methods:
+%
+\begin{itemize}
+\item \texttt{addAction()}, that is used to append an action to the set;
+\item \texttt{execute()}, that is used to perfom the actions that compose the attack;
+\item \texttt{addVarTable()}, that is used by the parser to store a variable in the \texttt{varTable}.
+\end{itemize}
+
+
+\subsection{Execute}
+The method \texttt{execute()} executes, one by one, all the actions contained in list. 
+%
+% parte rimossa
+\iffalse
+Each action is handled in a particular way. In conditional and unconditional attacks, in addiction to the variable table we find the \texttt{packetTable}, the idea is like the varTable in fact it contains the packets created by a \texttt{Clone} or a \texttt{Create}. The new packets are sended by the LocalFilter or GlobalFilter after the end of the attack's execution.
+\fi
+The method \texttt{execute()} is showed in the following (in pseudocode C\texttt{++} like).
+%
+\begin{lstlisting}[language={cpp}]
+void Attack::execute() {
+
+	// execute the actions
+	for(int i=0; i < actions.size(); i++ ) {
+
+		switch( actions[i]->getName() ) {
+		  
+			case MOVE:{
+				Move* move = (Move *)actions[i];
+				move->execute();
+				break;
+			}
+
+			case DESTROY:{
+				Destroy *destroy = (Destroy *)(actions[i]);
+				destroy->execute(destroyed);
+				break;
+			}
+	
+			case EXPRESSION:{
+				ASFExpression* my_expr = (ASFExpression*)actions[i];
+				my_expr->execute(&varTable, &varStack);
+				break;
+			}
+            
+			...
+            
+		};
+	}
+}
+\end{lstlisting}
+% parte rimossa
+\iffalse
+the name of the action  used in a \texttt{switch} to understand the action type and then we cast it in the real action. Complex action like change or create have much more helpfull code to support it.
+\fi
+
+
+
+\section{cSimpleModule concepts}
+The local filter and the global filter are based on \texttt{cSimpleModule}. It is the base class for all simple module classes and offers the following functions:
+%
+\begin{itemize}
+\item \texttt{void initialize()}, which is invoked by OMNeT\texttt{++} when it creates the module, it's used to initialize all the data structure used by the module.
+\item \texttt{void handleMessage(cMessage *msg)},  which is called when the module receives a message. It is used to handle messages. A message may represents events, internal messages (\texttt{cMessage} class) or packets (\texttt{cPacket} sub-class).
+\item \texttt{void activity()}, which is an alternative for the \texttt{handleMessage()} but presents scalability and debugging issues.
+\item \texttt{void finish()}, which is called at the end of the simulation to records the statistics collected during the simulation.
+\end{itemize}
+%
+The class \texttt{cSimpleModule} and its sub-classes are the only classes able to send messages and packets. %Thus, it is used to realize MAC/Routing/Application and Radio modules or anyone module that must send/receive messages. 
+
+
+\section{LocalFilter and GlobalFilter}
+\label{sec:filters}
+The classes \texttt{LocalFilter} and \texttt{GlobalFilter} are the core of ASF\texttt{++}. During the initialization, both of them parse the xml configuration file and initialize the attacks data structures. 
+%The attacks are enabled only at the time specified by the user by a set of timers, in this way we haven't computation overhead until it isn't necessary. 
+The function \texttt{handleMessage()} handles the conditional attacks. It is called when the local filter intercepts a victim packet, i.e. a packet that match with the packet filter.
+
+Instead, the global filter uses the function \texttt{handleMessage()} to:
+%
+\begin{itemize}
+\item complete a \texttt{Put} action;
+\item perform an uncoditional attack.
+\end{itemize}
+
+A node, or his local filter, sends a \texttt{PutMessage} to the global filter. Thus, it extracts all the informations and, for each destination node, it builds a \texttt{PutRequest} message which contains :
+%
+\begin{itemize}
+\item an hard copy of the packet contained in the received \texttt{PutMessage};
+\item the direction of the packet in the communication stack (\texttt{RX} or \texttt{TX});
+\item values that are releated to the statistics.
+\end{itemize} 
+
+When a node receives a \texttt{PutRequest} message, it extracts all the contained informations and sends the encapsulated packets to the right layer. In \ref{fig:put} there is a graphical example of the Put action flow.
+
+In the local filter the timer is used to enable attacks. In the global filter, instead, the timer is used to perform attacks (unconditional attacks have a start time and a frequency).
+%
+\begin{figure}
+\centering
+\includegraphics[width=.8\textwidth]{PutFlow.pdf}
+\caption{Put action flow}
+\label{fig:put}
+\end{figure} 
+
+
+
+
+\section{Parser}
+\label{sec:Parser}
+In this section is showed how ASF\texttt{++} parses the xml configuration files. To support xml files is necessary to include the \texttt{libxml++} library. 
+
+This library uses three kind of parser to parse a document. It was used the \texttt{DOM} parser because it parses the whole document at once and stores the structure in memory. An xml file has an hierarchy architecture, and this library represent it like a tree where all the tags are nodes.
+To explain what it means, we describe the Donald Duck family tree (a part of it) by using an xml file.
+%
+\begin{lstlisting}[language={xml}]
+<FamilyTree>
+	<ScroogeMcDuck>
+	</ScroogeMcDuck>
+    
+	<HortenseMcDuck>
+		<DonaldDuck></DonaldDuck>
+	</HortenseDuck>
+<FamilyTree>    
+\end{lstlisting}  
+
+At the highest level we find the root of the tree. In this case the root is \texttt{FamilyTree}.
+One level lower than the previous we can find \texttt{Scrooge McDuck} and his sister \texttt{Hortense McDuck}. From \texttt{Hortense}, at the even lower lever, we find his son (a famous one) \texttt{DonaldDuck}. 
+
+The \texttt{libxml++} uses iterators to scroll the nodes at the same level (\texttt{Scrooge} and \texttt{Hortense}). Instead, to go to nodes in the lower levels to respect of a certain node, it uses the method \texttt{get\_children()}. 
+So, if we want to scroll this file and print every node, we can use the following code:
+%
+\begin{lstlisting}[language={cpp}]
+xmlpp::DomParser parser;
+
+parser.parse_file("DonaldDuckFamilyTree");
+
+// Get the root node,  <FamilyTree>
+xmlpp::Node* rootNode = parser.get_document()->get_root_node(); 
+
+// Root node childs
+// list with Scrooge and Hortense
+xmlpp::Node::NodeList list = rootNode->get_children(); 
+		
+for(xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter) {
+	xmlpp::Node *duck = *iter;
+	Glib::ustring name = duck->get_name();
+    
+	cout << name << endl;
+    
+	if( name == "HortenseMcDuck"){ 
+		xmlpp::Node::NodeList sons =  duck->get_children();
+		xmlpp::Node donaldDuck = sons.begin();
+		 
+		Glib::ustring d_name = donaldDuck->get_name();
+		cout << "\t Son : "<< d_name <<endl;
+	}
+}
+\end{verbatim}
+
+By using this code on the previous xml file, we obtain the following output:
+%
+\begin{lstlisting}[language={terminal}]
+ScroogeMcDuck
+HortenseMcDuck
+	Son : DonaldDuck
+\end{lstlisting}
+
+The parser works in the same way. It retrieves the document and organize it like a tree. Then scrolls it level by level to retrieve the informations.
+The root of the document is \texttt{configuration}. Attacks are grouped by type, i.e. \texttt{Physical}, \texttt{Conditional} and \texttt{Unconditional}. 
+The tag \texttt{Attack} encloses all the attack details. The example of the structure of a xml configuration file is:
+%
+\begin{lstlisting}[language={xml}]
+<configuration>
+	<Physical>
+		<Attack>
+			<start_time></start_time>
+			<node></node>
+			<action></action>
+		</Attack>
+	</Physical>
+	<Conditional>
+		<Attack>
+			<start_time></start_time>
+			<node></node>
+			<filter></filter>
+			<var></var>
+			<action></action>
+			...
+			<action></action>
+		</Attack>
+		...
+		<Attack>
+            ...
+		</Attack>
+	</Conditional>
+	<Unconditional>
+		<Attack>
+			<start_time></start_time>
+			<frequency></frequency>
+			<action></action>
+			...
+			<action></action>
+		</Attack>
+	</Unconditional>
+</configuration>
+\end{lstlisting}
+
+For each type of attack, the parser scrolls the list of contained attacks and releated informations. Every time that the parser goes down in the tree, it builds an \texttt{Attack}, \texttt{Action} or \texttt{Variable} object.  
+The function \texttt{Parser::attackInit()} creates the variable table to store the variables declared by the user. The function in shown below:
+%
+\begin{lstlisting}[language={cpp}]
+/* we're parsing <Attack></Attack> */
+bool Parser::attackInit(const xmlpp::Node* xml_attack, Attack* attack, SimTime& time){
+
+	// some varible declaration
+    
+	/* Declare Variable Table */
+	map<string, Variable*> varTable;
+
+	//Add SELF, MIN and MAX to the Variable Table
+	varTable["SELF"] = new Variable(itos(nodeID), NUMBER);
+	varTable["MAX"] = new Variable("100", NUMBER);
+	varTable["MIN"] = new Variable("0", NUMBER);
+	
+	/* "details" contains the details about the attack like  
+	- start_time
+	- filter, only for conditional attack
+	- nodes
+	- var, contains the variables declared by the user
+	- frequency, only for unconditional attack
+	- action list
+	*/
+	xmlpp::Node::NodeList details = xml_attack->get_children();
+
+	for(xmlpp::Node::NodeList::iterator k = details.begin(); k != details.end(); ++k) {
+
+		xmlpp::Node *detail = *k;
+		
+		// <start_time></start_time>
+		if(detail->get_name() == "start_time")
+			start_time = get_node_value(detail);
+			
+		// <filter></filter>
+		if(detail->get_name() == "filter") {
+			// ..			
+		}	
+
+		// <frequency></frequency>
+		if(detail->get_name() == "frequency") {
+			double frequency = atof(get_node_value(detail).c_str());
+			((UnconditionalAttack *)(attack))->addFrequency( frequency );
+	       	}
+		
+		// <node></node>
+		if(detail->get_name() == "node") {
+			// ...
+		}
+
+		// <var></var>
+		if(detail->get_name() == "var") {
+			// ...
+		}
+	
+		// <action> </action>
+		if(detail->get_name() == "action") {
+
+			/* The action are composed of			
+			- name
+			- parameters
+			 item , only for Expression
+			*/
+			
+			xmlpp::Node::NodeList parameters = detail->get_children(); 
+
+			action_name = "";
+			action_parameters = "";
+			tokens.clear();
+			items.clear();
+			
+			for(xmlpp::Node::NodeList::iterator jter = parameters.begin(); jter != parameters.end(); ++jter) {
+			  
+				xmlpp::Node *param = *jter;
+				
+				// <name></name>
+				if( param->get_name() == "name")
+					action_name = get_node_value(param);
+
+				// <parameters></parameters>
+				if( param->get_name() == "parameters")
+					action_parameters = get_node_value(param);
+
+				// <item></item>
+				if( param->get_name() == "item")
+					items.push_back(get_node_value(param));
+		
+			} // end retrieve name, parameters and item
+			
+			/*  the parameters of an action are divided by ":"
+			now in tokens vector we have :
+			- odd position name of parameter
+			- even position the value of the parameter
+			*/	
+			tokenize(tokens, action_parameters, ':');
+
+			if(action_name == "Destroy") {
+
+				// create the action
+				Destroy *destroy = new Destroy();
+				// add it to the Attack object 
+				attack->addAction(destroy);  			
+
+			} // end Destroy Action			
+
+            
+			if(action_name == "Clone") {
+				/* the clone action has 2 parameters
+				- the packet to be cloned
+				- the name of the clone packet
+				*/
+				string packetName;
+				string newPacketName;
+
+				for(int i=0; i < tokens.size() ; i++) {
+				
+					if(tokens[i] == "packetName")
+						packetName = tokens[i+1];
+
+					else if(tokens[i] == "newPacketName")
+						newPacketName = tokens[i+1];
+					
+				}
+				
+				// create the action object
+				Clone* clone = new Clone(newPacketName, packetName);
+				// add it to the attack
+				attack->addAction(clone);
+			
+			}
+			
+			// others if statement for the others action 
+			
+		}
+
+
+	}// end details
+
+	// add the Variable Table to the attack
+	attack->addVarTable(varTable);
+
+}// end attackInit
+\end{lstlisting}  
+
+
+\section{How to work on new Castalia}
+Unfortunately, ASF\texttt{++} is not completely independent from Castalia. %In fact, there are some things to do if you want add a new application or a new action.
+
+\section{Create your own Application, Routing and MAC}
+\label{sec:updateCastalia}
+It is not difficult to add new layers (application, routing, etc) to the ASF\texttt{++}. 
+
+After the builds of the new layer, you probably must add some code to the class \texttt{Create}. The core of the class \texttt{Create} is the function  \texttt{buildNewPacket()}. This function is a collection of \texttt{if} statements. There are many \texttt{if} statements as there are layers in Castalia. In Castalia, the layer determines the structure of the relative packet. To ensure high flexibility, the user can define its own packet but it is him responsibility to handle it correctly.
+
+The user must add few rows in \texttt{Create.cc}/\texttt{.h} files. In the header file, you must only include the packet header file. In the implementation file, for each new layer type, you have to add a code portion similar to that shown below:
+%
+\begin{lstlisting}[language={cpp}]
+void Create::buildNewPacket(cPacket** pkt, int layer, string type, string subtype){  
+
+	switch(layer){
+
+		case(APPLICATION) :  
+	
+        		...
+	
+         	/* New application */
+		if(applicationName.compare("YourAppName") == 0){
+			*pkt = new YourApp("YourAppName", APPLICATION_PACKET);
+			done = true;
+		}
+            
+		...
+            
+	}
+}
+\end{lstlisting}
+
+The function interface has two parameters: \texttt{type} and \texttt{subtype}. If the new layer do not use  only one kind of packet, in the \texttt{if} statement it is necessary to add additional \texttt{if} statements using the type \texttt{type} or the subtype \texttt{subtype}.
+
+For routing and MAC protocols, you must remember to set the packet length using the function \texttt{getPacketLength()}. In general, with increasing  complexity of the structure of the packet, the complexity of the code to add in the \texttt{.cc} file increases.
+
+
+
+\subsection{getPacketLayer()}
+In Castalia, the length of the packet is setted by using the function \texttt{setByteLength()}. When you create a new application, or protocol, you must edit the function \texttt{getByteLength()}. First of all, you must create a new map to associate the type of the new packet with its length.
+Than you have to append it to a major map, which key is the name of the application or the name of the protocol. Below, you can find an example about the TMAC protocol:
+%
+\begin{lstlisting}[language={cpp}]
+	/*TMAC 
+		SYNC_TMAC_PACKET = 1;
+		RTS_TMAC_PACKET = 2;
+		CTS_TMAC_PACKET = 3;
+		DS_TMAC_PACKET = 4;
+		FRTS_TMAC_PACKET = 5;
+		DATA_TMAC_PACKET = 6;
+		ACK_TMAC_PACKET = 7;
+	*/
+	
+	map<int, int> tmac;
+	tmac[SYNC_TMAC_PACKET] = 11;
+	tmac[RTS_TMAC_PACKET] = 13;
+	tmac[CTS_TMAC_PACKET] = 13;
+	tmac[DS_TMAC_PACKET] = 0; // not supported
+	tmac[FRTS_TMAC_PACKET] = 0; // not supported
+	tmac[DATA_TMAC_PACKET] = 11; // header mac, used to encapsulate
+	tmac[ACK_TMAC_PACKET] = 11;
+	
+	layer_map["TMAC"] = tmac;
+\end{lstlisting}
+
+
+
+\section{Create your own action}
+\subsection{ASF\texttt{++} implementation}
+To add an action, you have to know how the actions are implemented and managed by the attack classes.
+
+First of all you must create a new sub-class of \texttt{Action}. Then, you have to add some code in the following files:
+%
+\begin{itemize}
+\item \texttt{Action.h}/\texttt{Action.cc}
+\item \texttt{Parser.h}/\texttt{Parser.cc}
+\end{itemize}
+
+The changes in the class \texttt{Action} are really simple: you have to add an entry in the enumerate called \texttt{ActionName}. Then, you have to edit the method \texttt{execute()}.
+
+The changes in the execute method can be simple or complex. It depends to the complexity needed to handle the action. You must add an entry in the \texttt{switch} statement, using the name specified in the \texttt{ActionName}. The parser must be modified in order to parse correctly a file that contains the new action.
+
+For example, to create the action \texttt{Print} that prints a text in the shell, start adding an entry in the \texttt{Action.h} and creating a class that represents the new action:
+%
+\begin{lstlisting}[language={cpp}]
+// in Action.h file
+...
+enum ActionName{
+	DESTROY = 0,
+	MOVE = 1,
+	CHANGE = 2,
+	DROP = 3,
+	PUT = 4,
+	CLONE = 5,
+	RETRIEVE = 6,
+	CREATE = 7,
+	SEND = 8,
+	EXPRESSION = 9,
+	FAKEREAD = 10,
+	PRINT = 11 // <- you must add this line
+};
+...
+\end{listing}
+%
+The \texttt{Print.h} file contains:
+%
+\begin{lstlisting}[language={cpp}]
+// in Print.h file
+
+class Print : public Action{
+
+	string text; // is the message we want to show in the shell
+    
+	public:
+	  
+	Print(string t) : Action(PRINT) { text = t; }
+	virtual ~Print() {}
+	
+	void execute(){ cout<<text<<endl; }
+}
+\end{lstlisting}
+%
+Assume now that the new action is used in conditional attacks.
+%
+\begin{lstlisting}[language={cpp}]
+void ConditionalAttack::execute(cMessage **packet, vector<cMessage*> &new_messages){
+
+	...
+
+	/* Actions composing the attack will be executed */
+	for(int i=0; i < actions.size(); i++) {
+	 
+		switch(actions[i]->getName()) {
+
+			case CHANGE:{ ... }
+			case CLONE :{ ... }
+			...
+				
+			case PRINT{
+				Print *print = (Print*)actions[i]; 
+				print->execute();
+				break;			
+			}
+			...
+		}
+	}
+	...
+} 
+\end{lstlisting}
+%
+Generally, the comparison between integers is more efficient with respect the comparison between strings. Furthermore a \texttt{switch} statement is more efficient than a list of \texttt{if} statements.
+
+Then, we must create the xml template for the \texttt{Print} action and add some code in the parser, in order to let him to know how to recognize the new action. Generally, in the xml file an action is described by :
+%
+\begin{itemize}
+\item name,
+\item parameters.
+\end{itemize}
+%
+\begin{lstlisting}[language={xml}]
+<action>
+	<name>ActionName</name>
+	<parameters>ListOfParameters<parameters>
+</action>
+\end{lstlisting}
+%
+The \texttt{ActionName} can be the one you want. The list of parameters is composed by a string of couples \texttt{<ParameterName:Value>}.
+
+In the \texttt{Print} action case, the only parameter that it is used is the text defined by the user. The xml code that represents \texttt{Print} action is:
+%
+\begin{lstlisting}[language={xml}]
+<action>
+	<name>Print</name>
+	<parameters>text:I'm a message<parameters>
+</action>
+\end{lstlisting}
+
+The last step is to edit the function \texttt{attackInit()} in the file \texttt{parser.cc} to make the parser capable to handle the new action:
+%
+\begin{lstlisting}[language={cpp}]
+// handle the different action
+if(detail->get_name() == "action") {  
+	...
+	
+	if(action_name == "Print") {
+				
+		string text;
+				
+		// we've only one parameter
+		text = tokens[i+1];					
+		Print *print = new Print(text);				
+		attack->addAction(print);
+				
+	}	
+}
+\end{lstlisting}
+
+
+
+\subsection{Add the new action to the interpreter}
+The last step is to edit the ASL interpreter. 
+% parte rimossa
+\iffalse
+To clearly understand what we are to doing now you should have a basic knowledge about to build a programming language, this isn't the right place where explain that so we divide this procedure in some steps; for more informations you can find infinite resources on the web. 
+\fi
+The interpreter is based on PLY (Python Lex-Yacc).
+
+\paragraph{Step 1 - Lexer}
+The lexer is used to break the input text into a collection of tokens, which are specified by a collection of regular expression rules. We must specify a token for each action.
+Open the \texttt{ASLexer.py} file and add the new entry \texttt{PRINT} in the \texttt{tokens} list. Now, associate the new token to the word \texttt{print} (i.e. the action name) by adding the entry \texttt{'print' : 'PRINT',} into the \texttt{reserved} dictionary:
+%
+\begin{lstlisting}[language={cpp}]
+# List of tokens
+
+tokens = (
+	'ID','REAL',
+	'PLUS','MINUS','EXP', 'TIMES','DIVIDE', 'MODULE',
+	'EQUALS','PLUSEQ', 'MINUSEQ', 'TIMESEQ', 'DIVIDEQ', 'MODULEQ',
+	'LPAREN','RPAREN', 'STRING', 'INTEGER', 'COMMA', 'LCBRACKET',
+	'RCBRACKET', 'VAR', 'PACKET', 'FROM', 'DO', 'IN', 'EVERY',
+	'LIST', 'NODES', 'FILTER', 'AND', 'OR', 'EQUAL', 'DIFFERENT',
+	'TX', 'RX', 'TRUE', 'FALSE', 'ORIGINAL', 'SELF',
+	'DESTROY', 'MOVE', 'DROP', 'CHANGE', 'RETRIEVE',
+	'CLONE', 'CREATE', 'SEND', 'PUT', 'PRINT',
+	'GRTHAN', 'LESSTHAN', 'GREQTHAN', 'LEQTHAN' 
+)
+ 
+
+# Reserved keywords
+
+reserved = {
+	'var'  : 'VAR',
+	'packet' : 'PACKET',
+	'from' : 'FROM',
+	'do' : 'DO',
+	'in' : 'IN',
+	'every' : 'EVERY',
+	'list' : 'LIST',
+	'nodes' : 'NODES',
+	'filter' : 'FILTER',
+	'and' : 'AND',
+	'or' : 'OR',
+	'TX' : 'TX',
+	'RX' : 'RX',
+	'TRUE' : 'TRUE',
+	'FALSE' : 'FALSE',
+	'original' : 'ORIGINAL',
+	'SELF' : 'SELF',
+	'destroy' : 'DESTROY',
+	'move' : 'MOVE',
+	'drop' : 'DROP',
+	'change' : 'CHANGE',
+	'retrieve' : 'RETRIEVE',
+	'clone' : 'CLONE',
+	'create' : 'CREATE',
+	'send' : 'SEND',
+	'put' : 'PUT',
+	'print' : 'PRINT',
+}
+\end{lstlisting}
+
+\paragraph{Step 2 - Yacc}
+Yacc is used to recognize the language syntax that has been specified in the form of a context free grammar. Our grammar is specified in the file \texttt{interpreter.py}. Each rule is composed as follows :
+%
+\begin{lstlisting}[language={cpp}]
+def p_<rule_handling_name>(p):
+	'<grammar specification>'
+	# code
+\end{lstlisting} 
+
+\texttt{p} is a sequence that contains the values of each grammar symbol in the corresponding rule. Instead, the values of \texttt{p[i]} are the various parts that compose the rule. In the example below, suppose to have and expression which define an addition of 2 elements:
+%
+\begin{lstlisting}[language={cpp}]
+def p_expression_plus(p):
+	'expression : element PLUS element' # <- grammar spec
+	#   ^            ^      ^     ^
+	#  p[0]         p[1]   p[2]  p[3]
+
+	p[0] = p[1] + p[3]
+\end{lstlisting}
+
+The element \texttt{label} is defined as follows:
+%
+\begin{lstlisting}[language={cpp}]
+def p_element(p):
+	'element : REAL | INTEGER' 
+	#   ^       ^
+	#  p[0]    p[1]
+	
+	p[0] = p[1]
+	# now 'element' has the value of p[1]
+\end{lstlisting}
+
+So, an element can be a real or a integer token. Suppose to have the following expression: $5.5 + 2$. The lexer returns the following tokens: 
+%
+\begin{lstlisting}[language={cpp}]
+(REAL, 5.5) , (PLUS, '+'), (INTEGER, 2)
+\end{lstlisting}
+%
+The parser associates the list of tokens with the rules \texttt{p\_expression\_plus}, and resolves each \texttt{element} by using the rule defined in \texttt{p\_element}. The element rule returns the value using \texttt{p[1]}, and the expression rule returns the sum of the two element.
+
+In the following it is shown how to define a grammar rule for the \texttt{Print} action:
+%
+\begin{lstlisting}[language={cpp}]
+def p_print(p):
+	'statement : PRINT LPAREN STRING RPAREN'
+	#   p[0]      p[1]  p[2]   p[3]   p[4]
+
+	# the value of p[3] is converted to string 
+	argument = str(p[3])
+	
+	action = Print( argument )
+	actions.append(action)
+\end{lstlisting}
+%
+Each ASL primitive is associated with a Python class that describes it and its xml format (in the file \texttt{primitives.py} ). To describe the \texttt{Print} xml structure, edit the file \texttt{primitives.py} as follow:
+%
+\begin{lstlisting}[language={cpp}]
+""" print( string ) """
+class Print:
+
+	name = "Print"
+	# values of the argument
+	argv = ""
+	# number of argument expected
+	argc = 1
+
+	def __init__(self, arg):
+		self.argv = arg
+
+	def __str__(self):
+		xml = """\t<action>\n\t\t<name>Print</name>\n\t\t<parameters>argument:"
+		+self.argv+"</parameters>\n\t</action>"""
+		
+		return xml
+\end{lstlisting}
+%
+The method \texttt{\_\_str\_\_()} is used when the interpreter writes the xml file. It returns a string (in xml format) that is understandable by the parser of ASF\texttt{++}.
+
+%\textbf{For more informations about the use of yacc and lexer read\\\\ http://www.dabeaz.com/ply/ply.html.}
+
+
+
+
+
+
+
+
+

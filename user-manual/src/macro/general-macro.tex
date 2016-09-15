@@ -1,0 +1,55 @@
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+\usepackage{makeidx}
+\usepackage{ifthen}
+
+\usepackage[toc,page]{appendix}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\usepackage{hyperref}
+
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{upgreek}
+
+\usepackage{subfloat}
+\usepackage{subfig}
+
+\usepackage{tabularx}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{booktabs}
+
+\usepackage[english]{varioref}
+
+% new commands
+\newcommand{\asf}{ASF\texttt{++}~}
+\newcommand{\omnet}{OMNeT\texttt{++}~}
+\newcommand{\mail}[1]{\textcolor{red!70!black}{\href{mailto:#1}{\texttt{#1}}}}
+\newcommand{\ie}{i.\,e.,}
+\newcommand{\eg}{e.\,g..}
+
+ % backslash in \tt font.
+\def\bs{\char'134 }
+
+\DeclareRobustCommand\cs[1]{\texttt{\char`\\#1}}
+
+% declare math operators
+\DeclareMathOperator{\avg}{avg}
+\DeclareMathOperator{\abs}{abs}
+\DeclareMathOperator{\fix}{fix}
+\DeclareMathOperator{\rnd}{rnd}
+\DeclareMathOperator{\lin}{lin}
+\DeclareMathOperator{\mymed}{med}
+\DeclareMathOperator{\mysgn}{sgn}
+\DeclareMathOperator{\mysqr}{sqr}
+\DeclareMathOperator{\mytri}{tri}
+\DeclareMathOperator{\mysaw}{saw}
+\DeclareMathOperator{\mysym}{sym}
+\DeclareMathOperator{\myshp}{shp}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}

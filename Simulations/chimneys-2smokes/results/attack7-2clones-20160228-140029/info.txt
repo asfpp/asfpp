@@ -1,0 +1,6 @@
+Auto-generated file
+-------------------
+
+Configuration: attack7-2clones
+Time: 2016-02-28 14:00:29
+Command: ../../bin/Castalia -i omnetpp.ini -c attack7-2clones -r 50

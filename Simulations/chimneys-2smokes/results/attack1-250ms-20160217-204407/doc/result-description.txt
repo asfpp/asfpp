@@ -1,0 +1,20 @@
+The plot shows the behavior of the monitoring system under the attack 
+'attack1-250ms'.
+
+Threshold
+---------
+The threshold is set to 35 µg/m^3.
+
+Smokestack-1
+------------
+The attack begins at 175.
+The original packets coming from cluster-1 are lost due to the attack.
+The attacker injects fake data packets and brings the reported emissions 
+above the threshold (from about 30 µg/m^3 to about 40 µg/m^3).
+
+Smokestack-2
+------
+The attack begins at 175.
+The attacker injects a fake data packet every 250 ms.
+By using this injection rate, the attacker brings the reported emissions 
+below the threshold (from about 44 µg/m^3 to about 35 µg/m^3).

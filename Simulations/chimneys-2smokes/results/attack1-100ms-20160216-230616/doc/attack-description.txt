@@ -1,0 +1,42 @@
+Name
+----
+attack1-100ms.adl
+
+
+Techinque
+---------
+Attack against the routing mechanism carried out by injecting fake packets
+into the network.
+
+
+Brief
+-----
+The objective of the attack is to tamper data regarding pollutant emissions
+of cluster-1 and cluster-2.
+
+
+Detail
+------
++ Attacking cluster-1
+The attacker periodically injects fake RREP and HELLO packets. The fake
+packets are sent to the node-5 and appear to come from the node-4.
+In this way the node-5, which is the cluster head of the cluster-1, sets
+(and keeps) the node-4 as its next-hop in the path to reach the sink node.
+However the node-4 and the node-5 are too far apart, and the one can't 
+physically reach the other.
+By doing so, cluster-1 is isolated from the network because all the data 
+packets sent by node-5 to node-4 are lost.
+
+Once the cluster-1 is isolated, the attacker injects fake data packets  
+into the network in order to tamper data about cluster-1's emissions.
+The fake data packets appear to come from the node-5.
+
++ Attacking cluster-2
+To alter the data concerning the emissions of pollutant from cluster-2, 
+the attacker injects into the network fake data packets with a 
+rate of one fake packet every 100ms. 
+The fake data packets seem to come from node-6, which is the 
+cluster head of the cluster-2.
+To compute the emission of pollutant from cluster-2, the sink node uses 
+both original and fake data.
+
