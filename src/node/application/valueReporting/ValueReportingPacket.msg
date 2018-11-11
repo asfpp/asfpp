@@ -25,3 +25,4 @@ struct ValueReportData {
 packet ValueReportingDataPacket extends ApplicationPacket {
 	ValueReportData extraData;
 }
+

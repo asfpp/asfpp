@@ -27,7 +27,7 @@ void VirtualMac::initialize()
 	resMgrModule = check_and_cast <ResourceManager*>(getParentModule()->getParentModule()->getSubmodule("ResourceManager"));
 
 	if (!resMgrModule || !radioModule)
-		opp_error("\n Virtual Routing init: Error in geting a valid reference module(s).");
+		opp_error("\n Virtual Mac init: Error in geting a valid reference module(s).");
 
 	setTimerDrift(resMgrModule->getCPUClockDrift());
 	pktHistory.clear();
@@ -56,7 +56,6 @@ int VirtualMac::bufferPacket(cPacket * rcvFrame)
 		    new MacControlMessage("MAC buffer full", MAC_CONTROL_MESSAGE);
 		fullBuffMsg->setMacControlMessageKind(MAC_BUFFER_FULL);
 		send(fullBuffMsg, "toNetworkModule");
-		trace()<<" -> Buffer overflow";
 		return 0;
 	} else {
 		TXBuffer.push(rcvFrame);

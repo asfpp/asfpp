@@ -567,7 +567,8 @@ void Radio::delayStateTransition(simtime_t delay)
 void Radio::completeStateTransition()
 {
 	state = (BasicState_type) changingToState;
-
+	trace() << "completing transition to " << state << " (" <<
+			(state == TX ? "TX" : (state == RX ? "RX" : "SLEEP")) << ")";
 	changingToState = -1;
 
 	// Add to extra Energy consumption
@@ -593,7 +594,7 @@ void Radio::completeStateTransition()
 				radioCmd->setRadioControlCommandKind(SET_STATE);
 				radioCmd->setState(RX);
 				scheduleAt(simTime(), radioCmd);
-
+				trace() << "WARNING: just changed to TX, but buffer is empty, changing to RX ";
 			}
 			break;
 		}
@@ -967,7 +968,7 @@ double Radio::SNR2BER(double SNR_dB)
 			return 0.5 * erfc(sqrt(pow(10.0, (SNR_dB / 10.0)) * RXmode->noiseBandwidth / RXmode->datarate));
 
 		case DIFFBPSK:
-			return 0.5 * exp((RXmode->noiseBandwidth / RXmode->datarate) * pow(10.0, (SNR_dB / 10.0)));
+			return 0.5 * exp(-(RXmode->noiseBandwidth / RXmode->datarate) * pow(10.0, (SNR_dB / 10.0)));
 
 		case DIFFQPSK:
 			return diffQPSK_SNR2BER(SNR_dB);
@@ -1133,7 +1134,7 @@ void Radio::parseRadioParameterFile(const char *fileName)
 			if (section == 1) {
 				// parsing lines in the following format:
 				// Name, dataRate(kbps), modulationType, bitsPerSymbol, bandwidth(MHz),
-				// noiseBandwidth(MHz), noiseFloor(dBm), sensitivity(dBm), powerConsumed(mW)
+				// noiseBandwidth(KHz), noiseFloor(dBm), sensitivity(dBm), powerConsumed(mW)
 
 				RXmode_type rxmode;
 				cStringTokenizer t(s.c_str(), ", \t");

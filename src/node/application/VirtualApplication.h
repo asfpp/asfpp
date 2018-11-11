@@ -41,8 +41,8 @@ class VirtualApplication: public CastaliaModule, public TimerService {
 	int latencyBuckets;
 
 	/*--- Custom class parameters ---*/
-	int self;					// the node's ID
-	string selfAddress;				// the node's routing level address
+	int self;								// the node's ID
+	string selfAddress;						// the node's routing level address
 	ResourceManager *resMgrModule;			// a pointer to the Resource Manager module
 	VirtualMobilityManager *mobilityModule;	// a pointer to the mobility Manager module
 	Radio *radioModule;						// a pointer to the Radio module

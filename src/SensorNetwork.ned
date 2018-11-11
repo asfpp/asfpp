@@ -29,6 +29,7 @@ network SN {
 
 	int numPhysicalProcesses = default (1);
 	string physicalProcessName = default ("CustomizablePhysicalProcess");
+	string wirelessChannelName = default ("WirelessChannel");
 	string debugInfoFileName = default ("Castalia-Trace.txt");
 	
 	bool attacksEvaluation = default (true);
@@ -36,7 +37,8 @@ network SN {
 	string configurationFile = default("none");
 	
  submodules:
-	wirelessChannel:wirelessChannel.WirelessChannel {
+	wirelessChannel: <wirelessChannelName>
+				like wirelessChannel.iWirelessChannel {
 	 gates:
 		toNode[numNodes];
 		fromNode[numNodes];

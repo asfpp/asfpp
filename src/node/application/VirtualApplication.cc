@@ -60,8 +60,6 @@ void VirtualApplication::initialize()
 		    startup_delay, 0, resMgrModule, "powerConsumption");
 	scheduleAt(simTime() + startup_delay, new cMessage("App [STARTUP]", NODE_STARTUP));
 
-	
-
 	/* Latency measurement is optional. An application can define the
 	 * following two parameters. If they are not defined then the
 	 * declareHistogram and collectHistogram statement are not called.
@@ -204,13 +202,11 @@ void VirtualApplication::toNetworkLayer(cPacket * pkt, const char *dst)
 	appPkt->getAppNetInfoExchange().timestamp = simTime();
 	appPkt->setApplicationID(applicationID.c_str());
 	int size = appPkt->getByteLength();
-	
 	if (size == 0)
 		size = constantDataPayload;
-	
-
 	if (packetHeaderOverhead > 0) size += packetHeaderOverhead;
-	//trace() << "Sending [" << appPkt->getName() << "] of size " <<size << " bytes to communication layer";
+	trace() << "Sending [" << appPkt->getName() << "] of size " <<
+		size << " bytes to communication layer";
 	appPkt->setByteLength(size);
 	send(appPkt, "toCommunicationModule");
 }

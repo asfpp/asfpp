@@ -119,7 +119,7 @@ void VirtualRouting::handleMessage(cMessage * msg)
 				    ", max Network packet size:" << maxNetFrameSize;
 				break;
 			}
-			//trace() << "Received [" << appPacket->getName() << "] from application layer";
+			trace() << "Received [" << appPacket->getName() << "] from application layer";
 
 			/* Control is now passed to a specific routing protocol by calling fromApplicationLayer()
 			 * Notice that after the call we RETURN (not BREAK) so that the packet is not deleted.
@@ -134,7 +134,7 @@ void VirtualRouting::handleMessage(cMessage * msg)
 		case NETWORK_LAYER_PACKET:
 		{
 			RoutingPacket *netPacket = check_and_cast <RoutingPacket*>(msg);
-			//trace() << "Received [" << netPacket->getName() << "] from MAC layer";
+			trace() << "Received [" << netPacket->getName() << "] from MAC layer";
 			NetMacInfoExchange_type info = netPacket->getNetMacInfoExchange();
 
 			/* Control is now passed to a specific routing protocol by calling fromMacLayer()
@@ -208,7 +208,6 @@ void VirtualRouting::handleRadioControlMessage(cMessage * msg)
 
 void VirtualRouting::finish()
 {
-	//trace() << "FInish - at VirtualRouting::finish()";
 	CastaliaModule::finish();
 	cPacket *pkt;
 	// clear the buffer from all remaining packets
@@ -223,7 +222,6 @@ int VirtualRouting::bufferPacket(cPacket * rcvFrame)
 {
 	if ((int)TXBuffer.size() >= netBufferSize) {
 		collectOutput("Buffer overflow");
-		trace()<<"-> Buffer overflow";
 		cancelAndDelete(rcvFrame);
 		return 0;
 	} else {

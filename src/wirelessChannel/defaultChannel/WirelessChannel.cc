@@ -87,7 +87,6 @@ void WirelessChannel::initialize(int stage)
 		yIndexIncrement = numOfXCells;
 		xIndexIncrement = 1;
 	}
-	
 
 	/***************************************************************
 	 * Allocate and initialize cellOccupation and nodeLocation.
@@ -181,11 +180,11 @@ void WirelessChannel::initialize(int stage)
 		opp_error("Could not allocate array pathLoss\n");
 
 	int elementSize = sizeof(PathLossElement) + 3 * sizeof(PathLossElement *);
-	int totalElements;	//keep track of pathLoss size for reporting purposes
-	
-	float x1=0, x2=0, y1=0, y2=0, z1=0, z2=0, dist=0;
-	float PLd = 0;		// path loss at distance dist, in dB
-	float bidirectionalPathLossJitter = 0; // variation of the pathloss in the two directions of a link, in dB
+	int totalElements = 0;	//keep track of pathLoss size for reporting purposes
+
+	float x1, x2, y1, y2, z1, z2, dist;
+	float PLd;		// path loss at distance dist, in dB
+	float bidirectionalPathLossJitter; // variation of the pathloss in the two directions of a link, in dB
 
 	/*******************************************************
 	 * Calculate the distance, beyond which we cannot
@@ -264,6 +263,7 @@ void WirelessChannel::initialize(int stage)
 		}
 	}
 
+	trace() << "Number of distinct space cells: " << numOfSpaceCells;
 	trace() << "Each cell affects " <<
 		(double)totalElements / numOfSpaceCells << " other cells on average";
 	trace() << "The pathLoss array of lists was allocated in " <<

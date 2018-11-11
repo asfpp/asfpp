@@ -111,8 +111,8 @@ void Create::buildNewPacket(cPacket** packet, const int layer, const string type
 	  
 		  /* IEEE 802.15.4 MAC protocol */
 		  if(MACProtocolName.compare("Mac802154") == 0) {
-		    *packet = new Mac802154Packet("802154 packet", MAC_LAYER_PACKET);
-		    ((Mac802154Packet*)(*packet))->setMac802154PacketType( atoi(type.c_str()) );
+		    *packet = new Basic802154Packet("802154 packet", MAC_LAYER_PACKET);
+		    ((Basic802154Packet*)(*packet))->setMac802154PacketType( atoi(type.c_str()) );
 			((MacPacket *)(*packet))->setCompromised(1);
 			(*packet)->setByteLength( getPacketLength(MACProtocolName, atoi(type.c_str()) ) );
 		    break;

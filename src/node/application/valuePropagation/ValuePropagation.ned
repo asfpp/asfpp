@@ -17,7 +17,7 @@ package node.application.valuePropagation;
 
 simple ValuePropagation like node.application.iApplication {
  parameters:
- 	string applicationID = default("valuePropagation");
+ 	string applicationID = default ("valuePropagation");
 	bool collectTraceInfo = default (true);
 	int priority = default (1);
 	int packetHeaderOverhead = default (8);	// in bytes

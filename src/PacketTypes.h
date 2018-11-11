@@ -35,7 +35,7 @@
 /* MAC protocols packets */
 #include "MacPacket_m.h"
 #include "BaselineMacPacket_m.h"
-#include "Mac802154Packet_m.h"
+#include "Basic802154Packet_m.h"
 #include "TMacPacket_m.h"
 #include "TunableMacPacket_m.h"
 

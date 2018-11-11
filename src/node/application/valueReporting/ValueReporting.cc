@@ -59,7 +59,8 @@ void ValueReporting::handleSensorReading(SensorReadingMessage * rcvReading)
 	tmpData.locX = mobilityModule->getLocation().x;
 	tmpData.locY = mobilityModule->getLocation().y;
 
-	ValueReportingDataPacket *packet2Net = new ValueReportingDataPacket("Value reporting pck", APPLICATION_PACKET);
+	ValueReportingDataPacket *packet2Net =
+	    new ValueReportingDataPacket("Value reporting pck", APPLICATION_PACKET);
 	packet2Net->setExtraData(tmpData);
 	packet2Net->setData(sensValue);
 	packet2Net->setSequenceNumber(currSentSampleSN);

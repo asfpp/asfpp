@@ -22,7 +22,7 @@
 #include "CastaliaMessages.h"
 
 #include "MultipathRingsRoutingPacket_m.h"
-#include "Mac802154Packet_m.h"
+#include "Basic802154Packet_m.h"
 
 
 using namespace std;

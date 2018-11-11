@@ -44,7 +44,6 @@ void BridgeTest::startup()
 	} else {
 		setTimer(REQUEST_SAMPLE, sampleInterval);
 	}
-	
 }
 
 void BridgeTest::timerFiredCallback(int timer)

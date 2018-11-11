@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright: National ICT Australia,  2007 - 2010                            *
+ *  Copyright: National ICT Australia,  2007 - 2012                            *
  *  Developed at the ATP lab, Networked Systems research theme                 *
  *  Author(s): Athanassios Boulis, Dimosthenis Pediaditakis, Yuriy Tselishchev *
  *  This file is distributed under the terms in the attached LICENSE file.     *
@@ -106,7 +106,31 @@ void ResourceManager::finishSpecific()
 {
 	calculateEnergySpent();
 	declareOutput("Consumed Energy");
-	collectOutput("Consumed Energy", "", getSpentEnergy());
+	collectOutput("Consumed Energy", "", initialEnergy - remainingEnergy);
+	declareOutput("Remaining Energy");
+	collectOutput("Remaining Energy", "", remainingEnergy);
+
+	if (getParentModule()->getIndex() == 0) {
+		cTopology *topo;	// temp variable to access energy spent by other nodes
+		topo = new cTopology("topo");
+		topo->extractByNedTypeName(cStringTokenizer("node.Node").asVector());
+
+		double minLifetime = estimateLifetime();
+		for (int i = 1; i < topo->getNumNodes(); i++) {
+			ResourceManager *resMng = dynamic_cast<ResourceManager*>
+				(topo->getNode(i)->getModule()->getSubmodule("ResourceManager"));
+			if (minLifetime > resMng->estimateLifetime()) 
+				minLifetime = resMng->estimateLifetime();
+		}
+		declareOutput("Estimated network lifetime (days)");
+		collectOutput("Estimated network lifetime (days)", "", minLifetime);
+		delete(topo);
+	}
+}
+
+double ResourceManager::estimateLifetime(void) 
+{
+	return ((initialEnergy * simTime().dbl()) / ((initialEnergy - remainingEnergy) * 86400.0));
 }
 
 double ResourceManager::getSpentEnergy(void)
@@ -132,7 +156,10 @@ void ResourceManager::consumeEnergy(double amount)
 		send(new cMessage("Destroy node message", OUT_OF_ENERGY), "toNetwork");
 		send(new cMessage("Destroy node message", OUT_OF_ENERGY), "toMac");
 		send(new cMessage("Destroy node message", OUT_OF_ENERGY), "toRadio");
-                remainingEnergy = 0;
+        disabled = true;
+        declareOutput("Dead Node");
+		collectOutput("Dead Node", "yes?", 1);
+		collectOutput("Dead Node", "time", SIMTIME_DBL(simTime()));
 	} else
 		remainingEnergy -= amount;
 }
@@ -146,6 +173,10 @@ void ResourceManager::destroyNode(void)
 	send(new cMessage("Destroy node message", DESTROY_NODE), "toNetwork");
 	send(new cMessage("Destroy node message", DESTROY_NODE), "toMac");
 	send(new cMessage("Destroy node message", DESTROY_NODE), "toRadio");
+	disabled = true;
+    declareOutput("Dead Node");
+	collectOutput("Dead Node", "yes?", 1);
+	collectOutput("Dead Node", "time", SIMTIME_DBL(simTime()));
 }
 
 int ResourceManager::RamStore(int numBytes)

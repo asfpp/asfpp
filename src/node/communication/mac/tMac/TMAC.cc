@@ -1,5 +1,5 @@
 /****************************************************************************
- *  Copyright: National ICT Australia,  2007 - 2010                         *
+ *  Copyright: National ICT Australia,  2007 - 2012                         *
  *  Developed at the ATP lab, Networked Systems research theme              *
  *  Author(s): Athanassios Boulis, Yuriy Tselishchev                        *
  *  This file is distributed under the terms in the attached LICENSE file.  *
@@ -7,7 +7,7 @@
  *                                                                          *
  *      NICTA, Locked Bag 9013, Alexandria, NSW 1435, Australia             *
  *      Attention:  License Inquiry.                                        *
- *                                                                          *  
+ *                                                                          *
  ****************************************************************************/
 
 #include <cmath>
@@ -32,7 +32,6 @@ void TMAC::startup()
 	useRtsCts = par("useRtsCts");
 	maxTxRetries = par("maxTxRetries");
 
-
 	disableTAextension = par("disableTAextension");
 	conservativeTA = par("conservativeTA");
 	collisionResolution = par("collisionResolution");
@@ -40,9 +39,6 @@ void TMAC::startup()
 		trace() << "Unknown value for parameter 'collisionResolution', will default to 1";
 		collisionResolution = 1;
 	}
-
-	trace()<<"COLLISION RESOLUTION "<<collisionResolution;
-
 	//Initialise state descriptions used in debug output
 	if (printStateTransitions) {
 		stateDescr[100] = "MAC_STATE_SETUP";
@@ -64,8 +60,8 @@ void TMAC::startup()
 	phyLayerOverhead = par("phyFrameOverhead");
 
 	//try to obtain the value of isSink parameter from application module
-	if (getParentModule()->getParentModule()->findSubmodule("nodeApplication") != -1) {
-		cModule *tmpApplication = getParentModule()->getParentModule()->getSubmodule("nodeApplication");
+	if (getParentModule()->getParentModule()->findSubmodule("Application") != -1) {
+		cModule *tmpApplication = getParentModule()->getParentModule()->getSubmodule("Application");
 		isSink = tmpApplication->hasPar("isSink") ? tmpApplication->par("isSink") : false;
 	} else {
 		isSink = false;
@@ -98,7 +94,7 @@ void TMAC::timerFiredCallback(int timer)
 	switch (timer) {
 
 		case SYNC_SETUP:{
-			/* Timeout to hear a schedule packet has expired at this stage, 
+			/* Timeout to hear a schedule packet has expired at this stage,
 			 * MAC is able to create its own schedule after a random offset
 			 * within the duration of 1 frame
 			 */
@@ -108,11 +104,10 @@ void TMAC::timerFiredCallback(int timer)
 		}
 
 		case SYNC_CREATE:{
-			/* Random offset selected for creating a new schedule has expired. 
-			 * If at this stage still no schedule was received, MAC creates 
+			/* Random offset selected for creating a new schedule has expired.
+			 * If at this stage still no schedule was received, MAC creates
 			 * its own schedule and tries to broadcast it
 			 */
-			trace()<<"!!! TIMER SYNC_CREATE call createPrimarySchedule()";
 			if (macState == MAC_STATE_SETUP)
 				createPrimarySchedule();
 			break;
@@ -120,7 +115,7 @@ void TMAC::timerFiredCallback(int timer)
 
 		case SYNC_RENEW:{
 			/* This node is the author of its own primary schedule
-			 * It is required to rebroadcast a SYNC packet and also 
+			 * It is required to rebroadcast a SYNC packet and also
 			 * schedule a self message for the next RESYNC procedure.
 			 */
 			trace() << "Initiated RESYNC procedure";
@@ -170,8 +165,8 @@ void TMAC::timerFiredCallback(int timer)
 		}
 
 		case CHECK_TA:{
-			/* Activation timeout fired, however we may need to extend the timeout 
-			 * here based on the current MAC state, or if there is no reason to 
+			/* Activation timeout fired, however we may need to extend the timeout
+			 * here based on the current MAC state, or if there is no reason to
 			 * extend it, then we need to go to sleep.
 			 */
 
@@ -296,14 +291,11 @@ int TMAC::handleRadioControlMessage(cMessage * msg)
 
 void TMAC::fromNetworkLayer(cPacket * netPkt, int destination)
 {
-
-	TMacPacket *macPkt;
-
 	// Create a new MAC frame from the received packet and buffer it (if possible)
-	macPkt = new TMacPacket("TMAC data packet", MAC_LAYER_PACKET);
+	TMacPacket* macPkt = new TMacPacket("TMAC data packet", MAC_LAYER_PACKET);
 	macPkt->setType(DATA_TMAC_PACKET);
 	macPkt->setSource(SELF_MAC_ADDRESS);
-	macPkt->setSequenceNumber(txSequenceNum);
+	//macPkt->setSequenceNumber(txSequenceNum);
 	
 	/* It will set the field "filtered" <A.P.> */
 	encapsulatePacket(macPkt, netPkt);
@@ -313,14 +305,14 @@ void TMAC::fromNetworkLayer(cPacket * netPkt, int destination)
 	*/
 	macPkt->setDestination(destination);
 
-	if (bufferPacket(macPkt)) {
+    //macPkt->setSequenceNumber(txSequenceNum); no need for TMAC specific seq number, virtualMAC takes care of this
+	if (bufferPacket(macPkt)) {	// this is causing problems
 		if (TXBuffer.size() == 1)
 			checkTxBuffer();
 	} else {
 		// cancelAndDelete(macPkt);
 		//We could send a control message to upper layer to inform of full buffer
 	}
-
 }
 
 /* This function will reset the internal MAC state in the following way:
@@ -337,7 +329,6 @@ void TMAC::resetDefaultState(const char *descr)
 	if (activationTimeout <= getClock()) {
 		if (disableTAextension) {
 			toRadioLayer(createRadioCommand(SET_STATE, SLEEP));
-			trace()<<"SET MAC_STATE_SLEEP";
 			setMacState(MAC_STATE_SLEEP, "active period expired (SMAC)");
 		} else {
 			performCarrierSense(MAC_CARRIER_SENSE_BEFORE_SLEEP);
@@ -352,7 +343,7 @@ void TMAC::resetDefaultState(const char *descr)
 			syncPacket->setDestination(BROADCAST_MAC_ADDRESS);
 			syncPacket->setSyncId(scheduleTable[0].ID);
 			syncPacket->setSequenceNumber(scheduleTable[0].SN);
-			syncPacket->setSync(currentFrameStart + frameTime - getClock() - 
+			syncPacket->setSync(currentFrameStart + frameTime - getClock() -
 						TX_TIME(syncPacketSize) - randomContentionInterval);
 			syncPacket->setByteLength(syncPacketSize);
 			performCarrierSense(MAC_CARRIER_SENSE_FOR_TX_SYNC, randomContentionInterval);
@@ -386,7 +377,6 @@ void TMAC::resetDefaultState(const char *descr)
  */
 void TMAC::createPrimarySchedule()
 {
-	trace()<<"!!! call updateSchedule";
 	updateScheduleTable(frameTime, self, 0);
 	setTimer(SYNC_RENEW, resyncTime);
 }
@@ -398,10 +388,10 @@ void TMAC::setMacState(int newState, const char *descr)
 		return;
 	if (printStateTransitions) {
 		if (descr)
-			trace() << "state changed from " << stateDescr[macState] << 
+			trace() << "state changed from " << stateDescr[macState] <<
 					" to " << stateDescr[newState] << ", reason: " << descr;
 		else
-			trace() << "state changed from " << stateDescr[macState] << 
+			trace() << "state changed from " << stateDescr[macState] <<
 					" to " << stateDescr[newState];
 	}
 	macState = newState;
@@ -421,7 +411,7 @@ void TMAC::updateScheduleTable(simtime_t wakeup, int ID, int SN)
 
 				//Calculate new frame offset for this schedule
 				simtime_t new_offset = getClock() - currentFrameStart + wakeup - frameTime;
-				trace() << "Resync successful for ID:" << ID << " old offset:" << 
+				trace() << "Resync successful for ID:" << ID << " old offset:" <<
 						scheduleTable[i].offset << " new offset:" << new_offset;
 				scheduleTable[i].offset = new_offset;
 				scheduleTable[i].SN = SN;
@@ -455,7 +445,7 @@ void TMAC::updateScheduleTable(simtime_t wakeup, int ID, int SN)
 	TMacSchedule newSch;
 	newSch.ID = ID;
 	newSch.SN = SN;
-	trace() << "ADD schedule ID:" << ID << ", SN:" << SN << ", wakeup:" << wakeup;
+	trace() << "Creating schedule ID:" << ID << ", SN:" << SN << ", wakeup:" << wakeup;
 
 	//Calculate the offset for the new schedule
 	if (currentFrameStart == -1) {
@@ -528,8 +518,6 @@ void TMAC::fromRadioLayer(cPacket * pkt, double RSSI, double LQI)
 	int destination = macPkt->getDestination();
 	simtime_t nav = macPkt->getNav();
 
-	trace()<<"-> Received a packet";
-
 	// first of all, check if the packet is to this node or not
 	if (destination != SELF_MAC_ADDRESS && destination != BROADCAST_MAC_ADDRESS) {
 		if (macState == MAC_CARRIER_SENSE_FOR_TX_RTS && useFRTS) {
@@ -546,7 +534,6 @@ void TMAC::fromRadioLayer(cPacket * pkt, double RSSI, double LQI)
 
 		/* received a RTS frame */
 		case RTS_TMAC_PACKET:{
-
 			//Since this node is the destination (checked above), reply with a CTS
 			if (ctsPacket)
 				cancelAndDelete(ctsPacket);
@@ -593,7 +580,7 @@ void TMAC::fromRadioLayer(cPacket * pkt, double RSSI, double LQI)
 		case DATA_TMAC_PACKET:{
 			// Forward the frame to upper layer first
 			if (isNotDuplicatePacket(macPkt))
-				toNetworkLayer(macPkt->decapsulate());
+				toNetworkLayer(decapsulatePacket(macPkt));
 
 			// If the frame was sent to broadcast address, nothing else needs to be done
 			if (destination == BROADCAST_MAC_ADDRESS)
@@ -643,9 +630,6 @@ void TMAC::fromRadioLayer(cPacket * pkt, double RSSI, double LQI)
 
 		/* received SYNC frame */
 		case SYNC_TMAC_PACKET:{
-
-			trace()<<"SYNC_TMAC_PACKET";
-
 			// Schedule table is updated with values from the SYNC frame
 			updateScheduleTable(macPkt->getSync(),
 					    macPkt->getSyncId(), macPkt->getSequenceNumber());
@@ -654,7 +638,7 @@ void TMAC::fromRadioLayer(cPacket * pkt, double RSSI, double LQI)
 		}
 
 		default:{
-			trace() << "Packet with unknown type (" << macPkt->getType() << 
+			trace() << "Packet with unknown type (" << macPkt->getType() <<
 					") received: [" << macPkt->getName() << "]";
 		}
 	}
@@ -743,8 +727,6 @@ void TMAC::carrierIsClear()
 				// update MAC state
 				setMacState(MAC_STATE_IN_TX, "transmitting SYNC packet");
 
-				trace()<<"Send SYNC PACKET";
-
 				// create a timeout for this transmission - nothing is expected in reply
 				// so MAC is only waiting for the RADIO to finish the packet transmission
 				setTimer(TRANSMISSION_TIMEOUT, TX_TIME(syncPacketSize));
@@ -770,7 +752,6 @@ void TMAC::carrierIsClear()
 
 			// update MAC and RADIO states
 			toRadioLayer(createRadioCommand(SET_STATE, SLEEP));
-			trace()<<"SET MAC_STATE_SLEEP";
 			setMacState(MAC_STATE_SLEEP, "no activity on the channel");
 			break;
 		}
@@ -802,7 +783,7 @@ void TMAC::sendDataPacket()
 		// This packet is unicast, so MAC will be expecting an ACK
 		// packet in reply, so the timeout is longer
 		// If we are not using RTS/CTS exchange, then this attempt
-		// also decreases the txRetries counter 
+		// also decreases the txRetries counter
 		// (NOTE: with RTS/CTS exchange sending RTS packet decrements counter)
 		if (!useRtsCts)
 			txRetries--;
@@ -834,11 +815,11 @@ void TMAC::extendActivePeriod(simtime_t extra)
 {
 	simtime_t curTime = getClock();
 	if (conservativeTA) {
-		curTime += extra;
-		while (activationTimeout < curTime) {
+		simtime_t extraCurTime = curTime + extra;
+		while (activationTimeout < extraCurTime) {
 			activationTimeout += listenTimeout;
 		}
-		if (curTime + listenTimeout < activationTimeout)
+		if (extraCurTime + listenTimeout < activationTimeout)
 			return;
 		activationTimeout += listenTimeout;
 	} else if (activationTimeout < curTime + listenTimeout + extra) {
@@ -857,7 +838,7 @@ void TMAC::checkTxBuffer()
 	TMacPacket *macPkt = check_and_cast < TMacPacket * >(TXBuffer.front());
 	txAddr = macPkt->getDestination();
 	txRetries = maxTxRetries;
-	txSequenceNum = 0;
+	// txSequenceNum = 0;  no need for TMAC specific seq number, virtualMAC takes care of this 
 }
 
 /* This function will remove the first packet from MAC transmission buffer

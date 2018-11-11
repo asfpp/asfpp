@@ -27,8 +27,6 @@ void BypassRouting::fromApplicationLayer(cPacket * pkt, const char *destination)
 	netPacket->setSource(SELF_NETWORK_ADDRESS);
 	netPacket->setDestination(destination);
 	encapsulatePacket(netPacket, pkt);
-	trace() << "-> Pass a packet destined to "<< destination <<" ( Node: "<< resolveNetworkAddress(destination) <<" ) at MAC Layer";
-	
 	toMacLayer(netPacket, resolveNetworkAddress(destination));
 }
 
@@ -41,15 +39,11 @@ void BypassRouting::fromApplicationLayer(cPacket * pkt, const char *destination)
 void BypassRouting::fromMacLayer(cPacket * pkt, int srcMacAddress, double rssi, double lqi)
 {
 	RoutingPacket *netPacket = dynamic_cast <RoutingPacket*>(pkt);
-	
 	if (netPacket) {
 		string destination(netPacket->getDestination());
-		trace () << "-> Arrived a packet for node "<< destination<< "from node" << srcMacAddress;
 		if (destination.compare(SELF_NETWORK_ADDRESS) == 0 ||
-		    destination.compare(BROADCAST_NETWORK_ADDRESS) == 0 || destination.compare("0") == 0){
-			trace() << "-> Send Packet to Application Layer";
+		    destination.compare(BROADCAST_NETWORK_ADDRESS) == 0)
 			toApplicationLayer(decapsulatePacket(pkt));
-		}
 	}
 }
 

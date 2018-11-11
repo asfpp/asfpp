@@ -1,5 +1,5 @@
 //****************************************************************************
-//*  Copyright: National ICT Australia,  2007 - 2010                         *
+//*  Copyright: National ICT Australia,  2007 - 2012                         *
 //*  Developed at the ATP lab, Networked Systems research theme              *
 //*  Author(s): Athanassios Boulis, Yuriy Tselishchev                        *
 //*  This file is distributed under the terms in the attached LICENSE file.  *
@@ -12,20 +12,18 @@
 
 package node.communication.mac.mac802154;
 
-simple Mac802154 like node.communication.mac.iMac {
+simple Basic802154 like node.communication.mac.iMac {
  parameters:
     //debug parameters
 	bool collectTraceInfo = default (false);
 	bool printStateTransitions = default (false);
 
 	//mac layer parameters
-	//non colpevoli
-	int macMaxPacketSize = default (121);// O(0) R(121); considering the standard maxphypacketsize --> 127 - 6 <-- phy hdr
-	int macPacketOverhead = default (9); //O(14) R(9); assuming to use 2 bytes addresses and PAN ID compression.
-	int macBufferSize = default (32); //<R.D.> not so sure about this
+	int macMaxPacketSize = default (142);	//128 (Maximum payload for 802.15.4) + 14 (Data packet overhead)
+	int macPacketOverhead = default (14);
+	int macBufferSize = default (32);
 
-	bool enableSlottedCSMA = default (true); // if true it's a beacon enabled network
-	bool enableCAP = default (true);
+	bool enableSlottedCSMA = default (true);
 	bool isFFD = default (false);
 	bool isPANCoordinator = default (false);
 	bool batteryLifeExtention = default (false);
@@ -36,22 +34,19 @@ simple Mac802154 like node.communication.mac.iMac {
 	int baseSlotDuration = default (60);
 
 	int numSuperframeSlots = default (16);
-	// <R.D.> changing the following values to stay standard compliant (old values commented out)
-	int macMinBE = default(5); //originale(5) R(3); opzione colpevole nel senso che è troppo piccolo
-	int macMaxBE = default(7); //originale(7) R(5); (come sopra)
+	int macMinBE = default (5);
+	int macMaxBE = default (7);
 	int macMaxCSMABackoffs = default (4);
-	int macMaxFrameRetries = default (3);
+	int macMaxFrameRetries = default (2);
 	int maxLostBeacons = default (4);
 	int minCAPLength = default (440);
-	int requestGTS = default (0);
 
 	// parameters dependent on physical layer
 	// some are essential and are not defined as default
 	double phyDelayForValidCS = default (0.128);
 	double phyDataRate;
-	//non colpevoli
-	double phyDelaySleep2Tx = default (0.006); //originale(0.2) R(0.006); //in ms, considering a tmote sky mote
-	double phyDelayRx2Tx = default (0.192); //originale (0.02) R(0.192);	//in ms 15.4 Turnaroundtime is 192us
+	double phyDelaySleep2Tx = default (0.2); //in ms
+	double phyDelayRx2Tx = default (0.02);	//in ms
 	int phyFrameOverhead = default (6);
 	int phyBitsPerSymbol; 
 

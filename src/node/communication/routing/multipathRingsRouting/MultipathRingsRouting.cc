@@ -35,12 +35,6 @@ void MultipathRingsRouting::startup()
 
 	if (isSink)
 		sendTopologySetupPacket();
-
-	// multipathRingsRouting-related member variables
-	int currentSequenceNumber = 0;
-	int tmpSinkID = NO_SINK;
-	int tmpLevel = NO_LEVEL;
-
 }
 
 void MultipathRingsRouting::sendTopologySetupPacket()
@@ -53,9 +47,6 @@ void MultipathRingsRouting::sendTopologySetupPacket()
 	setupPkt->setSinkID(currentSinkID);
 	setupPkt->setSenderLevel(currentLevel);
 	toMacLayer(setupPkt, BROADCAST_MAC_ADDRESS);
-
-	trace()<<"-> SEND TOPOLOGY SETUP";
-
 }
 
 void MultipathRingsRouting::sendControlMessage(multipathRingsRoutingControlDef kind)
@@ -111,7 +102,6 @@ void MultipathRingsRouting::fromApplicationLayer(cPacket * pkt, const char *dest
 {
 	string dst(destination);
 
-	
 	MultipathRingsRoutingPacket *netPacket =
 	    new MultipathRingsRoutingPacket("Multipath rings routing data packet", NETWORK_LAYER_PACKET);
 	netPacket->setMultipathRingsRoutingPacketKind(MPRINGS_DATA_PACKET);
@@ -122,7 +112,6 @@ void MultipathRingsRouting::fromApplicationLayer(cPacket * pkt, const char *dest
 
 	/* It will set the field "filtered" <A.P.> */
 	encapsulatePacket(netPacket, pkt);
-
 
 	if (dst.compare(SINK_NETWORK_ADDRESS) == 0 || dst.compare(PARENT_NETWORK_ADDRESS) == 0) {
 		netPacket->setSequenceNumber(currentSequenceNumber);
@@ -135,7 +124,6 @@ void MultipathRingsRouting::fromApplicationLayer(cPacket * pkt, const char *dest
 			}
 		} else {
 			//Here we could send a control message to upper layer informing that our buffer is full
-			trace() << "-> Here we could send a control message to upper layer informing that our buffer is full";
 		}
 	} else {		//++++ need to control flooding
 		toMacLayer(netPacket, BROADCAST_MAC_ADDRESS);
@@ -151,8 +139,6 @@ void MultipathRingsRouting::fromMacLayer(cPacket * pkt, int macAddress, double r
 	switch (netPacket->getMultipathRingsRoutingPacketKind()) {
 
 		case MPRINGS_TOPOLOGY_SETUP_PACKET:{
-
-			trace()<<"-> Topology setup arrived from "<<netPacket->getSource();
 			if (isSink)
 				break;
 			if (!isScheduledNetSetupTimeout) {
@@ -174,41 +160,31 @@ void MultipathRingsRouting::fromMacLayer(cPacket * pkt, int macAddress, double r
 			int senderLevel = netPacket->getSenderLevel();
 			int sinkID = netPacket->getSinkID();
 
-
 			if (dst.compare(BROADCAST_NETWORK_ADDRESS) == 0 ||
 					dst.compare(SELF_NETWORK_ADDRESS) == 0) {
 				// We are not filtering packets that are sent to this node directly or to 
 				// broadcast network address, making application layer responsible for them
-
 				toApplicationLayer(pkt->decapsulate());
 
-			} else if (dst.compare("0") == 0) {
-
+			} else if (dst.compare(SINK_NETWORK_ADDRESS) == 0) {
 				if (senderLevel == currentLevel + 1) {
-
-
 					if (self == sinkID) {
 						// Packet is for this node, if filter passes, forward it to application
-						if (isNotDuplicatePacket(pkt)){
+						if (isNotDuplicatePacket(pkt))
 							toApplicationLayer(decapsulatePacket(pkt));
-						}
-						else{
+						else
 							trace() << "Discarding duplicate packet from node " << src;
-						}
-
 					} else if (sinkID == currentSinkID) {
 						// We want to rebroadcast this packet since we are not its destination
 						// For this, a copy of the packet is created and sender level field is 
 						// updated before calling toMacLayer() function
 						MultipathRingsRoutingPacket *dupPacket = netPacket->dup();
 						dupPacket->setSenderLevel(currentLevel);
-						trace() << "-> This packet wasn't for me,  rebroadcast it. Src "<< netPacket->getSource();
 						toMacLayer(dupPacket, BROADCAST_MAC_ADDRESS);
 					}
 				}
 
 			} else if (dst.compare(PARENT_NETWORK_ADDRESS) == 0) {
-				
 				if (senderLevel == currentLevel + 1 && sinkID == currentSinkID) {
 					// Packet is for this node, if filter passes, forward it to application
 					if (isNotDuplicatePacket(pkt))

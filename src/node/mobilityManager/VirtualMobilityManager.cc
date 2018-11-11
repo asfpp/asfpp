@@ -27,7 +27,9 @@ void VirtualMobilityManager::initialize()
 	if (!wchannel)
 		opp_error("Unable to obtain wchannel pointer");
 	
-	parseDeployment();
+	parseDeployment();	
+	trace() << "initial location(x:y:z) is " << nodeLocation.x << ":" << 
+			nodeLocation.y << ":" << nodeLocation.z;
 }
 
 void VirtualMobilityManager::parseDeployment() {
