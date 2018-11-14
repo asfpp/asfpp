@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Remove remote deploy directory"
+rm -rf /Users/francescoracciatti/Desktop/work/virtualbox/shared/sandbox-asfpp-5.x/deploy/asfpp/
+
+echo "Build remote deploy directory"
+mkdir /Users/francescoracciatti/Desktop/work/virtualbox/shared/sandbox-asfpp-5.x/deploy/asfpp
+
+echo "Deploy ..."
+cp -rf asfpp /Users/francescoracciatti/Desktop/work/virtualbox/shared/sandbox-asfpp-5.x/deploy/asfpp/
+
+echo "Done"

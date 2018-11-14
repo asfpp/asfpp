@@ -1,6 +1,0 @@
-Auto-generated file
--------------------
-
-Configuration: misread
-Time: 2015-10-14 18:47:16
-Command: ../../bin/Castalia -i omnetpp.ini -c misread -r 5
