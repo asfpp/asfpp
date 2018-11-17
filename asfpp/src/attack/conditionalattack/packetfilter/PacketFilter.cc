@@ -60,17 +60,17 @@ PacketFilter::PacketFilter(string monolithicPacketFilter)
             }
             
             // packet-filter has a bad structure in the xml
-            opp_error("[PacketFilter::PacketFilter(string)] Error, packet filter in the xml has a bad structure");
+            throw cRuntimeError("[PacketFilter::PacketFilter(string)] Error, packet filter in the xml has a bad structure");
 
         }
         catch(const out_of_range& oor) {
-            opp_error("[PacketFilter::PacketFilter(string)] Out of range exception raised during the building of an elementary or a compound block");
+            throw cRuntimeError("[PacketFilter::PacketFilter(string)] Out of range exception raised during the building of an elementary or a compound block");
         }
     }
     
     // simple consistency check
     if (filterBlocks.size() != filterOperators.size()+1) {
-        opp_error("[PacketFilter::PacketFilter(string)] Error, the number of packet-filter's block is inconsistent with that of the logical operators");
+        throw cRuntimeError("[PacketFilter::PacketFilter(string)] Error, the number of packet-filter's block is inconsistent with that of the logical operators");
     }
     
     // set packet-filter's minimum layer
@@ -100,7 +100,7 @@ void PacketFilter::setPacketFilterLayer()
                 break;
             }
             default: {
-                opp_error("[PacketFilter::setPacketFilterLayer()] Can't recognize the type of the filter block");
+                throw cRuntimeError("[PacketFilter::setPacketFilterLayer()] Can't recognize the type of the filter block");
             }
         }
         
@@ -139,8 +139,8 @@ bool PacketFilter::passPreMatchChecks(cMessage* msg) const
     
     // check if the packet has been already filtered before
 	cClassDescriptor* descriptor = cClassDescriptor::getDescriptorFor(msg);
-	int fieldIndex = descriptor->findField(msg, "filtered");
-	int filtered = atoi(descriptor->getFieldAsString(msg, fieldIndex, 0).c_str());
+	int fieldIndex = descriptor->findField("filtered");
+	int filtered = atoi(descriptor->getFieldValueAsString(msg, fieldIndex, 0).c_str());
 	if (filtered == 1) {
 		return false;
     }

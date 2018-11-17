@@ -40,7 +40,7 @@ Variable Variable::operator+( const Variable& other ) const {
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("\n\nASF-ASF-Error: Type mismatch.\n\n");
+		throw cRuntimeError("\n\nASF-ASF-Error: Type mismatch.\n\n");
 
 
 	switch(this->type){
@@ -71,7 +71,7 @@ Variable Variable::operator+( const int number ) const {
 
 
 	if(this->type != NUMBER )
-		opp_error("ASF-Error: Type mismatch.");
+		throw cRuntimeError("ASF-Error: Type mismatch.");
 
 
 
@@ -97,7 +97,7 @@ Variable& Variable::operator++(){
 			break;
 			
 		default: 	
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 
 	}	
 	
@@ -125,7 +125,7 @@ Variable& Variable::operator+=( const Variable& other ){
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch(this->type){
 
@@ -161,7 +161,7 @@ Variable Variable::operator-( const Variable& other ) const{
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch(this->type){
 
@@ -172,7 +172,7 @@ Variable Variable::operator-( const Variable& other ) const{
 			break;
 			
 		case STRING: 	
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 			break;
 
 	}	
@@ -195,7 +195,7 @@ Variable& Variable::operator--(){
 			break;
 
 		default:
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 	}
 
 	return *this;
@@ -218,7 +218,7 @@ Variable& Variable::operator-=( const Variable& other ){
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch(this->type){
 
@@ -227,7 +227,7 @@ Variable& Variable::operator-=( const Variable& other ){
 			break;
 			
 		case STRING: 	
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 			break;
 
 	}	
@@ -242,7 +242,7 @@ Variable Variable::operator*( const Variable& other ) const{
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch(this->type){
 
@@ -251,7 +251,7 @@ Variable Variable::operator*( const Variable& other ) const{
 			break;
 			
 		case STRING:
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 			break;
 
 	}	
@@ -266,7 +266,7 @@ Variable Variable::operator%( const Variable& other)const{
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch(this->type){
 
@@ -275,7 +275,7 @@ Variable Variable::operator%( const Variable& other)const{
 			break;
 			
 		case STRING:
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 			break;
 
 	}	
@@ -289,19 +289,19 @@ Variable Variable::operator/( const Variable& other) const{
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch(this->type){
 
 		case NUMBER:
 			if(double(other) == 0)
-			  opp_error("ASF-Error: Division by zero.");
+			  throw cRuntimeError("ASF-Error: Division by zero.");
 				
 			r_value = dtos( double(*this) / double(other) );
 			break;
 			
 		case STRING:
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 			break;
 
 	}
@@ -322,7 +322,7 @@ Variable& Variable::operator*=(const Variable& other){
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch(this->type){
 
@@ -331,7 +331,7 @@ Variable& Variable::operator*=(const Variable& other){
 			break;
 			
 		case STRING:
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 			break;
 
 	}	
@@ -344,7 +344,7 @@ Variable& Variable::operator/=( const Variable& other){
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch(this->type){
 
@@ -353,7 +353,7 @@ Variable& Variable::operator/=( const Variable& other){
 			break;
 			
 		case STRING:
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 			break;
 
 	}	
@@ -366,7 +366,7 @@ Variable& Variable::operator%=( const Variable& other){
 	
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 	
 
 	switch(this->type){
@@ -376,7 +376,7 @@ Variable& Variable::operator%=( const Variable& other){
 			break;
 			
 		case STRING:
-			opp_error("ASF-Error: Operator not supported.");
+			throw cRuntimeError("ASF-Error: Operator not supported.");
 			break;
 
 	}	
@@ -394,7 +394,7 @@ Variable Variable::operator==(const Variable &other){
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch( this->type ){	
 
@@ -426,7 +426,7 @@ Variable Variable::operator>(const Variable &other){
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch( this->type ){	
 
@@ -448,7 +448,7 @@ Variable Variable::operator<(const Variable &other){
 
 	// The two variables are of different types: print an error and stop
 	if(this->type != other.type )
-		opp_error("ASF-Error: Type mismatch.\n");
+		throw cRuntimeError("ASF-Error: Type mismatch.\n");
 
 	switch( this->type ){	
 
@@ -526,7 +526,7 @@ Variable Variable::cast_int() const{
 
 		case STRING: 	
 				if( getFormat(this->value) != NUMBER )
-					opp_error("ASF-Error: Operator not supported.");
+					throw cRuntimeError("ASF-Error: Operator not supported.");
 				
 
 		case NUMBER: 	r_value = itos( int(*this) );
@@ -552,7 +552,7 @@ Variable Variable::cast_double() const{
 
 		case STRING:
 			if( getFormat(this->value) != NUMBER )
-				opp_error("ASF-Error: Operator not supported.");	
+				throw cRuntimeError("ASF-Error: Operator not supported.");	
 
 		case NUMBER: 	r_value = dtos( double(*this) );
 				break;
@@ -577,7 +577,7 @@ Variable::operator int(){
 
 		case STRING: 
 			if( getFormat(this->value) != NUMBER )
-				opp_error("ASF-Error: Operator not supported.");
+				throw cRuntimeError("ASF-Error: Operator not supported.");
 
 		case NUMBER: 	r_value = atoi( (this->value).c_str() );
 				break;
@@ -598,7 +598,7 @@ Variable::operator bool() {
 
 		case STRING:
 			if( getFormat(this->value) != NUMBER )
-				opp_error("ASF-Error: Operator not supported.");
+				throw cRuntimeError("ASF-Error: Operator not supported.");
 
 		case NUMBER:
 			r_value = atoi( (this->value).c_str() );
@@ -629,7 +629,7 @@ Variable::operator double(){
 
 		case STRING: 	
 				if( getFormat(this->value) != NUMBER )
-					opp_error("ASF-Error: Operator not supported.");				
+					throw cRuntimeError("ASF-Error: Operator not supported.");				
 
 		case NUMBER: 	r_value = atof( (this->value).c_str() );
 				break;
@@ -650,7 +650,7 @@ Variable::operator double() const{
 
 		case STRING: 	
 				if( getFormat(this->value) != NUMBER )
-					opp_error("ASF-Error: Operator not supported.");
+					throw cRuntimeError("ASF-Error: Operator not supported.");
 				
 
 		case NUMBER: 	r_value = atof( (this->value).c_str() );
@@ -671,7 +671,7 @@ Variable::operator int() const{
 
 		case STRING: 	
 				if( getFormat(this->value) != NUMBER )
-					opp_error("ASF-Error: Operator not supported.");
+					throw cRuntimeError("ASF-Error: Operator not supported.");
 				
 
 		case NUMBER: 	r_value = atoi( (this->value).c_str() );

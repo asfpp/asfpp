@@ -63,7 +63,7 @@ void UnconditionalAttack::execute(vector<cMessage*> &put_messages){
 					max = double(*(varTable["MAX"]));
 					min = double(*(varTable["MIN"]));
 
-					fake_value = min +  ( dblrand() * (max - min) );
+					fake_value = min +  ( dblrand(0) * (max - min) );
 
 					new_value = dtos(fake_value);
 
@@ -182,7 +182,7 @@ void UnconditionalAttack::execute(vector<cMessage*> &put_messages){
 
 			default:{
 
-				opp_error("Unconditional attacks doesn't recognize the action. Check the manual to the compability.");
+				cRuntimeError("Unconditional attacks doesn't recognize the action. Check the manual to the compability.");
 
 			}
 

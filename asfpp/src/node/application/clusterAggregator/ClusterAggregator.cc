@@ -56,7 +56,7 @@ void ClusterAggregator::startup()
 	driftCorrection = par("driftCorrection");
 
 	/* Retrieve the simulation duration */
-	simtime = string(ev.getConfig()->getConfigValue("sim-time-limit"));
+	simtime = string(getEnvir()->getConfig()->getConfigValue("sim-time-limit"));
 	simtime = simtime.replace(simtime.size()-1, 1, ""); // Relete the 's' character
 	
 	simulationTime = atof( simtime.c_str() );

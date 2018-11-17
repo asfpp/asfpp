@@ -3,6 +3,7 @@
 
 //#include <cmessage.h>
 #include <string>
+#include "omnetpp.h"
 
 using namespace std;
 

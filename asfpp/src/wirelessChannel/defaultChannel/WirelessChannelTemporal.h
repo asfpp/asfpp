@@ -14,7 +14,7 @@
 #define __CHANNELMODEL_H
 
 #include <omnetpp.h>
-#include "random.h"
+//#include "random.h"
 
 #include <iostream>
 #include <fstream>

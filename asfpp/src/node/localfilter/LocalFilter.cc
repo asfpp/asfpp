@@ -332,7 +332,7 @@ void LocalFilter::handleMessage(cMessage* msg)
 				cClassDescriptor *descriptor; // general class descriptor
 				int ind;
 				descriptor = cClassDescriptor::getDescriptorFor(packet);
-				ind = descriptor->findField(packet, "filtered");
+				ind = descriptor->findField("filtered");
 
 				//trace()<<" Filtered : "<<descriptor->getFieldAsString(packet, ind, 0);
 
@@ -577,7 +577,7 @@ void LocalFilter::handleMessage(cMessage* msg)
 						    descriptor = cClassDescriptor::getDescriptorFor(new_messages[i]);
 
 						    /* Check if the packet actually has to be sent */
-						    field_int = descriptor->findField(new_messages[i], "sended");
+						    field_int = descriptor->findField("sended");
 						    
 						    if( field_int == -1 ) {
 						      
@@ -586,7 +586,7 @@ void LocalFilter::handleMessage(cMessage* msg)
 
 						    }
 
-						    sended = descriptor->getFieldAsString(new_messages[i], field_int, 0);
+						    sended = descriptor->getFieldValueAsString(new_messages[i], field_int, 0);
 
 						    /* This packet must not be sent */
 						    if( sended == "0") {
@@ -599,7 +599,7 @@ void LocalFilter::handleMessage(cMessage* msg)
 						    /* The packet is sent to the layer below the current one */
 
 						    /* Set the field 'sended' to 0 */
-						    descriptor->setFieldAsString(new_messages[i], field_int, 0, "0");
+						    descriptor->setFieldValueAsString(new_messages[i], field_int, 0, "0");
 
 						    /* Packets are directly sent to the lower layer, without being stored
 						     * in any transmission buffer. This is consistent with the assumption
@@ -698,10 +698,10 @@ bool LocalFilter::testAndSet(cMessage* packet){
 
 	// Check if the packet has the flag out_of_reality setted
 	descriptor = cClassDescriptor::getDescriptorFor(packet);
-	field_index = descriptor->findField(packet, "compromised");
+	field_index = descriptor->findField("compromised");
 
 	// out_of_reality == 1 stop the procedure
-	if( atoi( descriptor->getFieldAsString(packet, field_index, 0).c_str() ) == 1 )
+	if( atoi( descriptor->getFieldValueAsString(packet, field_index, 0).c_str() ) == 1 )
 		return FALSE;
 
 	// set the flag in every packet layer

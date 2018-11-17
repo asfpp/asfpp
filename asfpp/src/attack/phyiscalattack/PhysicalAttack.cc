@@ -69,7 +69,7 @@ void PhysicalAttack::execute () {
             }
             
             default: {
-                opp_error("[void PhysicalAttack::execute()] Error, unexpected type of node action to handle");
+                throw cRuntimeError("[void PhysicalAttack::execute()] Error, unexpected type of node action to handle");
             }
         
         }

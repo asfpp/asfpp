@@ -19,7 +19,7 @@ void DistanceTest::startup()
 	maxSampleInterval = ((double)par("maxSampleInterval")) / 1000.0;
 	minSampleInterval = ((double)par("minSampleInterval")) / 1000.0;
 	currSentSampleSN = 0;
-	randomBackoffIntervalFraction = genk_dblrand(0);
+	randomBackoffIntervalFraction = dblrand(0);
 	sentOnce = false;
 	if (!isSink)
 		setTimer(REQUEST_SAMPLE, minSampleInterval);

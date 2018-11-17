@@ -60,10 +60,10 @@ bool ElementaryBlock::solveFilterBlock(cMessage* msg) const
         
         // the first entry is packet's top level field
         if (i==0) {
-            fieldIndex = descriptor->findField(encapsulatedMsg, pathOfFields[i].c_str());
+            fieldIndex = descriptor->findField(pathOfFields[i].c_str());
         }
         else {
-            fieldIndex = descriptor->findField(compoundField, pathOfFields[i].c_str());
+            fieldIndex = descriptor->findField(pathOfFields[i].c_str());
         }
         
         // field not found in the current packet
@@ -77,12 +77,12 @@ bool ElementaryBlock::solveFilterBlock(cMessage* msg) const
             string structName;
             // get the pointer-to the compound field
             if (i==0) {
-                structName = descriptor->getFieldStructName(encapsulatedMsg, fieldIndex);
-                compoundField = descriptor->getFieldStructPointer(encapsulatedMsg, fieldIndex, 0);
+                structName = descriptor->getFieldStructName(fieldIndex);
+                compoundField = descriptor->getFieldStructValuePointer(encapsulatedMsg, fieldIndex, 0);
             }
             else {
-                structName = descriptor->getFieldStructName(compoundField, fieldIndex);
-                compoundField = descriptor->getFieldStructPointer(compoundField, fieldIndex, 0);
+                structName = descriptor->getFieldStructName(fieldIndex);
+                compoundField = descriptor->getFieldStructValuePointer(compoundField, fieldIndex, 0);
             }
             
             // get the descriptor of the compound field
@@ -92,7 +92,7 @@ bool ElementaryBlock::solveFilterBlock(cMessage* msg) const
         
     }
     // use the descriptor to get the last field's content
-    string actualValue = descriptor->getFieldAsString((cObject*)compoundField, fieldIndex, 0);
+    string actualValue = descriptor->getFieldValueAsString((cObject*)compoundField, fieldIndex, 0);
         
     // retrieve the comparison operator from the block
     string comparisonOperator = blockElements[2];

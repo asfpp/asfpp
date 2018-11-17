@@ -1,6 +1,7 @@
 
 
 
+
 #include "utils.h"
 
 void tokenize(vector<string>& tokens, const string str, const char delim) {
@@ -62,7 +63,7 @@ int layertoi(const string layer) {
     }
     
     string errorMessage = "Layer name '" + layer + "' not recognized, the packet-filter supports only 'MAC', 'NET' and 'APP'";
-	opp_error(errorMessage.c_str());
+	throw cRuntimeError(errorMessage.c_str());
 
 }
 
@@ -81,13 +82,13 @@ void setFilteredRecursively(cMessage* packet, const int value) {
 	
 		// Retrieve the packet descriptor
 		descriptor = cClassDescriptor::getDescriptorFor(temp_packet);
-		field_index = descriptor->findField(temp_packet, "filtered");
+		field_index = descriptor->findField("filtered");
 
 		// Set the packet as filtered
 		if(value)
-			descriptor->setFieldAsString(temp_packet, field_index, 0, "1");
+			descriptor->setFieldValueAsString(temp_packet, field_index, 0, "1");
 		else
-			descriptor->setFieldAsString(temp_packet, field_index, 0, "0");
+			descriptor->setFieldValueAsString(temp_packet, field_index, 0, "0");
 
 		// Rretrieve the encapsulated packet
 		temp_packet = ((cPacket*)temp_packet)->getEncapsulatedPacket();
@@ -117,10 +118,10 @@ void setCompromisedRecursively(cMessage* packet) {
 	
 		// Retrieve the packet descriptor
 		descriptor = cClassDescriptor::getDescriptorFor(temp_packet);
-		field_index = descriptor->findField(temp_packet, "compromised");
+		field_index = descriptor->findField("compromised");
 
 		// Set the flag
-		descriptor->setFieldAsString(temp_packet, field_index, 0, "1");
+		descriptor->setFieldValueAsString(temp_packet, field_index, 0, "1");
 
 		// Retrieve the encapsulated packet
 		temp_packet = ((cPacket*)temp_packet)->getEncapsulatedPacket();
