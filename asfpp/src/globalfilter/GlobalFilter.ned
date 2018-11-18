@@ -1,4 +1,4 @@
-package castlia.globalfilter;
+package castalia.globalfilter;
 
 simple GlobalFilter {
 
@@ -21,4 +21,4 @@ simple GlobalFilter {
         input fromWirelessChannel; // from wireless channel
     
 }
- 
+

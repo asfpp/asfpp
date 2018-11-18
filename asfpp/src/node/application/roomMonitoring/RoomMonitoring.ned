@@ -15,7 +15,7 @@ package castalia.node.application.roomMonitoring;
 // The sensor node module. Connects to the wireless channel in order to communicate 
 // with other nodes. Connects to psysical processes so it can sample them.
 
-simple RoomMonitoring like node.application.iApplication {
+simple RoomMonitoring like castalia.node.application.iApplication {
  parameters: 
  	string applicationID = default ("RoomMonitoring");
 	bool collectTraceInfo = default (false);

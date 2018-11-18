@@ -4,12 +4,12 @@
 //*                                                                          *
 //****************************************************************************/
 
-package node.application.dummyApplication;
+package castalia.node.application.dummyApplication;
 
 // The sensor node module. Connects to the wireless channel in order to communicate 
 // with other nodes. Connects to psysical processes so it can sample them.
 
-simple DummyApplication like node.application.iApplication {
+simple DummyApplication like castalia.node.application.iApplication {
  parameters: 
  	string applicationID = default ("DummyApplication");
 	bool collectTraceInfo = default (false);

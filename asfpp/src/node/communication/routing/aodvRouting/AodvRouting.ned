@@ -91,12 +91,12 @@ simple AodvRouting like castalia.node.communication.routing.iRouting
 	int netDataFrameOverhead = default (10);	// bytes
 	int netBufferSize = default (32);	// number of messages
 
-	int activeRouteTimeout = default(60000); // orig 60000
+	double activeRouteTimeout = default(60000); // orig 60000
 	int allowedHelloLoss = default(2);  
-	int helloInterval = default(25000); 	// orig 25000
+	double helloInterval = default(25000); 	// orig 25000
 	int localAddTTL = default(2);
 	int netDiameter = default(5); // orig 35
-	int nodeTraversalTime = default(4000);	// orig 4000
+	double nodeTraversalTime = default(4000);	// orig 4000
 	int rerrRatelimit = default(10);
 	int rreqRetries = default(2);
 	int rreqRatelimit = default(10);
@@ -104,7 +104,7 @@ simple AodvRouting like castalia.node.communication.routing.iRouting
 	int ttlStart = default(2);
 	int ttlIncrement = default(2);
 	int ttlThreshould = default(7);
-	int pathDiscoveryTime = default(560000); 	//ms, 2 * netTrasversalTime orig 8000
+	double pathDiscoveryTime = default(560000); 	//ms, 2 * netTrasversalTime orig 8000
 
 
 

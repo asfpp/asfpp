@@ -10,7 +10,7 @@
 //*                                                                          *  
 //****************************************************************************/
 
-package node.communication.radio;
+package castalia.node.communication.radio;
 
 simple Radio {
  parameters:

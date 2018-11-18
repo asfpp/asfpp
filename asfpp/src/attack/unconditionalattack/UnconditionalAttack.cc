@@ -182,7 +182,7 @@ void UnconditionalAttack::execute(vector<cMessage*> &put_messages){
 
 			default:{
 
-				cRuntimeError("Unconditional attacks doesn't recognize the action. Check the manual to the compability.");
+				throw cRuntimeError("Unconditional attacks doesn't recognize the action. Check the manual to the compability.");
 
 			}
 
