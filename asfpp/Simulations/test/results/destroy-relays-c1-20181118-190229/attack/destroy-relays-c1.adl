@@ -1,0 +1,11 @@
+#
+# file: destroy-relays-c1.adl
+#
+# technique: destroys the relay nodes of the cluster C1.
+#         
+# author: Francesco Racciatti
+#
+
+destroy(1, 100)
+destroy(3, 100)
+destroy(5, 100)

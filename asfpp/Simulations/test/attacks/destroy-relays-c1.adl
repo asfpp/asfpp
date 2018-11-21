@@ -1,0 +1,12 @@
+#
+# file: destroy-relays-c1.adl
+#
+# technique: destroys the relay nodes of the cluster C1.
+#            From time 100, all the packets coming from C1 will be lost.
+#         
+# author: Francesco Racciatti
+#
+
+destroy(1, 100)
+destroy(3, 100)
+destroy(5, 100)

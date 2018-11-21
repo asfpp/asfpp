@@ -1,7 +1,7 @@
 #include "UnconditionalAttack.h"
 #include "RoutingPacket_m.h"
 #include "ASFExpression.h"
-
+#include <random>
 
 /*  <A.P.> This function performs the unconditional attack, by sequentially invoking the actions composing it.
  *  The vector 'put_messages' contains pointers to the PUT_MESSAGE messages created during the attack performance.
@@ -58,15 +58,17 @@ void UnconditionalAttack::execute(vector<cMessage*> &put_messages){
 
 				/* Compute a random value */
 				if(what == "RANDOM") {
-					double fake_value, max , min;
+					double max , min;
 		
 					max = double(*(varTable["MAX"]));
 					min = double(*(varTable["MIN"]));
+                	
+					std::random_device rd;
+                    std::mt19937 mt(rd());
+                    std::uniform_real_distribution<double> dist(min, max);
 
-					fake_value = min +  ( dblrand(0) * (max - min) );
-
-					new_value = dtos(fake_value);
-
+					new_value = dtos(dist(mt));
+					
 				} else{
 					// retrieve the value from a stored variable
 					new_value = varTable[what]->getValue();

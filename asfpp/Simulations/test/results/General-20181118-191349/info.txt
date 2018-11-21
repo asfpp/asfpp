@@ -1,0 +1,6 @@
+Auto-generated file
+-------------------
+
+Configuration: General
+Time: 2018-11-18 19:13:49
+Command: ../../bin/Castalia -i omnetpp.ini -c General -r 1

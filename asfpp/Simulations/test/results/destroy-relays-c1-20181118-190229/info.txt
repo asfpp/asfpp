@@ -1,0 +1,6 @@
+Auto-generated file
+-------------------
+
+Configuration: destroy-relays-c1
+Time: 2018-11-18 19:02:29
+Command: ../../bin/Castalia -i omnetpp.ini -c destroy-relays-c1 -r 1

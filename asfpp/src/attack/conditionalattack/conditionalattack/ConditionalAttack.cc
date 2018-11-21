@@ -22,8 +22,7 @@
 #include "utils.h"
 
 #include <sstream>
-
-
+#include <random>
 
 ConditionalAttack::ConditionalAttack() : Attack()
 {
@@ -147,14 +146,16 @@ void ConditionalAttack::execute(cMessage **packet, vector<cMessage*> &new_messag
 
 				/* Compute a random value */
 				if(what == "RANDOM") {
-					double fake_value, max , min;
+					double max , min;
 		
 					max = double(*(varTable["MAX"]));
 					min = double(*(varTable["MIN"]));
+                	
+					std::random_device rd;
+                    std::mt19937 mt(rd());
+                    std::uniform_real_distribution<double> dist(min, max);
 
-					fake_value = min +  ( dblrand(0) * (max - min) );
-
-					new_value = dtos(fake_value);
+					new_value = dtos(dist(mt));
 
 				} else // retrieve the value from a stored variable
 					new_value = varTable[what]->getValue();
